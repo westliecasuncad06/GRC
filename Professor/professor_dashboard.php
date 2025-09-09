@@ -34,13 +34,13 @@ $stmt->execute([$professor_id]);
 $subjects = $stmt->fetchAll();
 
 // Get sections and students for professor's classes
-$query = "SELECT DISTINCT s.section, st.student_id, st.first_name, st.last_name, st.email, sc.enrolled_at, c.class_name
+$query = "SELECT DISTINCT c.section, st.student_id, st.first_name, st.last_name, st.email, sc.enrolled_at, c.class_name
           FROM students st
           JOIN student_classes sc ON st.student_id = sc.student_id
           JOIN classes c ON sc.class_id = c.class_id
           JOIN subjects sub ON c.subject_id = sub.subject_id
           WHERE c.professor_id = ?
-          ORDER BY s.section, st.last_name, st.first_name";
+          ORDER BY c.section, st.last_name, st.first_name";
 $stmt = $pdo->prepare($query);
 $stmt->execute([$professor_id]);
 $all_students = $stmt->fetchAll();

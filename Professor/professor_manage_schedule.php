@@ -619,7 +619,7 @@ foreach ($subjects as $subject) {
             margin: 0;
             font-size: 1.25rem;
             font-weight: 600;
-            color: var(--dark);
+            color: var(--light);
         }
 
         .modal-close {
@@ -627,7 +627,7 @@ foreach ($subjects as $subject) {
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
-            color: #6c757d;
+            color:var(--light);
             padding: 0;
             width: 30px;
             height: 30px;
@@ -821,6 +821,7 @@ foreach ($subjects as $subject) {
         .collapse-icon {
             font-size: 1.2rem;
             transition: transform 0.2s;
+            color: var(--light);
         }
 
         .date-content {
