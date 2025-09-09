@@ -18,11 +18,11 @@ $class_id = $_GET['class_id'];
 
 try {
     // Get students enrolled in this class
-    $query = "SELECT s.student_id, s.first_name, s.last_name, s.email
+    $query = "SELECT s.student_id, s.first_name, s.last_name, s.email, s.section, sc.enrolled_at
               FROM students s
               JOIN student_classes sc ON s.student_id = sc.student_id
               WHERE sc.class_id = ?
-              ORDER BY s.last_name, s.first_name";
+              ORDER BY s.section, s.last_name, s.first_name";
     
     $stmt = $pdo->prepare($query);
     $stmt->execute([$class_id]);

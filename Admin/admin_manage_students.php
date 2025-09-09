@@ -22,11 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $password = md5($_POST['password']);
                 $mobile = $_POST['mobile'];
                 $address = $_POST['address'];
-                
+                $section = $_POST['section'];
+
                 try {
-                    $stmt = $pdo->prepare("INSERT INTO students (student_id, first_name, last_name, middle_name, email, password, mobile, address, created_at, updated_at) 
-                                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-                    $stmt->execute([$student_id, $first_name, $last_name, $middle_name, $email, $password, $mobile, $address]);
+                    $stmt = $pdo->prepare("INSERT INTO students (student_id, first_name, last_name, middle_name, email, password, mobile, address, section, created_at, updated_at)
+                                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                    $stmt->execute([$student_id, $first_name, $last_name, $middle_name, $email, $password, $mobile, $address, $section]);
                     $success = "Student added successfully!";
                 } catch (PDOException $e) {
                     $error = "Error adding student: " . $e->getMessage();
@@ -41,11 +42,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $email = $_POST['email'];
                 $mobile = $_POST['mobile'];
                 $address = $_POST['address'];
-                
+                $section = $_POST['section'];
+
                 try {
-                    $stmt = $pdo->prepare("UPDATE students SET first_name = ?, last_name = ?, middle_name = ?, email = ?, mobile = ?, address = ?, updated_at = NOW() 
+                    $stmt = $pdo->prepare("UPDATE students SET first_name = ?, last_name = ?, middle_name = ?, email = ?, mobile = ?, address = ?, section = ?, updated_at = NOW()
                                           WHERE student_id = ?");
-                    $stmt->execute([$first_name, $last_name, $middle_name, $email, $mobile, $address, $student_id]);
+                    $stmt->execute([$first_name, $last_name, $middle_name, $email, $mobile, $address, $section, $student_id]);
                     $success = "Student updated successfully!";
                 } catch (PDOException $e) {
                     $error = "Error updating student: " . $e->getMessage();
@@ -557,39 +559,41 @@ $students = $pdo->query($query)->fetchAll();
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Student ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Mobile</th>
-                        <th>Address</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($students as $student): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($student['student_id']); ?></td>
-                        <td><?php echo htmlspecialchars($student['first_name'] . ' ' . ($student['middle_name'] ? $student['middle_name'] . ' ' : '') . $student['last_name']); ?></td>
-                        <td><?php echo htmlspecialchars($student['email']); ?></td>
-                        <td><?php echo htmlspecialchars($student['mobile']); ?></td>
-                        <td><?php echo htmlspecialchars($student['address']); ?></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-sm btn-primary" onclick="editStudent(<?php echo htmlspecialchars(json_encode($student)); ?>)">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <form action="" method="POST" style="display:inline;">
-                                    <input type="hidden" name="action" value="delete_student">
-                                    <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($student['student_id']); ?>">
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this student?')">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Address</th>
+                <th>Section</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($students as $student): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($student['student_id']); ?></td>
+                <td><?php echo htmlspecialchars($student['first_name'] . ' ' . ($student['middle_name'] ? $student['middle_name'] . ' ' : '') . $student['last_name']); ?></td>
+                <td><?php echo htmlspecialchars($student['email']); ?></td>
+                <td><?php echo htmlspecialchars($student['mobile']); ?></td>
+                <td><?php echo htmlspecialchars($student['address']); ?></td>
+                <td><?php echo htmlspecialchars($student['section']); ?></td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn btn-sm btn-primary" onclick="editStudent(<?php echo htmlspecialchars(json_encode($student)); ?>)">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <form action="" method="POST" style="display:inline;">
+                            <input type="hidden" name="action" value="delete_student">
+                            <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($student['student_id']); ?>">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this student?')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
             </table>
         </div>
 
@@ -640,6 +644,10 @@ $students = $pdo->query($query)->fetchAll();
                             <label>Address</label>
                             <input type="text" name="address" required>
                         </div>
+                        <div class="form-group">
+                            <label>Section</label>
+                            <input type="text" name="section" placeholder="e.g., A">
+                        </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" onclick="closeModal('addStudentModal')">
                                 <i class="fas fa-times"></i> Cancel
@@ -687,6 +695,10 @@ $students = $pdo->query($query)->fetchAll();
                         <div class="form-group">
                             <label>Address</label>
                             <input type="text" name="address" id="edit_address" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Section</label>
+                            <input type="text" name="section" id="edit_section" placeholder="e.g., A">
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" onclick="closeModal('editStudentModal')">
@@ -759,6 +771,7 @@ $students = $pdo->query($query)->fetchAll();
             document.getElementById('edit_email').value = student.email;
             document.getElementById('edit_mobile').value = student.mobile;
             document.getElementById('edit_address').value = student.address;
+            document.getElementById('edit_section').value = student.section || '';
             openModal('editStudentModal');
         }
 

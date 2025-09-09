@@ -9,10 +9,9 @@ require_once '../php/db.php';
 
 // Fetch professor data using session values
 $professor_id = $_SESSION['user_id'];
-$stmt = $pdo->prepare("SELECT
-
-
- WHERE professor_id = ?");
+$stmt = $pdo->prepare("SELECT first_name, last_name, email, mobile
+FROM professors
+WHERE professor_id = ?");
 $stmt->execute([$professor_id]);
 $professor = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -25,14 +24,36 @@ if ($professor) {
 }
 
 // Get professor's subjects (from attendance_reports.php)
-$query = "SELECT s.*, c.class_id, c.class_code, c.schedule, c.room 
-          FROM subjects s 
-          JOIN classes c ON s.subject_id = c.subject_id 
-          WHERE c.professor_id = ? 
+$query = "SELECT s.*, c.class_id, c.class_code, c.schedule, c.room, c.section
+          FROM subjects s
+          JOIN classes c ON s.subject_id = c.subject_id
+          WHERE c.professor_id = ?
           ORDER BY s.subject_name";
 $stmt = $pdo->prepare($query);
 $stmt->execute([$professor_id]);
 $subjects = $stmt->fetchAll();
+
+// Get sections and students for professor's classes
+$query = "SELECT DISTINCT s.section, st.student_id, st.first_name, st.last_name, st.email, sc.enrolled_at, c.class_name
+          FROM students st
+          JOIN student_classes sc ON st.student_id = sc.student_id
+          JOIN classes c ON sc.class_id = c.class_id
+          JOIN subjects sub ON c.subject_id = sub.subject_id
+          WHERE c.professor_id = ?
+          ORDER BY s.section, st.last_name, st.first_name";
+$stmt = $pdo->prepare($query);
+$stmt->execute([$professor_id]);
+$all_students = $stmt->fetchAll();
+
+// Group students by section
+$students_by_section = [];
+foreach ($all_students as $student) {
+    $section = $student['section'] ?: 'Unassigned';
+    if (!isset($students_by_section[$section])) {
+        $students_by_section[$section] = [];
+    }
+    $students_by_section[$section][] = $student;
+}
 
 // Get attendance statistics (from attendance_reports.php)
 $attendance_stats = [];
@@ -865,6 +886,39 @@ foreach ($subjects as $subject) {
                             </div>
                             <?php endforeach; ?>
                         </div>
+                    </div>
+
+                    <!-- Sections and Students -->
+                    <div class="stat-card">
+                        <h3 class="chart-title">Sections and Enrolled Students</h3>
+                        <?php if (!empty($students_by_section)): ?>
+                            <?php foreach ($students_by_section as $section => $students): ?>
+                                <div class="section-group" style="margin-bottom: 2rem;">
+                                    <h4 style="color: var(--primary); margin-bottom: 1rem; font-size: 1.1rem;">
+                                        <i class="fas fa-users"></i> Section <?php echo $section; ?> (<?php echo count($students); ?> students)
+                                    </h4>
+                                    <div class="students-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0.75rem;">
+                                        <?php foreach ($students as $student): ?>
+                                            <div class="student-card" style="background: #f8f9fa; padding: 0.75rem; border-radius: 8px; border: 1px solid #e9ecef;">
+                                                <div style="font-weight: 600; color: var(--dark);">
+                                                    <?php echo $student['first_name'] . ' ' . $student['last_name']; ?>
+                                                </div>
+                                                <div style="font-size: 0.85rem; color: var(--gray);">
+                                                    <?php echo $student['student_id']; ?>
+                                                </div>
+                                                <div style="font-size: 0.8rem; color: var(--gray); margin-top: 0.25rem;">
+                                                    Enrolled: <?php echo date('M j, Y', strtotime($student['enrolled_at'])); ?>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="no-data">
+                                <p>No students found in your classes.</p>
+                            </div>
+                        <?php endif; ?>
                     </div>
 
                     <!-- Analytics Tab -->

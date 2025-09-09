@@ -1,16 +1,9 @@
-f# TODO: Update Logout Links
+# TODO: Fix Search Bar in Professor/manage_students.php
 
-- [x] Edit UI_UX/Admin/admin_dashboard.html
-- [x] Edit UI_UX/Admin/admin_manage_professors.html
-- [x] Edit UI_UX/Admin/admin_manage_schedule.html
-- [x] Edit UI_UX/Admin/admin_manage_students.html
-- [x] Edit UI_UX/Admin/settings.html
-- [ ] Edit UI_UX/Professor/manage_students.html
-- [ ] Edit UI_UX/Professor/manage_subjects.html
-- [ ] Edit UI_UX/Professor/professor_dashboard.html
-- [ ] Edit UI_UX/Professor/professor_manage_schedule.html
-- [ ] Edit UI_UX/Professor/settings.html
-- [ ] Edit UI_UX/Student/settings.html
-- [ ] Edit UI_UX/Student/student_dashboard.html
-- [ ] Edit UI_UX/Student/student_manage_schedule.html
-jhbygvhb
+## Tasks
+- [ ] Update PHP query to include subjects and sections for each student
+- [ ] Update table HTML to display subjects and sections columns
+- [ ] Add dropdown for search type (All, Student Name, Subject, Section)
+- [ ] Modify JavaScript filterStudents function to filter based on selected type
+- [ ] Ensure when searching by Section, it filters students in that section
+- [ ] Test the search functionality

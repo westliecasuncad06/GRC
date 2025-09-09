@@ -45,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $subject_name = $_POST['subject_name'];
                 $schedule = $_POST['schedule'];
                 $room = $_POST['room'];
+                $section = $_POST['section'];
                 
                 try {
                     // First insert the subject
@@ -57,10 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $class_code = generateUniqueClassCode($pdo);
                     
                     // Then create a class for this subject
-                    $stmt = $pdo->prepare("INSERT INTO classes (class_id, class_name, class_code, subject_id, professor_id, schedule, room, created_at, updated_at) 
-                                          VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                    $stmt = $pdo->prepare("INSERT INTO classes (class_id, class_name, class_code, subject_id, professor_id, schedule, room, section, created_at, updated_at) 
+                                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
                     $class_id = 'CLASS' . time();
-                    $stmt->execute([$class_id, $subject_name . ' Class', $class_code, $subject_id, $professor_id, $schedule, $room]);
+                    $stmt->execute([$class_id, $subject_name . ' Class', $class_code, $subject_id, $professor_id, $schedule, $room, $section]);
                     
                     $success = "Subject and class added successfully! Class Code: " . $class_code;
                 } catch (PDOException $e) {
@@ -160,14 +161,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Get professor's subjects
 $professor_id = $_SESSION['user_id'];
-$query = "SELECT s.*, c.class_id, c.class_code, c.schedule, c.room 
-          FROM subjects s 
-          JOIN classes c ON s.subject_id = c.subject_id 
-          WHERE c.professor_id = ? 
-          ORDER BY s.created_at DESC";
+$query = "SELECT s.*, c.class_id, c.class_code, c.schedule, c.room, c.section
+          FROM subjects s
+          JOIN classes c ON s.subject_id = c.subject_id
+          WHERE c.professor_id = ?
+          ORDER BY s.subject_name ASC, c.section ASC";
 $stmt = $pdo->prepare($query);
 $stmt->execute([$professor_id]);
 $subjects = $stmt->fetchAll();
+
+// Get unique sections for the professor
+$query_sections = "SELECT DISTINCT c.section
+                   FROM classes c
+                   WHERE c.professor_id = ?
+                   AND c.section IS NOT NULL
+                   ORDER BY c.section ASC";
+$stmt_sections = $pdo->prepare($query_sections);
+$stmt_sections->execute([$professor_id]);
+$sections = $stmt_sections->fetchAll(PDO::FETCH_COLUMN);
 
 // Get enrolled students count for each subject
 $enrollment_counts = [];
@@ -200,6 +211,16 @@ foreach ($subjects as $subject) {
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .stat-card-enhanced {
@@ -342,6 +363,31 @@ foreach ($subjects as $subject) {
 
         .table-actions-enhanced {
             margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-input-enhanced {
+            padding: 0.75rem 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.9rem;
+            width: 300px;
+            transition: all 0.2s ease;
+        }
+
+        .search-input-enhanced::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-input-enhanced:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
         }
 
         .stat-primary-btn {
@@ -362,6 +408,138 @@ foreach ($subjects as $subject) {
         .stat-primary-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .view-btn {
+            margin-right: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .view-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .view-btn.active {
+            background: rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .sections-view {
+            display: none;
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUpCard 0.6s ease-out forwards;
+        }
+
+        .section-card:nth-child(1) { animation-delay: 0.1s; }
+        .section-card:nth-child(2) { animation-delay: 0.2s; }
+        .section-card:nth-child(3) { animation-delay: 0.3s; }
+        .section-card:nth-child(4) { animation-delay: 0.4s; }
+        .section-card:nth-child(5) { animation-delay: 0.5s; }
+        .section-card:nth-child(6) { animation-delay: 0.6s; }
+        .section-card:nth-child(7) { animation-delay: 0.7s; }
+        .section-card:nth-child(8) { animation-delay: 0.8s; }
+
+        @keyframes fadeInUpCard {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-info {
+            flex: 1;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0 0 0.25rem 0;
+        }
+
+        .section-subtitle {
+            font-size: 0.9rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .section-classes {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-class-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .section-class-item:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+            border-radius: 6px;
+        }
+
+        .section-class-item:last-child {
+            border-bottom: none;
+        }
+
+        .section-class-icon {
+            font-size: 1.1rem;
+            color: var(--primary);
+            width: 20px;
+        }
+
+        .section-class-text {
+            font-size: 0.9rem;
+            color: var(--dark);
+            font-weight: 500;
         }
 
         .no-data {
@@ -683,6 +861,13 @@ foreach ($subjects as $subject) {
         <div class="table-header-enhanced">
             <h2 class="table-title-enhanced"><i class="fas fa-calendar-alt" style="margin-right: 10px;"></i>Manage My Classes</h2>
             <div class="table-actions-enhanced">
+                <input type="search" id="searchInput" class="search-input-enhanced" placeholder="Search subjects or sections..." aria-label="Search subjects or sections" onkeyup="filterSubjects()">
+                <button class="stat-primary-btn view-btn active" id="allSubjectsBtn" onclick="switchView('allSubjects')">
+                    <i class="fas fa-book"></i> All Subjects
+                </button>
+                <button class="stat-primary-btn view-btn" id="sectionsBtn" onclick="switchView('sections')">
+                    <i class="fas fa-users"></i> Sections
+                </button>
                 <button class="stat-primary-btn" onclick="openModal('addSubjectModal')">
                     <i class="fas fa-plus"></i> Add New Class
                 </button>
@@ -745,6 +930,46 @@ foreach ($subjects as $subject) {
                     </div>
                     <?php endforeach; ?>
                 </div>
+
+                <!-- Sections View -->
+                <div class="sections-view" id="sectionsView">
+                    <div class="sections-grid">
+                        <?php
+                        // Group subjects by section
+                        $subjectsBySection = [];
+                        foreach ($subjects as $subject) {
+                            $section = $subject['section'] ?? 'No Section';
+                            if (!isset($subjectsBySection[$section])) {
+                                $subjectsBySection[$section] = [];
+                            }
+                            $subjectsBySection[$section][] = $subject;
+                        }
+
+                        foreach ($subjectsBySection as $section => $sectionSubjects):
+                        ?>
+                        <div class="section-card">
+                            <div class="section-header">
+                                <div class="section-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="section-info">
+                                    <h3 class="section-title"><?php echo htmlspecialchars($section); ?></h3>
+                                    <span class="section-subtitle"><?php echo count($sectionSubjects); ?> classes</span>
+                                </div>
+                            </div>
+
+                            <div class="section-classes">
+                                <?php foreach ($sectionSubjects as $subject): ?>
+                                <div class="section-class-item" onclick="openAttendanceModal('<?php echo $subject['class_id']; ?>', '<?php echo htmlspecialchars($subject['subject_name']); ?>')">
+                                    <i class="fas fa-book section-class-icon"></i>
+                                    <span class="section-class-text"><?php echo htmlspecialchars($subject['subject_name']); ?> (<?php echo htmlspecialchars($subject['subject_code']); ?>)</span>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
             <?php endif; ?>
         </div>
 
@@ -755,31 +980,35 @@ foreach ($subjects as $subject) {
                     <h3 class="modal-title">Add New Class</h3>
                     <button class="modal-close" onclick="closeModal('addSubjectModal')">&times;</button>
                 </div>
-                <div class="modal-body">
-                    <form class="modal-form" action="" method="POST">
-                        <input type="hidden" name="action" value="add_subject">
-                        <div class="form-group">
-                            <label>Subject Code</label>
-                            <input type="text" name="subject_code" required>
+                        <div class="modal-body">
+                            <form class="modal-form" action="" method="POST">
+                                <input type="hidden" name="action" value="add_subject">
+                                <div class="form-group">
+                                    <label>Subject Code</label>
+                                    <input type="text" name="subject_code" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Subject Name</label>
+                                    <input type="text" name="subject_name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Schedule</label>
+                                    <input type="text" name="schedule" placeholder="e.g., MWF 9:00-10:30" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Room</label>
+                                    <input type="text" name="room" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Section</label>
+                                    <input type="text" name="section" required>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" onclick="closeModal('addSubjectModal')">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">Add Class</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="form-group">
-                            <label>Subject Name</label>
-                            <input type="text" name="subject_name" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Schedule</label>
-                            <input type="text" name="schedule" placeholder="e.g., MWF 9:00-10:30" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Room</label>
-                            <input type="text" name="room" required>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" onclick="closeModal('addSubjectModal')">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Add Class</button>
-                        </div>
-                    </form>
-                </div>
             </div>
         </div>
 
@@ -1261,6 +1490,81 @@ function saveAttendance(date) {
         });
 
         // Removed event listeners for non-existent elements to fix errors
+
+        function switchView(view) {
+            const allSubjectsBtn = document.getElementById('allSubjectsBtn');
+            const sectionsBtn = document.getElementById('sectionsBtn');
+            const statsGrid = document.querySelector('.stats-grid');
+            const sectionsView = document.getElementById('sectionsView');
+
+            if (view === 'allSubjects') {
+                allSubjectsBtn.classList.add('active');
+                sectionsBtn.classList.remove('active');
+                statsGrid.style.display = 'grid';
+                sectionsView.style.display = 'none';
+            } else if (view === 'sections') {
+                sectionsBtn.classList.add('active');
+                allSubjectsBtn.classList.remove('active');
+                statsGrid.style.display = 'none';
+                sectionsView.style.display = 'block';
+
+                // Reset animation for section cards
+                const sectionCards = document.querySelectorAll('.section-card');
+                sectionCards.forEach(card => {
+                    card.style.animation = 'none';
+                    card.offsetHeight; // Trigger reflow
+                    card.style.animation = '';
+                });
+            }
+        }
+
+        function filterSubjects() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const allSubjectsBtn = document.getElementById('allSubjectsBtn');
+            const sectionsBtn = document.getElementById('sectionsBtn');
+            const statsGrid = document.querySelector('.stats-grid');
+            const sectionsView = document.getElementById('sectionsView');
+
+            // If query matches any section, switch to sections view automatically
+            let sectionFound = false;
+            const sectionCards = sectionsView.querySelectorAll('.section-card');
+            sectionCards.forEach(card => {
+                const sectionTitle = card.querySelector('.section-title').textContent.toLowerCase();
+                if (sectionTitle.includes(query)) {
+                    sectionFound = true;
+                }
+            });
+
+            if (sectionFound) {
+                switchView('sections');
+            } else {
+                switchView('allSubjects');
+            }
+
+            if (allSubjectsBtn.classList.contains('active')) {
+                // Filter subjects in allSubjects view
+                const subjectCards = statsGrid.querySelectorAll('.stat-card-enhanced');
+                subjectCards.forEach(card => {
+                    const title = card.querySelector('.stat-title-enhanced').textContent.toLowerCase();
+                    const subtitle = card.querySelector('.stat-subtitle-enhanced').textContent.toLowerCase();
+                    if (title.includes(query) || subtitle.includes(query)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            } else if (sectionsBtn.classList.contains('active')) {
+                // Filter sections in sections view
+                sectionCards.forEach(card => {
+                    const sectionTitle = card.querySelector('.section-title').textContent.toLowerCase();
+                    if (sectionTitle.includes(query)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+        }
     </script>
 </body>
 </html>

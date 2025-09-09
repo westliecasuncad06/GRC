@@ -14,6 +14,7 @@ try {
             password VARCHAR(255) NOT NULL,
             mobile VARCHAR(15) NOT NULL,
             address TEXT NOT NULL,
+            section VARCHAR(10),
             created_at DATETIME NOT NULL,
             updated_at DATETIME NOT NULL
         )",
@@ -63,6 +64,7 @@ try {
             professor_id VARCHAR(20),
             schedule VARCHAR(100),
             room VARCHAR(50),
+            section VARCHAR(10),
             created_at DATETIME NOT NULL,
             updated_at DATETIME NOT NULL,
             FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),

@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $password = password_hash(trim($_POST['password']), PASSWORD_DEFAULT);
             $mobile = trim($_POST['mobile']);
             $address = trim($_POST['address']);
+            $section = trim($_POST['section']);
             $created_at = date('Y-m-d H:i:s');
             $updated_at = $created_at;
 
@@ -35,8 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             // Insert student
-            $stmt = $pdo->prepare("INSERT INTO students (student_id, first_name, last_name, middle_name, email, password, mobile, address, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$student_id, $first_name, $last_name, $middle_name, $email, $password, $mobile, $address, $created_at, $updated_at]);
+            $stmt = $pdo->prepare("INSERT INTO students (student_id, first_name, last_name, middle_name, email, password, mobile, address, section, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$student_id, $first_name, $last_name, $middle_name, $email, $password, $mobile, $address, $section, $created_at, $updated_at]);
 
             header('Location: ../index.php?success=student_registered');
             exit();
