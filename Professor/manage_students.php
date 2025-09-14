@@ -102,6 +102,22 @@ $students = $stmt->fetchAll();
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
+        :root {
+            --primary: #F75270;
+            --primary-dark: #DC143C;
+            --primary-light: #F7CAC9;
+            --secondary: #F75270;
+            --accent: #F7CAC9;
+            --light: #FDEBD0;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-gray: #F7CAC9;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+        }
+
         .dashboard-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -647,6 +663,32 @@ $students = $stmt->fetchAll();
                 justify-content: center;
             }
         }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            padding-right: 50px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--gray);
+            font-size: 1.2rem;
+            padding: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+        }
     </style>
 </head>
 <body>
@@ -968,22 +1010,7 @@ $students = $stmt->fetchAll();
             }
         });
 
-        // Dropdown functionality
-        document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
-            toggle.addEventListener('click', function(event) {
-                event.stopPropagation();
-                const menu = this.nextElementSibling;
-                document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('show'));
-                menu.classList.toggle('show');
-            });
-        });
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            if (!event.target.closest('.user-dropdown')) {
-                document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('show'));
-            }
-        });
 
         // Hamburger menu toggle
         document.getElementById('sidebarToggle').addEventListener('click', function() {

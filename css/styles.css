@@ -1,17 +1,17 @@
 :root {
-    --primary: #C62828;
-    --primary-dark: #B71C1C;
-    --primary-light: #EF5350;
-    --secondary: #2E7D32;
-    --accent: #1565C0;
-    --light: #f8f9fa;
+    --primary: #F75270;
+    --primary-dark: #DC143C;
+    --primary-light: #F7CAC9;
+    --secondary: #F75270;
+    --accent: #F7CAC9;
+    --light: #FDEBD0;
     --dark: #343a40;
     --gray: #6c757d;
-    --light-gray: #e9ecef;
-    --success: #28a745;
-    --warning: #ffc107;
-    --danger: #dc3545;
-    --info: #17a2b8;
+    --light-gray: #F7CAC9;
+    --success: #F7CAC9;
+    --warning: #FDEBD0;
+    --danger: #DC143C;
+    --info: #F75270;
 }
 
 * {
@@ -300,11 +300,11 @@ body {
 
 .btn-success {
     background: var(--success);
-    color: white;
+    color: var(--dark);
 }
 
 .btn-success:hover {
-    background: #218838;
+    background: var(--primary-dark);
 }
 
 .btn-danger {
@@ -313,7 +313,7 @@ body {
 }
 
 .btn-danger:hover {
-    background: #c82333;
+    background: var(--primary-dark);
 }
 
 .btn-warning {
@@ -322,7 +322,7 @@ body {
 }
 
 .btn-warning:hover {
-    background: #e0a800;
+    background: var(--primary-dark);
 }
 
 .btn-sm {
@@ -372,40 +372,40 @@ body {
 }
 
 .alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    border-color: #c3e6cb;
+    background-color: rgba(247, 202, 201, 0.1);
+    color: #F7CAC9;
+    border-color: rgba(247, 202, 201, 0.2);
 }
 
 .alert-error,
 .alert-danger {
-    background-color: #f8d7da;
-    color: #721c24;
-    border-color: #f5c6cb;
+    background-color: rgba(220, 20, 60, 0.1);
+    color: #DC143C;
+    border-color: rgba(220, 20, 60, 0.2);
 }
 
 .alert-warning {
-    background-color: #fff3cd;
-    color: #856404;
-    border-color: #ffeaa7;
+    background-color: rgba(253, 235, 208, 0.1);
+    color: #FDEBD0;
+    border-color: rgba(253, 235, 208, 0.2);
 }
 
 .alert-info {
-    background-color: #d1ecf1;
-    color: #0c5460;
-    border-color: #bee5eb;
+    background-color: rgba(247, 82, 112, 0.1);
+    color: #F75270;
+    border-color: rgba(247, 82, 112, 0.2);
 }
 
 .alert-primary {
-    background-color: rgba(198, 40, 40, 0.1);
+    background-color: rgba(247, 82, 112, 0.1);
     color: var(--primary);
-    border-color: rgba(198, 40, 40, 0.2);
+    border-color: rgba(247, 82, 112, 0.2);
 }
 
 .alert-secondary {
-    background-color: rgba(46, 125, 50, 0.1);
+    background-color: rgba(247, 82, 112, 0.1);
     color: var(--secondary);
-    border-color: rgba(46, 125, 50, 0.2);
+    border-color: rgba(247, 82, 112, 0.2);
 }
 
 /* Alert Icons */
@@ -422,20 +422,20 @@ body {
 }
 
 .alert-success::before {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23155724'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23F7CAC9'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
 }
 
 .alert-error::before,
 .alert-danger::before {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23721c24'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3Cpath d='M13.59 7L9 7l.59-1.41L11.18 4l4.6 4.59L13.59 7zM9.41 7L5 7l-.59 1.41L6.82 12l4.6-4.59L9.41 7z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23DC143C'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3Cpath d='M13.59 7L9 7l.59-1.41L11.18 4l4.6 4.59L13.59 7zM9.41 7L5 7l-.59 1.41L6.82 12l4.6-4.59L9.41 7z'/%3E%3C/svg%3E");
 }
 
 .alert-warning::before {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23856404'%3E%3Cpath d='M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FDEBD0'%3E%3Cpath d='M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z'/%3E%3C/svg%3E");
 }
 
 .alert-info::before {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230c5460'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3Cpath d='M11 7h2v2h-2zm0 4h2v6h-2z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23F75270'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3Cpath d='M11 7h2v2h-2zm0 4h2v6h-2z'/%3E%3C/svg%3E");
 }
 
 /* Alert Sizes */
@@ -501,18 +501,18 @@ body {
 }
 
 .badge-success {
-    background: #d4edda;
-    color: #155724;
+    background: rgba(247, 202, 201, 0.1);
+    color: #F7CAC9;
 }
 
 .badge-warning {
-    background: #fff3cd;
-    color: #856404;
+    background: rgba(253, 235, 208, 0.1);
+    color: #FDEBD0;
 }
 
 .badge-danger {
-    background: #f8d7da;
-    color: #721c24;
+    background: rgba(220, 20, 60, 0.1);
+    color: #DC143C;
 }
 
 /* Modal Styles */
@@ -910,4 +910,9 @@ body {
     .table-actions {
         justify-content: center;
     }
+}
+
+/* Hide Microsoft Edge password reveal icon */
+input[type="password"]::-ms-reveal {
+    display: none;
 }

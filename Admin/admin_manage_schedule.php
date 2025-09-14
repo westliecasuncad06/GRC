@@ -143,6 +143,22 @@ foreach ($subjects as $subject) {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #F75270;
+            --primary-dark: #DC143C;
+            --primary-light: #F7CAC9;
+            --secondary: #F75270;
+            --accent: #F7CAC9;
+            --light: #FDEBD0;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-gray: #F7CAC9;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+        }
+
         .enhanced-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
@@ -179,17 +195,17 @@ foreach ($subjects as $subject) {
             width: 100%;
             height: 40px;
             padding: 10px 16px 10px 40px;
-            border: 2px solid #dc3545;
+            border: 2px solid var(--primary);
             border-radius: 12px;
             font-size: 1rem;
             box-sizing: border-box;
             transition: border-color 0.3s ease;
-            background-color: #fef2f2;
+            background-color: var(--light);
         }
         .search-input:focus {
             outline: none;
-            border-color: #c82333;
-            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+            border-color: var(--primary-dark);
+            box-shadow: 0 0 0 3px rgba(247, 82, 112, 0.2);
             background-color: white;
         }
         .search-icon {
@@ -197,7 +213,7 @@ foreach ($subjects as $subject) {
             left: 11px;
             top: 65%;
             transform: translateY(-50%);
-            color: #dc3545;
+            color: var(--primary);
             font-size: 1.1rem;
         }
         .btn-icon {
@@ -212,19 +228,19 @@ foreach ($subjects as $subject) {
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
-            box-shadow: 0 6px 16px rgba(220, 53, 69, 0.3);
+            box-shadow: 0 6px 16px rgba(247, 82, 112, 0.3);
         }
         .btn-primary {
-            background: #dc3545;
+            background: var(--primary);
             color: white;
         }
         .btn-primary:hover {
-            background: #c82333;
+            background: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(220, 53, 69, 0.5);
+            box-shadow: 0 8px 24px rgba(247, 82, 112, 0.5);
         }
         .add-professor-btn {
-            background: #dc3545;
+            background: var(--primary);
             color: white;
             border: none;
             padding: 10px 28px;
@@ -238,12 +254,12 @@ foreach ($subjects as $subject) {
             height: 40px;
             box-sizing: border-box;
             transition: background 0.3s, transform 0.3s ease;
-            box-shadow: 0 6px 16px rgba(220, 53, 69, 0.3);
+            box-shadow: 0 6px 16px rgba(247, 82, 112, 0.3);
         }
         .add-professor-btn:hover {
-            background: #c82333;
+            background: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(220, 53, 69, 0.5);
+            box-shadow: 0 8px 24px rgba(247, 82, 112, 0.5);
         }
         .table-container {
             background: white;
@@ -291,7 +307,7 @@ foreach ($subjects as $subject) {
             color: white;
         }
         .btn-danger {
-            background: #dc3545;
+            background: var(--danger);
             color: white;
         }
         .btn-primary:hover, .btn-danger:hover {
@@ -399,7 +415,7 @@ foreach ($subjects as $subject) {
         .form-group input:focus, .form-group select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
         }
         .alert {
             position: fixed;

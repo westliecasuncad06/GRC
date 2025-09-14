@@ -124,6 +124,22 @@ if ($role == 'professor') {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #F75270;
+            --primary-dark: #DC143C;
+            --primary-light: #F7CAC9;
+            --secondary: #F75270;
+            --accent: #F7CAC9;
+            --light: #FDEBD0;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-gray: #F7CAC9;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+        }
+
         .dashboard-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -543,6 +559,57 @@ if ($role == 'professor') {
         });
 
     // Dropdown behaviour is handled in the included navbar script (../includes/navbar_admin.php)
+    </script>
+
+    <script>
+        // Add toggle password visibility for Change Password inputs
+        document.addEventListener('DOMContentLoaded', function () {
+            const newPasswordInput = document.querySelector('input[name="new_password"]');
+            const confirmPasswordInput = document.querySelector('input[name="confirm_password"]');
+
+            // Create toggle buttons
+            function createToggleButton(input) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'toggle-password';
+                btn.setAttribute('aria-label', 'Toggle password visibility');
+                btn.style.position = 'absolute';
+                btn.style.right = '12px';
+                btn.style.top = '50%';
+                btn.style.transform = 'translateY(-50%)';
+                btn.style.background = 'none';
+                btn.style.border = 'none';
+                btn.style.cursor = 'pointer';
+                btn.style.color = 'var(--gray)';
+                btn.style.fontSize = '1.2rem';
+                btn.style.padding = '5px';
+
+                const eyeVisible = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"></circle></svg>`;
+                const eyeHidden = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"></circle><line x1="3" y1="3" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line></svg>`;
+
+                btn.innerHTML = eyeHidden;
+
+                btn.addEventListener('click', function () {
+                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                    input.setAttribute('type', type);
+                    this.innerHTML = type === 'password' ? eyeHidden : eyeVisible;
+                });
+
+                return btn;
+            }
+
+            if (newPasswordInput) {
+                const wrapper = newPasswordInput.parentElement;
+                wrapper.style.position = 'relative';
+                wrapper.appendChild(createToggleButton(newPasswordInput));
+            }
+
+            if (confirmPasswordInput) {
+                const wrapper = confirmPasswordInput.parentElement;
+                wrapper.style.position = 'relative';
+                wrapper.appendChild(createToggleButton(confirmPasswordInput));
+            }
+        });
     </script>
 </body>
 </html>

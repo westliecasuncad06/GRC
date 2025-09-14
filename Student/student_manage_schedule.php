@@ -28,6 +28,22 @@ $enrolled_classes = $stmt->fetchAll();
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
+        :root {
+            --primary: #F75270;
+            --primary-dark: #DC143C;
+            --primary-light: #F7CAC9;
+            --secondary: #F75270;
+            --accent: #F7CAC9;
+            --light: #FDEBD0;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-gray: #F7CAC9;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+        }
+
         /* Enhanced Dashboard Container */
         .dashboard-container {
             max-width: 1200px;

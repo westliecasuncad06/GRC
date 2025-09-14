@@ -8,15 +8,15 @@
     <link rel="stylesheet" href="css/styles.css">
     <style>
         :root {
-            --primary: #C62828;
-            --primary-dark: #B71C1C;
-            --primary-light: #EF5350;
-            --secondary: #2E7D32;
-            --accent: #1565C0;
-            --light: #f8f9fa;
+            --primary: #DC143C;
+            --primary-dark: #B01030;
+            --primary-light: #F7CAC9;
+            --secondary: #DC143C;
+            --accent: #F7CAC9;
+            --light: #FDEBD0;
             --dark: #343a40;
             --gray: #6c757d;
-            --light-gray: #e9ecef;
+            --light-gray: #F7CAC9;
         }
 
         * {
@@ -27,7 +27,7 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--light);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -85,7 +85,7 @@
 
         .steps-section {
             flex: 1 1 300px;
-            background: var(--light-gray);
+            background: var(--accent);
             padding: 40px 30px;
             border-right: 2px solid var(--light);
             display: flex;
@@ -199,7 +199,7 @@
             padding: 15px 50px 15px 20px;
         }
 
-        .toggle-password {
+        .password-toggle {
             position: absolute;
             right: 15px;
             top: 50%;
@@ -209,16 +209,12 @@
             cursor: pointer;
             color: var(--gray);
             font-size: 1.2rem;
-            transition: color 0.3s ease;
             padding: 5px;
+            transition: color 0.3s ease;
         }
 
-        .toggle-password:hover {
+        .password-toggle:hover {
             color: var(--primary);
-        }
-
-        .toggle-password:focus {
-            outline: none;
         }
 
         .form-input:focus, .form-select:focus {
@@ -472,8 +468,11 @@
                         <label for="password" class="form-label required-field">Password</label>
                         <div class="password-container">
                             <input type="password" name="password" id="password" class="form-input" placeholder="Create a strong password" required>
-                            <button type="button" class="toggle-password" id="togglePassword" aria-label="Toggle password visibility">
-                                👁️
+                            <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                                </svg>
                             </button>
                         </div>
                         <div class="field-hint">Use at least 8 characters with letters and numbers</div>
@@ -690,18 +689,22 @@
 
         // Initialize progress indicator
         updateProgressIndicator();
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const button = input.nextElementSibling;
+            const svg = button.querySelector('svg');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                svg.innerHTML = '<path d="M2.99902 3L20.999 21M9.8433 9.91364C9.32066 10.4536 8.99902 11.1892 8.99902 12C8.99902 13.6569 10.3422 15 11.999 15C12.8215 15 13.5667 14.669 14.1086 14.133M6.49902 6.64715C4.59972 7.90034 3.15305 9.78394 2.45703 12C3.73128 16.0571 7.52159 19 11.9992 19C13.9881 19 15.8414 18.4194 17.3988 17.4184M10.999 5.04939C11.328 5.01673 11.6617 5 11.9992 5C16.4769 5 20.2672 7.94291 21.5414 12C21.2607 12.894 20.8577 13.7338 20.3522 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+            } else {
+                input.type = 'password';
+                svg.innerHTML = '<path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>';
+            }
+        }
     </script>
 
-    <script>
-        const togglePassword = document.getElementById('togglePassword');
-        const passwordInput = document.getElementById('password');
 
-        togglePassword.addEventListener('click', function () {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            // Toggle icon (optional)
-            this.textContent = type === 'password' ? '👁️' : '🙈';
-        });
-    </script>
 </body>
 </html>

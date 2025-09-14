@@ -1,9 +1,12 @@
-# TODO: Fix Search Bar in Professor/manage_students.php
+# TODO: Update Login and Registration Page Colors
 
 ## Tasks
-- [ ] Update PHP query to include subjects and sections for each student
-- [ ] Update table HTML to display subjects and sections columns
-- [ ] Add dropdown for search type (All, Student Name, Subject, Section)
-- [ ] Modify JavaScript filterStudents function to filter based on selected type
-- [ ] Ensure when searching by Section, it filters students in that section
-- [ ] Test the search functionality
+- [x] Update :root variables in index.php to new palette
+- [x] Update body gradient in index.php
+- [x] Update left-section gradient in index.php
+- [ ] Update :root variables in register.php to new palette
+- [ ] Update body gradient in register.php
+- [ ] Update header gradient in register.php
+- [ ] Update steps-section background in register.php
+- [ ] Update btn-submit hover color in register.php
+- [ ] Test the changes by launching the browser to http://localhost/grc/index.php and http://localhost/grc/register.php
