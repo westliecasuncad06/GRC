@@ -1027,49 +1027,7 @@ foreach ($monthly_raw as $row) {
             </table>
         </div>
 
-        <!-- My Classes -->
-        <div class="table-container" style="margin-top: 2rem;">
-            <div class="table-header-enhanced">
-                <h2 class="table-title-enhanced">My Enrolled Classes</h2>
-            </div>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Class Name</th>
-                        <th>Subject</th>
-                        <th>Professor</th>
-                        <th>Schedule</th>
-                        <th>Room</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $stmt = $pdo->prepare("SELECT c.*, s.subject_name, p.first_name, p.last_name 
-                                         FROM student_classes sc 
-                                         JOIN classes c ON sc.class_id = c.class_id 
-                                         JOIN subjects s ON c.subject_id = s.subject_id 
-                                         JOIN professors p ON c.professor_id = p.professor_id 
-                                         WHERE sc.student_id = ?");
-                    $stmt->execute([$student_id]);
-                    $enrolled_classes = $stmt->fetchAll();
-                    
-                    foreach ($enrolled_classes as $class) {
-                        echo "<tr>
-                            <td>{$class['class_name']}</td>
-                            <td>{$class['subject_name']}</td>
-                            <td>Prof. {$class['first_name']} {$class['last_name']}</td>
-                            <td>{$class['schedule']}</td>
-                            <td>{$class['room']}</td>
-                        </tr>";
-                    }
-                    
-                    if (empty($enrolled_classes)) {
-                        echo "<tr><td colspan='5' style='text-align: center;'>No classes enrolled yet</td></tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
+
 
 
     <script>
@@ -1261,6 +1219,34 @@ foreach ($monthly_raw as $row) {
             setTimeout(() => {
                 location.reload();
             }, 500);
+        }
+
+        // Unenroll from class function
+        function unenrollFromClass(classId) {
+            if (confirm('Are you sure you want to unenroll from this class?')) {
+                fetch('../php/unenroll_student.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        class_id: classId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Successfully unenrolled from the class.');
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while unenrolling.');
+                });
+            }
         }
     </script>
 </body>
