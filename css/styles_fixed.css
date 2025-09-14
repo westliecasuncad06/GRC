@@ -101,6 +101,45 @@ body {
     gap: 15px;
 }
 
+/* Notification Button Styles */
+.notification-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    position: relative;
+    font-size: 1.1rem;
+}
+
+.notification-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.notification-btn .fa-bell {
+    font-size: 1.1rem;
+}
+
+/* Notification Badge (for future use) */
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+}
+
 .user-dropdown {
     position: relative;
 }
