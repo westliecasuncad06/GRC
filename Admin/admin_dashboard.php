@@ -208,10 +208,6 @@ require_once '../php/db.php';
             // Total Classes
             $stmt = $pdo->query("SELECT COUNT(*) as count FROM classes");
             $stats['classes'] = $stmt->fetch()['count'];
-
-            // Total Subjects
-            $stmt = $pdo->query("SELECT COUNT(*) as count FROM subjects");
-            $stats['subjects'] = $stmt->fetch()['count'];
             ?>
 
             <div class="stats-card fade-in">
@@ -232,11 +228,6 @@ require_once '../php/db.php';
                 <div class="stats-label">Total Classes</div>
             </div>
 
-            <div class="stats-card fade-in-delayed">
-                <i class="fas fa-book-open stats-icon"></i>
-                <div class="stats-number"><?php echo $stats['subjects']; ?></div>
-                <div class="stats-label">Total Subjects</div>
-            </div>
         </div>
 
         <!-- User Management Section -->

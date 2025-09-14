@@ -643,11 +643,6 @@ $students = $pdo->query($query)->fetchAll();
                 <div class="stats-number"><?php echo count(array_filter($students, function($s) { return strtotime($s['created_at']) > strtotime('-30 days'); })); ?></div>
                 <div class="stats-label">New This Month</div>
             </div>
-            <div class="stats-card fade-in" tabindex="0">
-                <i class="fas fa-envelope" style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
-                <div class="stats-number"><?php echo count(array_unique(array_column($students, 'email'))); ?></div>
-                <div class="stats-label">Unique Emails</div>
-            </div>
         </div>
 
         <div class="table-container">
