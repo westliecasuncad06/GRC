@@ -384,8 +384,8 @@ session_start(); // Start the session
                 
                 <button type="submit" class="login-btn">Sign In</button>
                 
-                <div class="forgot-password"> 
-                    <a href="#">Forgot your password?</a>
+                <div class="forgot-password">
+                    <a href="forgot_password.php">Forgot your password?</a>
                 </div>
                 
                 <div class="register-link">
