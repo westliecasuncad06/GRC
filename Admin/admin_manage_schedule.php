@@ -927,5 +927,7 @@ foreach ($subjects as $subject) {
             });
         });
     </script>
+    <?php include '../includes/footbar.php'; ?>
+
 </body>
 </html>
