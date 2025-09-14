@@ -11,6 +11,9 @@
     </div>
     <div class="navbar-user">
         <span>Welcome, <?php echo $_SESSION['first_name']; ?></span>
+        <button type="button" class="notification-btn" onclick="openNotificationModal()" title="Notifications">
+            <i class="fas fa-bell" aria-hidden="true"></i>
+        </button>
         <div class="user-dropdown">
             <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-cog" aria-hidden="true"></i>
@@ -23,39 +26,101 @@
     </div>
 </nav>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('[navbar_professor] DOMContentLoaded');
-    // Dropdown functionality for multiple dropdowns
-    document.querySelectorAll('.user-dropdown').forEach(function(dropdown) {
-        const toggle = dropdown.querySelector('.dropdown-toggle');
-        const menu = dropdown.querySelector('.dropdown-menu');
+<!-- Notification Modal -->
+<div id="notificationModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-header-content">
+                <h3 class="modal-title">
+                    <div class="modal-title-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    Notifications
+                </h3>
+            </div>
+            <button class="modal-close" onclick="closeNotificationModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="notification-list">
+                <!-- Sample notifications -->
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">New Student Enrolled</div>
+                        <div class="notification-message">John Doe has been enrolled in your Mathematics class.</div>
+                        <div class="notification-meta">
+                            <div class="notification-time">
+                                <i class="fas fa-clock"></i>
+                                2 hours ago
+                            </div>
+                            <div class="notification-status status-unread">Unread</div>
+                        </div>
+                    </div>
+                </div>
 
-        if (toggle && menu) {
-            toggle.addEventListener('click', function(event) {
-                console.log('[navbar_professor] dropdown toggle clicked');
-                event.stopPropagation();
-                // Close other dropdowns first
-                document.querySelectorAll('.dropdown-menu.show').forEach(function(otherMenu) {
-                    if (otherMenu !== menu) {
-                        otherMenu.classList.remove('show');
-                        const otherToggle = otherMenu.closest('.user-dropdown')?.querySelector('.dropdown-toggle');
-                        if (otherToggle) otherToggle.setAttribute('aria-expanded', 'false');
-                    }
-                });
-                const isOpen = menu.classList.toggle('show');
-                toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-            });
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">Attendance Reminder</div>
+                        <div class="notification-message">Don't forget to take attendance for your Physics class scheduled for tomorrow.</div>
+                        <div class="notification-meta">
+                            <div class="notification-time">
+                                <i class="fas fa-clock"></i>
+                                1 day ago
+                            </div>
+                            <div class="notification-status status-read">Read</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">Monthly Report Available</div>
+                        <div class="notification-message">Your monthly attendance report for October is now available for download.</div>
+                        <div class="notification-meta">
+                            <div class="notification-time">
+                                <i class="fas fa-clock"></i>
+                                3 days ago
+                            </div>
+                            <div class="notification-status status-read">Read</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-enhanced btn-secondary-enhanced" onclick="closeNotificationModal()">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Global function for notification modal close button
+    function closeNotificationModal() {
+        const modal = document.getElementById('notificationModal');
+        modal.classList.remove('show');
+    }
+
+    // Function to open notification modal
+    function openNotificationModal() {
+        const modal = document.getElementById('notificationModal');
+        modal.classList.add('show');
+    }
+
+    // Close notification modal when clicking outside
+    document.addEventListener('click', function(event) {
+        const modal = document.getElementById('notificationModal');
+        if (event.target === modal) {
+            closeNotificationModal();
         }
     });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(event) {
-        document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
-            if (!event.target.closest('.user-dropdown')) {
-                menu.classList.remove('show');
-            }
-        });
-    });
-});
 </script>
