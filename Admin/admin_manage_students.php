@@ -907,5 +907,7 @@ $students = $pdo->query($query)->fetchAll();
             }
         });
     </script>
+    <?php include '../includes/footbar.php'; ?>
+
 </body>
 </html>

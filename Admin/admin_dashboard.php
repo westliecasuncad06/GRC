@@ -307,5 +307,7 @@ require_once '../php/db.php';
         </div>
     </main>
 
+    <?php include '../includes/footbar.php'; ?>
+
 </body>
 </html>
