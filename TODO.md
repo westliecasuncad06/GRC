@@ -1,3 +1,5 @@
-- [x] Update Student/my_enrolled_classes.php to pass class_id as string in onclick handler
-- [x] Update php/unenroll_student.php to add bypass for testing with test_student_id parameter
-- [x] Test the unenroll functionality
+# TODO: Design Alert for Unenroll Button
+
+- [x] Add toast notification styles to css/styles_fixed.css
+- [x] Update Student/my_enrolled_classes.php with custom modal for confirmation and toast for messages
+- [ ] Test the new alert design

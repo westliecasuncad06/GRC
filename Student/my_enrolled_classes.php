@@ -71,34 +71,133 @@ $student_id = $_SESSION['user_id'];
         </div>
     </main>
 
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="modal confirmation-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-exclamation-triangle"></i> Confirm Unenrollment</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to unenroll from this class? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-danger" id="confirmUnenrollBtn" disabled>Unenroll</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
     <script>
+        let currentClassId = null;
+
         function unenrollFromClass(classId) {
-            if (confirm('Are you sure you want to unenroll from this class?')) {
-                fetch('../php/unenroll_student.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        class_id: classId
-                    })
-                })
-                .then(response => response.json())
-.then(data => {
-    if (data.success) {
-        alert('Successfully unenrolled from the class.');
-        alert('You have been unenrolled from the subject.');
-        location.reload();
-    } else {
-        alert('Error: ' + data.message);
-    }
-})
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while unenrolling.');
+            console.log('unenrollFromClass called with classId:', classId);
+            currentClassId = classId;
+            showModal();
+            // Enable the confirm button when a class is selected
+            document.getElementById('confirmUnenrollBtn').disabled = false;
+        }
+
+        function showModal() {
+            document.getElementById('confirmationModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('confirmationModal').classList.remove('show');
+            currentClassId = null;
+            // Disable the confirm button when modal is closed
+            document.getElementById('confirmUnenrollBtn').disabled = true;
+        }
+
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} toast-icon"></i>
+                <span class="toast-message">${message}</span>
+                <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
+        function confirmUnenroll() {
+            if (!currentClassId) {
+                showToast('Error: No class selected for unenrollment.', 'error');
+                return;
+            }
+
+            // Save currentClassId to a local variable before closing modal
+            const classIdToUnenroll = currentClassId;
+
+            closeModal();
+
+            // Bypass for testing: simulate success without server call
+            if (window.bypassUnenrollTest) {
+                showToast('Successfully unenrolled from the class! (Bypass)', 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+                return;
+            }
+
+        fetch('../php/unenroll_student.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                class_id: classIdToUnenroll
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Successfully unenrolled from the class!', 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                showToast('Error: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('An error occurred while unenrolling.', 'error');
+        });
+        }
+
+        // Add bypass toggle for testing
+        window.bypassUnenrollTest = false;
+
+        // Event listeners
+        window.addEventListener('DOMContentLoaded', () => {
+            const confirmBtn = document.getElementById('confirmUnenrollBtn');
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', confirmUnenroll);
+            }
+
+            const modal = document.getElementById('confirmationModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeModal();
+                    }
                 });
             }
-        }
+        });
     </script>
 </body>
 </html>
