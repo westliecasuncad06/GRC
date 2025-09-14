@@ -671,7 +671,7 @@
                 <span></span>
                 <span></span>
             </button>
-            <span class="navbar-title">Global Reciprocal College</span>
+            <span class="navbar-title">Global Reciprocal Colleges</span>
             <span class="navbar-title-mobile">GRC</span>
         </div>
         <div class="navbar-user">

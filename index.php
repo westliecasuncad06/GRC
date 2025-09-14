@@ -7,7 +7,7 @@ session_start(); // Start the session
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Reciprocal College - Student Portal</title>
+    <title>Global Reciprocal Colleges - Student Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
     <style>
@@ -319,7 +319,7 @@ session_start(); // Start the session
     <div class="login-container">
         <div class="left-section">
             <div class="school-logo">🎓</div>
-            <h1 class="school-name">Global Reciprocal College</h1>
+            <h1 class="school-name">Global Reciprocal Colleges</h1>
             <p class="tagline">Excellence in Education Through Innovation and Collaboration</p>
             
             <div class="features">
