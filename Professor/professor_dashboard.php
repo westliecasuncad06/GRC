@@ -27,7 +27,7 @@ if ($professor) {
 $query = "SELECT s.*, c.class_id, c.class_code, c.schedule, c.room, c.section
           FROM subjects s
           JOIN classes c ON s.subject_id = c.subject_id
-          WHERE c.professor_id = ?
+          WHERE c.professor_id = ? AND c.status = 'active'
           ORDER BY s.subject_name";
 $stmt = $pdo->prepare($query);
 $stmt->execute([$professor_id]);

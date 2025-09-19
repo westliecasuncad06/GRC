@@ -138,7 +138,7 @@ function generateUniqueClassCode($pdo) {
 $query = "SELECT s.*, c.class_code, c.schedule, c.room
           FROM subjects s
           JOIN classes c ON s.subject_id = c.subject_id
-          WHERE c.professor_id = ?
+          WHERE c.professor_id = ? AND c.status = 'active'
           ORDER BY s.created_at DESC";
 $stmt = $pdo->prepare($query);
 $stmt->execute([$professor_id]);

@@ -828,7 +828,7 @@ foreach ($monthly_raw as $row) {
                                FROM student_classes sc
                                JOIN classes c ON sc.class_id = c.class_id
                                JOIN subjects s ON c.subject_id = s.subject_id
-                               WHERE sc.student_id = ?");
+                               WHERE sc.student_id = ? AND c.status != 'archived'");
         $stmt->execute([$student_id]);
         $student_subjects = $stmt->fetchAll();
 

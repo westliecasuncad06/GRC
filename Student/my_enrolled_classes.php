@@ -42,12 +42,13 @@ $student_id = $_SESSION['user_id'];
                 </thead>
                 <tbody>
                     <?php
-                    $stmt = $pdo->prepare("SELECT c.*, s.subject_name, p.first_name, p.last_name 
-                                         FROM student_classes sc 
-                                         JOIN classes c ON sc.class_id = c.class_id 
-                                         JOIN subjects s ON c.subject_id = s.subject_id 
-                                         JOIN professors p ON c.professor_id = p.professor_id 
-                                         WHERE sc.student_id = ?");
+                    $stmt = $pdo->prepare("SELECT c.*, s.subject_name, p.first_name, p.last_name
+                                         FROM student_classes sc
+                                         JOIN classes c ON sc.class_id = c.class_id
+                                         JOIN subjects s ON c.subject_id = s.subject_id
+                                         JOIN professors p ON c.professor_id = p.professor_id
+                                         JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
+                                         WHERE sc.student_id = ? AND c.status != 'archived'");
                     $stmt->execute([$student_id]);
                     $enrolled_classes = $stmt->fetchAll();
 

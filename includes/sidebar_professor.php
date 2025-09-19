@@ -18,6 +18,9 @@
             <a href="#" class="sidebar-link" onclick="openNotificationModal()"><i class="fas fa-bell"></i> Notification</a>
         </li>
         <li class="sidebar-item">
+            <a href="../Professor/archive.php" class="sidebar-link <?php echo ($current_page == 'archive.php') ? 'active' : ''; ?>"><i class="fas fa-archive"></i> Archive</a>
+        </li>
+        <li class="sidebar-item">
             <a href="../Admin/settings.php" class="sidebar-link <?php echo ($current_page == 'settings.php') ? 'active' : ''; ?>"><i class="fas fa-cog"></i> Settings</a>
         </li>
     </ul>

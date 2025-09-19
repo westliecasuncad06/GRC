@@ -164,7 +164,7 @@ $professor_id = $_SESSION['user_id'];
 $query = "SELECT s.*, c.class_id, c.class_code, c.schedule, c.room, c.section
           FROM subjects s
           JOIN classes c ON s.subject_id = c.subject_id
-          WHERE c.professor_id = ?
+          WHERE c.professor_id = ? AND c.status = 'active'
           ORDER BY s.subject_name ASC, c.section ASC";
 $stmt = $pdo->prepare($query);
 $stmt->execute([$professor_id]);
@@ -173,7 +173,7 @@ $subjects = $stmt->fetchAll();
 // Get unique sections for the professor
 $query_sections = "SELECT DISTINCT c.section
                    FROM classes c
-                   WHERE c.professor_id = ?
+                   WHERE c.professor_id = ? AND c.status = 'active'
                    AND c.section IS NOT NULL
                    ORDER BY c.section ASC";
 $stmt_sections = $pdo->prepare($query_sections);
