@@ -33,6 +33,39 @@ $stmt = $pdo->prepare($query);
 $stmt->execute([$professor_id]);
 $subjects = $stmt->fetchAll();
 
+try {
+    // Check if 'requested_at' column exists in enrollment_requests table
+    $stmt = $pdo->query("DESCRIBE enrollment_requests");
+    $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    if (!in_array('requested_at', $columns)) {
+        // Add the requested_at column
+        $sql = "ALTER TABLE enrollment_requests ADD COLUMN requested_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER class_id";
+        $pdo->exec($sql);
+    }
+} catch (PDOException $e) {
+    // Log or handle error silently to avoid breaking the page
+}
+
+// Fetch pending enrollment requests for professor's classes
+$pending_requests_query = "
+    SELECT er.request_id, er.student_id, er.class_id, er.requested_at,
+           st.first_name, st.last_name,
+           c.class_code, s.subject_name
+    FROM enrollment_requests er
+    JOIN students st ON er.student_id = st.student_id
+    JOIN classes c ON er.class_id = c.class_id
+    JOIN subjects s ON c.subject_id = s.subject_id
+    WHERE er.status = 'pending' AND c.professor_id = ?
+    ORDER BY er.requested_at DESC
+";
+$pending_stmt = $pdo->prepare($pending_requests_query);
+$pending_stmt->execute([$professor_id]);
+$pending_requests = $pending_stmt->fetchAll();
+
+// Add pending requests count for notification badge
+$pending_requests_count = count($pending_requests);
+
 // Get sections and students for professor's classes
 $query = "SELECT DISTINCT c.section, st.student_id, st.first_name, st.last_name, st.email, sc.enrolled_at, c.class_name
           FROM students st
@@ -44,6 +77,8 @@ $query = "SELECT DISTINCT c.section, st.student_id, st.first_name, st.last_name,
 $stmt = $pdo->prepare($query);
 $stmt->execute([$professor_id]);
 $all_students = $stmt->fetchAll();
+
+// The rest of the code remains unchanged
 
 // Group students by section
 $students_by_section = [];
@@ -1389,58 +1424,43 @@ foreach ($subjects as $subject) {
                 <button class="modal-close" onclick="closeNotificationModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="notification-list">
-                    <!-- Sample notifications -->
-                    <div class="notification-item">
-                        <div class="notification-icon">
-                            <i class="fas fa-user-graduate"></i>
-                        </div>
-                        <div class="notification-content">
-                            <div class="notification-title">New Student Enrolled</div>
-                            <div class="notification-message">John Doe has been enrolled in your Mathematics class.</div>
-                            <div class="notification-meta">
-                                <div class="notification-time">
-                                    <i class="fas fa-clock"></i>
-                                    2 hours ago
-                                </div>
-                                <div class="notification-status status-unread">Unread</div>
+                <div class="notification-list" id="notificationList">
+                    <?php if (empty($pending_requests)): ?>
+                        <div class="no-notifications">
+                            <div class="no-notifications-icon">
+                                <i class="fas fa-bell-slash"></i>
                             </div>
+                            <div class="no-notifications-text">No new notifications</div>
+                            <div class="no-notifications-subtext">You have no pending enrollment requests.</div>
                         </div>
-                    </div>
-
-                    <div class="notification-item">
-                        <div class="notification-icon">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <div class="notification-content">
-                            <div class="notification-title">Attendance Reminder</div>
-                            <div class="notification-message">Don't forget to take attendance for your Physics class scheduled for tomorrow.</div>
-                            <div class="notification-meta">
-                                <div class="notification-time">
-                                    <i class="fas fa-clock"></i>
-                                    1 day ago
+                    <?php else: ?>
+                        <?php foreach ($pending_requests as $request): ?>
+                            <div class="notification-item" data-request-id="<?php echo $request['request_id']; ?>">
+                                <div class="notification-icon">
+                                    <i class="fas fa-user-graduate"></i>
                                 </div>
-                                <div class="notification-status status-read">Read</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="notification-item">
-                        <div class="notification-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <div class="notification-content">
-                            <div class="notification-title">Monthly Report Available</div>
-                            <div class="notification-message">Your monthly attendance report for October is now available for download.</div>
-                            <div class="notification-meta">
-                                <div class="notification-time">
-                                    <i class="fas fa-clock"></i>
-                                    3 days ago
+                                <div class="notification-content">
+                                    <div class="notification-title">Enrollment Request</div>
+                                    <div class="notification-message">
+                                        <?php echo htmlspecialchars($request['first_name'] . ' ' . $request['last_name']); ?> has requested to enroll in 
+                                        <strong><?php echo htmlspecialchars($request['subject_name']); ?></strong> 
+                                        (Class Code: <?php echo htmlspecialchars($request['class_code']); ?>).
+                                    </div>
+                                    <div class="notification-meta">
+                                        <div class="notification-time">
+                                            <i class="fas fa-clock"></i>
+                                            <?php echo date('M j, Y, g:i a', strtotime($request['requested_at'])); ?>
+                                        </div>
+                                        <div class="notification-status status-unread">PENDING</div>
+                                    </div>
+                                    <div class="notification-actions" style="margin-top: 10px;">
+                                        <button class="btn-enhanced btn-primary" onclick="handleEnrollmentRequest('<?php echo $request['request_id']; ?>', 'accept')">Accept</button>
+                                        <button class="btn-enhanced btn-secondary" onclick="handleEnrollmentRequest('<?php echo $request['request_id']; ?>', 'reject')">Reject</button>
+                                    </div>
                                 </div>
-                                <div class="notification-status status-read">Read</div>
                             </div>
-                        </div>
-                    </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="modal-footer">
@@ -1683,6 +1703,76 @@ foreach ($subjects as $subject) {
 
             // Dropdown behaviour is handled in the included navbar script
         });
+
+        // Handle enrollment request accept/reject
+        function handleEnrollmentRequest(requestId, action) {
+            if (!['accept', 'reject'].includes(action)) return;
+
+            fetch('../php/handle_enrollment_request.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `request_id=${encodeURIComponent(requestId)}&action=${encodeURIComponent(action)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+
+                    // Remove the notification item from the list
+                    const notificationList = document.getElementById('notificationList');
+                    const item = notificationList.querySelector(`.notification-item[data-request-id="${requestId}"]`);
+                    if (item) {
+                        item.remove();
+                    }
+
+                    // If no more notifications, show no notifications message
+                    if (notificationList.children.length === 0) {
+                        notificationList.innerHTML = `
+                            <div class="no-notifications">
+                                <div class="no-notifications-icon">
+                                    <i class="fas fa-bell-slash"></i>
+                                </div>
+                                <div class="no-notifications-text">No new notifications</div>
+                                <div class="no-notifications-subtext">You have no pending enrollment requests.</div>
+                            </div>
+                        `;
+                    }
+
+                    // Update notification badge count
+                    const badge = document.getElementById('notificationBadge');
+                    if (badge) {
+                        let count = parseInt(badge.textContent) || 0;
+                        count = Math.max(0, count - 1);
+                        if (count === 0) {
+                            badge.style.display = 'none';
+                        } else {
+                            badge.textContent = count;
+                        }
+                    }
+
+                    // If accepted, refresh the enrolled students list by reloading the page or dynamically updating
+                    if (action === 'accept') {
+                        // For simplicity, reload the page to reflect changes
+                        location.reload();
+                    }
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error handling enrollment request:', error);
+                alert('An error occurred while processing the request.');
+            });
+        }
+
+        // Automatically open notification modal if URL hash is #notifications
+        if (window.location.hash === '#notifications') {
+            openNotificationModal();
+            // Remove the hash from URL without reloading
+            history.replaceState(null, null, ' ');
+        }
     </script>
 </body>
 </html>

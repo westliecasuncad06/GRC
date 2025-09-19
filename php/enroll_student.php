@@ -15,54 +15,57 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $student_id = $_SESSION['user_id'];
-$class_code = trim($_POST['class_code'] ?? '');
+$class_code = $_POST['class_code'] ?? '';
 
 if (empty($class_code)) {
     echo json_encode(['success' => false, 'message' => 'Class code is required']);
     exit();
 }
 
-// Check if class exists with the given code
-$stmt = $pdo->prepare("SELECT c.*, s.subject_name, p.first_name, p.last_name
-                      FROM classes c
-                      JOIN subjects s ON c.subject_id = s.subject_id
-                      JOIN professors p ON c.professor_id = p.professor_id
-                      WHERE c.class_code = ?");
-$stmt->execute([$class_code]);
-$class = $stmt->fetch();
-
-if (!$class) {
-    echo json_encode(['success' => false, 'message' => 'Invalid class code. Please check the code and try again.']);
-    exit();
-}
-
-// Check if student is already enrolled in this class
-$stmt = $pdo->prepare("SELECT COUNT(*) as count FROM student_classes WHERE student_id = ? AND class_id = ?");
-$stmt->execute([$student_id, $class['class_id']]);
-$enrollment_count = $stmt->fetch()['count'];
-
-if ($enrollment_count > 0) {
-    echo json_encode(['success' => false, 'message' => 'You are already enrolled in this class.']);
-    exit();
-}
-
 try {
-    // Enroll the student
-    $stmt = $pdo->prepare("INSERT INTO student_classes (student_id, class_id, enrolled_at) VALUES (?, ?, NOW())");
-    $stmt->execute([$student_id, $class['class_id']]);
+    // Get class ID from class code
+    $stmt = $pdo->prepare("SELECT class_id FROM classes WHERE class_code = ?");
+    $stmt->execute([$class_code]);
+    $class = $stmt->fetch();
 
-    echo json_encode([
-        'success' => true,
-        'message' => 'Successfully enrolled in ' . $class['subject_name'] . '!',
-        'class_info' => [
-            'class_name' => $class['class_name'],
-            'subject_name' => $class['subject_name'],
-            'professor' => $class['first_name'] . ' ' . $class['last_name'],
-            'schedule' => $class['schedule'],
-            'room' => $class['room']
-        ]
-    ]);
+    if (!$class) {
+        echo json_encode(['success' => false, 'message' => 'Invalid class code']);
+        exit();
+    }
+
+    $class_id = $class['class_id'];
+
+    // Check if student is already enrolled in the class
+    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM student_classes WHERE student_id = ? AND class_id = ?");
+    $stmt->execute([$student_id, $class_id]);
+    $enrolled = $stmt->fetch()['count'];
+
+    if ($enrolled > 0) {
+        echo json_encode(['success' => false, 'message' => 'You are already enrolled in this class']);
+        exit();
+    }
+
+    // Check if there is a pending or accepted enrollment request for this class
+    $stmt = $pdo->prepare("SELECT status FROM enrollment_requests WHERE student_id = ? AND class_id = ?");
+    $stmt->execute([$student_id, $class_id]);
+    $existing_request = $stmt->fetch();
+
+    if ($existing_request && $existing_request['status'] !== 'rejected') {
+        echo json_encode(['success' => false, 'message' => 'You already have a pending or accepted enrollment request for this class']);
+        exit();
+    }
+
+    // Insert new enrollment request
+    $stmt = $pdo->prepare("INSERT INTO enrollment_requests (student_id, class_id, status, requested_at) VALUES (?, ?, 'pending', NOW())");
+    $stmt->execute([$student_id, $class_id]);
+
+    echo json_encode(['success' => true, 'message' => 'Enrollment request submitted successfully']);
+
 } catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Failed to enroll: ' . $e->getMessage()]);
+    if ($e->getCode() == 23000) { // Integrity constraint violation
+        echo json_encode(['success' => false, 'message' => 'You already have a pending or accepted enrollment request for this class']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+    }
 }
 ?>
