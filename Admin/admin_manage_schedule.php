@@ -44,20 +44,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
                 $professor_id = $_POST['professor_id'];
                 $schedule = trim($_POST['schedule']);
                 $room = trim($_POST['room']);
-                
+                $school_year = trim($_POST['school_year']);
+
                 $pdo->beginTransaction();
-                
+
                 $subject_id = 'SUB' . time();
-                $stmt = $pdo->prepare("INSERT INTO subjects (subject_id, subject_name, subject_code, credits, created_at, updated_at) 
+                $stmt = $pdo->prepare("INSERT INTO subjects (subject_id, subject_name, subject_code, credits, created_at, updated_at)
                                       VALUES (?, ?, ?, 3, NOW(), NOW())");
                 $stmt->execute([$subject_id, $subject_name, $subject_code]);
-                
+
                 $class_code = generateUniqueClassCode($pdo);
                 $class_id = 'CLASS' . time();
-                $stmt = $pdo->prepare("INSERT INTO classes (class_id, class_name, class_code, subject_id, professor_id, schedule, room, created_at, updated_at) 
-                                      VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-                $stmt->execute([$class_id, $subject_name . ' Class', $class_code, $subject_id, $professor_id, $schedule, $room]);
-                
+                $stmt = $pdo->prepare("INSERT INTO classes (class_id, class_name, class_code, subject_id, professor_id, schedule, room, school_year, created_at, updated_at)
+                                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                $stmt->execute([$class_id, $subject_name . ' Class', $class_code, $subject_id, $professor_id, $schedule, $room, $school_year]);
+
                 $pdo->commit();
                 $success = "Subject and class added successfully!";
                 break;
@@ -70,15 +71,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
                 $class_code = trim($_POST['class_code']);
                 $schedule = trim($_POST['schedule']);
                 $room = trim($_POST['room']);
-                
+                $school_year = trim($_POST['school_year']);
+
                 $pdo->beginTransaction();
-                
+
                 $stmt = $pdo->prepare("UPDATE subjects SET subject_code = ?, subject_name = ?, updated_at = NOW() WHERE subject_id = ?");
                 $stmt->execute([$subject_code, $subject_name, $subject_id]);
-                
-                $stmt = $pdo->prepare("UPDATE classes SET class_code = ?, professor_id = ?, schedule = ?, room = ?, updated_at = NOW() WHERE subject_id = ?");
-                $stmt->execute([$class_code, $professor_id, $schedule, $room, $subject_id]);
-                
+
+                $stmt = $pdo->prepare("UPDATE classes SET class_code = ?, professor_id = ?, schedule = ?, room = ?, school_year = ?, updated_at = NOW() WHERE subject_id = ?");
+                $stmt->execute([$class_code, $professor_id, $schedule, $room, $school_year, $subject_id]);
+
                 $pdo->commit();
                 $success = "Subject updated successfully!";
                 break;
@@ -116,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
 }
 
 // Fetch data for display
-$subjects = $pdo->query("SELECT s.*, p.first_name, p.last_name, c.class_id, c.class_code, c.schedule, c.room
+$subjects = $pdo->query("SELECT s.*, p.first_name, p.last_name, c.class_id, c.class_code, c.schedule, c.room, c.school_year
                         FROM subjects s
                         JOIN classes c ON s.subject_id = c.subject_id
                         LEFT JOIN professors p ON c.professor_id = p.professor_id
@@ -598,6 +600,7 @@ foreach ($subjects as $subject) {
                         <th>Professor</th>
                         <th>Schedule</th>
                         <th>Room</th>
+                        <th>School Year</th>
                         <th>Enrolled</th>
                         <th>Actions</th>
                     </tr>
@@ -625,6 +628,7 @@ foreach ($subjects as $subject) {
                         </td>
                         <td><?php echo $subject['schedule']; ?></td>
                         <td><?php echo $subject['room']; ?></td>
+                        <td><?php echo $subject['school_year']; ?></td>
                         <td><?php echo $enrollment_counts[$subject['subject_id']] ?? 0; ?> students</td>
                         <td>
                             <div class="action-buttons">
@@ -686,6 +690,10 @@ foreach ($subjects as $subject) {
                             <label>Room</label>
                             <input type="text" name="room" required>
                         </div>
+                        <div class="form-group">
+                            <label>School Year</label>
+                            <input type="text" name="school_year" placeholder="e.g., 2023-2024" required>
+                        </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" onclick="closeModal('addSubjectModal')">
                                 <i class="fas fa-times"></i> Cancel
@@ -742,6 +750,10 @@ foreach ($subjects as $subject) {
                         <div class="form-group">
                             <label>Room</label>
                             <input type="text" name="room" id="edit_room" required>
+                        </div>
+                        <div class="form-group">
+                            <label>School Year</label>
+                            <input type="text" name="school_year" id="edit_school_year" required>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" onclick="closeModal('editSubjectModal')">
@@ -867,6 +879,7 @@ foreach ($subjects as $subject) {
             document.getElementById('edit_class_code').value = subject.class_code;
             document.getElementById('edit_schedule').value = subject.schedule;
             document.getElementById('edit_room').value = subject.room;
+            document.getElementById('edit_school_year').value = subject.school_year;
             openModal('editSubjectModal');
         }
 
