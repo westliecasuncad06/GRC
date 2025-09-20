@@ -8,16 +8,37 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
 require_once '../php/db.php';
 
 $student_id = $_SESSION['user_id'];
+
+// Get enrolled classes
 $stmt = $pdo->prepare("SELECT c.class_id, c.class_name, c.class_code, s.subject_name, p.first_name, p.last_name
                      FROM student_classes sc
                      JOIN classes c ON sc.class_id = c.class_id
                      JOIN subjects s ON c.subject_id = s.subject_id
-                     JOIN professors p ON c.professor_id = p.professor_id
-                     JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
-                     WHERE sc.student_id = ? AND sys.status != 'Archived'
+                     LEFT JOIN professors p ON c.professor_id = p.professor_id
+                     LEFT JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
+                     WHERE sc.student_id = ? AND c.status != 'archived'
                      ORDER BY sc.enrolled_at DESC");
 $stmt->execute([$student_id]);
 $enrolled_classes = $stmt->fetchAll();
+
+// Get pending enrollment requests
+$stmt = $pdo->prepare("SELECT er.request_id, er.requested_at, c.class_code, s.subject_name, p.first_name, p.last_name
+                     FROM enrollment_requests er
+                     JOIN classes c ON er.class_id = c.class_id
+                     JOIN subjects s ON c.subject_id = s.subject_id
+                     LEFT JOIN professors p ON c.professor_id = p.professor_id
+                     WHERE er.student_id = ? AND er.status = 'pending'
+                     ORDER BY er.requested_at DESC");
+$stmt->execute([$student_id]);
+$pending_requests = $stmt->fetchAll();
+
+if (empty($enrolled_classes)) {
+    // Debug: Log to error log
+    error_log("No enrolled classes found for student_id: $student_id");
+} else {
+    // Debug: Log count of enrolled classes
+    error_log("Enrolled classes count for student_id $student_id: " . count($enrolled_classes));
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -571,7 +592,10 @@ $enrolled_classes = $stmt->fetchAll();
                             <div class="class-details">
                                 <div class="class-detail">
                                     <i class="fas fa-user-tie"></i>
-                                    Prof. <?php echo htmlspecialchars($class['first_name'] . ' ' . $class['last_name']); ?>
+                                    <?php
+                                    $professor_name = (!empty($class['first_name']) && !empty($class['last_name'])) ? 'Prof. ' . htmlspecialchars($class['first_name'] . ' ' . $class['last_name']) : 'N/A';
+                                    echo $professor_name;
+                                    ?>
                                 </div>
                             </div>
                             <div class="class-actions">
@@ -579,6 +603,42 @@ $enrolled_classes = $stmt->fetchAll();
                                     <i class="fas fa-eye"></i>
                                     View Attendance
                                 </button>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
+            <!-- Pending Requests Section -->
+            <?php if (!empty($pending_requests)): ?>
+                <div class="table-header-enhanced" style="margin-top: 3rem;">
+                    <h2 class="table-title-enhanced"><i class="fas fa-clock" style="margin-right: 10px;"></i>Pending Enrollment Requests</h2>
+                </div>
+                <div class="tiles-grid">
+                    <?php foreach ($pending_requests as $request): ?>
+                        <div class="class-tile" style="border-left: 4px solid #ffc107;">
+                            <div class="class-header">
+                                <div class="class-code" style="background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);"><?php echo htmlspecialchars($request['class_code']); ?></div>
+                                <div style="font-size: 0.8rem; color: #856404; background: #fff3cd; padding: 4px 8px; border-radius: 4px;">Pending Approval</div>
+                            </div>
+                            <div class="class-subject"><?php echo htmlspecialchars($request['subject_name']); ?></div>
+                            <div class="class-details">
+                                <div class="class-detail">
+                                    <i class="fas fa-user-tie"></i>
+                                    <?php
+                                    $professor_name = (!empty($request['first_name']) && !empty($request['last_name'])) ? 'Prof. ' . htmlspecialchars($request['first_name'] . ' ' . $request['last_name']) : 'N/A';
+                                    echo $professor_name;
+                                    ?>
+                                </div>
+                                <div class="class-detail">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Requested: <?php echo date('M j, Y', strtotime($request['requested_at'])); ?>
+                                </div>
+                            </div>
+                            <div class="class-actions">
+                                <div style="font-size: 0.9rem; color: var(--gray); text-align: center;">
+                                    <i class="fas fa-info-circle"></i> Waiting for professor approval
+                                </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -641,6 +701,26 @@ $enrolled_classes = $stmt->fetchAll();
             modal.classList.remove('show');
             modal.setAttribute('aria-hidden', 'true');
             document.getElementById('attendanceModalBody').innerHTML = '<p>Loading attendance data...</p>';
+        }
+
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} toast-icon"></i>
+                <span class="toast-message">${message}</span>
+                <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
         }
 
         // Fetch attendance for a student in a class
@@ -720,6 +800,8 @@ $enrolled_classes = $stmt->fetchAll();
             });
         });
 
+
+
         // Add click event listeners to class tiles (for accessibility)
         document.querySelectorAll('.class-tile').forEach(tile => {
             tile.addEventListener('click', () => {
@@ -765,7 +847,7 @@ $enrolled_classes = $stmt->fetchAll();
 
             const classCode = document.getElementById('class_code').value.trim();
             if (!classCode) {
-                alert('Please enter a class code');
+                showToast('Please enter a class code', 'error');
                 return;
             }
 
@@ -788,17 +870,22 @@ $enrolled_classes = $stmt->fetchAll();
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert(data.message);
+                    showToast(data.message, 'success');
                     closeEnrollModal();
-                    // Refresh the page to show the newly enrolled class
+                    // Refresh the page to show the updated status
                     location.reload();
                 } else {
-                    alert(data.message);
+                    if (data.message === 'You are already enrolled in this class.' ||
+                        data.message.includes('pending or accepted enrollment request')) {
+                        alert(data.message);
+                    } else {
+                        showToast(data.message, 'error');
+                    }
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred while enrolling. Please try again.');
+                showToast('An error occurred while enrolling. Please try again.', 'error');
             })
             .finally(() => {
                 // Reset button state
@@ -807,13 +894,18 @@ $enrolled_classes = $stmt->fetchAll();
             });
         });
 
+
+
         // Close enrollment modal when clicking outside
         document.getElementById('enrollModal').addEventListener('click', function(event) {
             if (event.target === this) {
                 closeEnrollModal();
             }
         });
-        
+
     </script>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
 </body>
 </html>

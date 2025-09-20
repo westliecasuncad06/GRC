@@ -4,35 +4,27 @@ require_once 'db.php';
 
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'professor') {
-    echo json_encode(['success' => false, 'message' => 'Unauthorized access']);
-    exit();
-}
-
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);
     exit();
 }
 
-$professor_id = $_SESSION['user_id'];
-$request_id = $_POST['request_id'] ?? '';
-$action = $_POST['action'] ?? ''; // 'accept' or 'reject'
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'professor') {
+    echo json_encode(['success' => false, 'message' => 'Unauthorized access']);
+    exit();
+}
+
+$request_id = trim($_POST['request_id'] ?? '');
+$action = trim($_POST['action'] ?? '');
 
 if (empty($request_id) || !in_array($action, ['accept', 'reject'])) {
-    echo json_encode(['success' => false, 'message' => 'Invalid request data']);
+    echo json_encode(['success' => false, 'message' => 'Invalid parameters']);
     exit();
 }
 
 try {
-    // Get the unenrollment request and verify it belongs to professor's class
-    $stmt = $pdo->prepare("
-        SELECT ur.*, c.professor_id, s.subject_name, st.first_name as student_first, st.last_name as student_last
-        FROM unenrollment_requests ur
-        JOIN classes c ON ur.class_id = c.class_id
-        JOIN subjects s ON c.subject_id = s.subject_id
-        JOIN students st ON ur.student_id = st.student_id
-        WHERE ur.request_id = ? AND ur.status = 'pending'
-    ");
+    // Get the unenrollment request details
+    $stmt = $pdo->prepare("SELECT student_id, class_id FROM unenrollment_requests WHERE request_id = ? AND status = 'pending'");
     $stmt->execute([$request_id]);
     $request = $stmt->fetch();
 
@@ -41,41 +33,28 @@ try {
         exit();
     }
 
-    if ($request['professor_id'] !== $professor_id) {
-        echo json_encode(['success' => false, 'message' => 'Unauthorized to handle this request']);
-        exit();
-    }
+    $professor_id = $_SESSION['user_id'];
+    $student_id = $request['student_id'];
+    $class_id = $request['class_id'];
 
     if ($action === 'accept') {
-        // Check if student is still enrolled
-        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM student_classes WHERE student_id = ? AND class_id = ?");
-        $stmt->execute([$request['student_id'], $request['class_id']]);
-        $enrolled = $stmt->fetch()['count'];
-
-        if ($enrolled == 0) {
-            echo json_encode(['success' => false, 'message' => 'Student is not enrolled in this class']);
-            exit();
-        }
-
-        // Remove from student_classes
+        // Remove from student_classes table
         $stmt = $pdo->prepare("DELETE FROM student_classes WHERE student_id = ? AND class_id = ?");
-        $stmt->execute([$request['student_id'], $request['class_id']]);
+        $stmt->execute([$student_id, $class_id]);
 
-        // Update request status
-        $stmt = $pdo->prepare("UPDATE unenrollment_requests SET status = 'accepted', handled_at = NOW(), handled_by = ? WHERE request_id = ?");
-        $stmt->execute([$professor_id, $request_id]);
-
-        $message = 'Student has been unenrolled from your subject.';
-
-    } elseif ($action === 'reject') {
-        // Update request status
-        $stmt = $pdo->prepare("UPDATE unenrollment_requests SET status = 'rejected', handled_at = NOW(), handled_by = ? WHERE request_id = ?");
-        $stmt->execute([$professor_id, $request_id]);
-
-        $message = 'Unenrollment request rejected for ' . $request['student_first'] . ' ' . $request['student_last'] . ' in ' . $request['subject_name'];
+        $message = 'Unenrollment request approved successfully';
+    } else {
+        $message = 'Unenrollment request rejected';
     }
 
-    echo json_encode(['success' => true, 'message' => $message]);
+    // Update the unenrollment request
+    $stmt = $pdo->prepare("UPDATE unenrollment_requests SET status = ?, processed_at = NOW(), processed_by = ? WHERE request_id = ?");
+    $stmt->execute([$action === 'accept' ? 'approved' : 'rejected', $professor_id, $request_id]);
+
+    echo json_encode([
+        'success' => true,
+        'message' => $message
+    ]);
 
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);

@@ -3,6 +3,7 @@ require_once '../php/db.php';
 
 $professor_id = $_SESSION['user_id'] ?? null;
 $pending_requests = [];
+$pending_unenrollment_requests = [];
 $pending_requests_count = 0;
 
 if ($professor_id) {
@@ -27,7 +28,25 @@ if ($professor_id) {
         return $req['status'] !== 'pending';
     });
 
-    $pending_requests_count = count($pending_requests);
+    // Fetch unenrollment requests for professor's classes
+    $stmt = $pdo->prepare("
+        SELECT ur.request_id, ur.requested_at, ur.status, s.subject_name, c.class_code, st.first_name, st.last_name
+        FROM unenrollment_requests ur
+        JOIN classes c ON ur.class_id = c.class_id
+        JOIN subjects s ON c.subject_id = s.subject_id
+        JOIN students st ON ur.student_id = st.student_id
+        WHERE c.professor_id = ?
+        ORDER BY ur.requested_at DESC
+    ");
+    $stmt->execute([$professor_id]);
+    $all_unenrollment_requests = $stmt->fetchAll();
+
+    // Separate pending and handled unenrollment requests
+    $pending_unenrollment_requests = array_filter($all_unenrollment_requests, function($req) {
+        return $req['status'] === 'pending';
+    });
+
+    $pending_requests_count = count($pending_requests) + count($pending_unenrollment_requests);
 }
 ?>
 
@@ -87,13 +106,13 @@ if ($professor_id) {
                             <div class="notification-content">
                                 <div class="notification-title">Enrollment Request</div>
                                 <div class="notification-message">
-                                    <?php echo htmlspecialchars($request['first_name'] . ' ' . $request['last_name']); ?> has requested to enroll in 
+                                    <?php echo htmlspecialchars($request['first_name'] . ' ' . $request['last_name']); ?> has requested to enroll in
                                     <strong><?php echo htmlspecialchars($request['subject_name']); ?></strong> (Class Code: <?php echo htmlspecialchars($request['class_code']); ?>).
                                 </div>
                                 <div class="notification-meta">
                                     <div class="notification-time">
                                         <i class="fas fa-clock"></i>
-                                        <?php 
+                                        <?php
                                             $datetime = new DateTime($request['requested_at']);
                                             echo $datetime->format('M j, Y, g:i a');
                                         ?>
@@ -103,6 +122,35 @@ if ($professor_id) {
                                 <div class="notification-actions">
                                     <button class="btn btn-success btn-sm" onclick="handleEnrollmentRequest('<?php echo $request['request_id']; ?>', 'accept')">Accept</button>
                                     <button class="btn btn-danger btn-sm" onclick="handleEnrollmentRequest('<?php echo $request['request_id']; ?>', 'reject')">Reject</button>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+
+                    <?php foreach ($pending_unenrollment_requests as $request): ?>
+                        <div class="notification-item" id="unenrollment-request-<?php echo $request['request_id']; ?>">
+                            <div class="notification-icon">
+                                <i class="fas fa-user-minus"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">Unenrollment Request</div>
+                                <div class="notification-message">
+                                    <?php echo htmlspecialchars($request['first_name'] . ' ' . $request['last_name']); ?> has requested to unenroll from
+                                    <strong><?php echo htmlspecialchars($request['subject_name']); ?></strong> (Class Code: <?php echo htmlspecialchars($request['class_code']); ?>).
+                                </div>
+                                <div class="notification-meta">
+                                    <div class="notification-time">
+                                        <i class="fas fa-clock"></i>
+                                        <?php
+                                            $datetime = new DateTime($request['requested_at']);
+                                            echo $datetime->format('M j, Y, g:i a');
+                                        ?>
+                                    </div>
+                                    <div class="notification-status status-unread">Pending</div>
+                                </div>
+                                <div class="notification-actions">
+                                    <button class="btn btn-success btn-sm" onclick="handleUnenrollmentRequest('<?php echo $request['request_id']; ?>', 'accept')">Accept</button>
+                                    <button class="btn btn-danger btn-sm" onclick="handleUnenrollmentRequest('<?php echo $request['request_id']; ?>', 'reject')">Reject</button>
                                 </div>
                             </div>
                         </div>
@@ -169,6 +217,52 @@ if ($professor_id) {
                 alert(data.message);
                 // Remove the handled request from the notification list immediately
                 const requestElem = document.getElementById('request-' + requestId);
+                if (requestElem) {
+                    requestElem.remove();
+                }
+                // Update notification badge count
+                const badge = document.querySelector('.notification-badge');
+                if (badge) {
+                    let count = parseInt(badge.textContent);
+                    count = Math.max(0, count - 1);
+                    if (count === 0) {
+                        badge.remove();
+                    } else {
+                        badge.textContent = count;
+                    }
+                }
+            } else {
+                alert('Failed to handle request: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while handling the request.');
+        });
+    }
+
+    // Handle unenrollment request accept/reject
+    function handleUnenrollmentRequest(requestId, action) {
+        if (!['accept', 'reject'].includes(action)) {
+            alert('Invalid action');
+            return;
+        }
+        fetch('../php/handle_unenrollment_request.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                request_id: requestId,
+                action: action
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                // Remove the handled request from the notification list immediately
+                const requestElem = document.getElementById('unenrollment-request-' + requestId);
                 if (requestElem) {
                     requestElem.remove();
                 }
