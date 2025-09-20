@@ -14,8 +14,8 @@ $query = "SELECT c.*, s.subject_name, s.subject_code, p.first_name, p.last_name,
           FROM student_classes sc
           JOIN classes c ON sc.class_id = c.class_id
           JOIN subjects s ON c.subject_id = s.subject_id
-          JOIN professors p ON c.professor_id = p.professor_id
-          JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
+          LEFT JOIN professors p ON c.professor_id = p.professor_id
+          LEFT JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
           WHERE sc.student_id = ? AND c.status = 'archived'
           ORDER BY sys.school_year DESC, sys.semester DESC, s.subject_name ASC";
 
@@ -326,7 +326,10 @@ foreach ($archived_classes as $class) {
                                     <i class="fas fa-book archive-class-icon"></i>
                                     <span class="archive-class-text">
                                         <?php echo htmlspecialchars($class['subject_name']); ?> (<?php echo htmlspecialchars($class['subject_code']); ?>) -
-                                        Prof. <?php echo htmlspecialchars($class['first_name'] . ' ' . $class['last_name']); ?> -
+                                        <?php
+                                        $professor_name = (!empty($class['first_name']) && !empty($class['last_name'])) ? 'Prof. ' . htmlspecialchars($class['first_name'] . ' ' . $class['last_name']) : 'N/A';
+                                        echo $professor_name;
+                                        ?> -
                                         <?php echo htmlspecialchars($class['schedule']); ?> -
                                         <?php echo htmlspecialchars($class['room']); ?>
                                     </span>

@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'db.php';
+require_once 'notifications.php';
 
 header('Content-Type: application/json');
 
@@ -53,8 +54,39 @@ try {
         $stmt->execute([$student_id, $class_id]);
 
         $message = 'Enrollment request approved successfully';
+
+        // Create notification for student
+        $notification_title = 'Enrollment Request Approved';
+        $notification_message = 'Your enrollment request has been approved. You are now enrolled in the class.';
+        $notification_type = 'enrollment_approved';
+
+        $notificationManager->createNotification(
+            $student_id,
+            'student',
+            $notification_title,
+            $notification_message,
+            $notification_type,
+            $request_id,
+            $class_id
+        );
+
     } else {
         $message = 'Enrollment request rejected';
+
+        // Create notification for student
+        $notification_title = 'Enrollment Request Rejected';
+        $notification_message = 'Your enrollment request has been rejected by the professor.';
+        $notification_type = 'enrollment_rejected';
+
+        $notificationManager->createNotification(
+            $student_id,
+            'student',
+            $notification_title,
+            $notification_message,
+            $notification_type,
+            $request_id,
+            $class_id
+        );
     }
 
     // Update the enrollment request

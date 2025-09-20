@@ -63,8 +63,24 @@ $pending_stmt = $pdo->prepare($pending_requests_query);
 $pending_stmt->execute([$professor_id]);
 $pending_requests = $pending_stmt->fetchAll();
 
-// Add pending requests count for notification badge
-$pending_requests_count = count($pending_requests);
+// Fetch pending unenrollment requests for professor's classes
+$pending_unenrollment_requests_query = "
+    SELECT ur.request_id, ur.student_id, ur.class_id, ur.requested_at,
+           st.first_name, st.last_name,
+           c.class_code, s.subject_name
+    FROM unenrollment_requests ur
+    JOIN students st ON ur.student_id = st.student_id
+    JOIN classes c ON ur.class_id = c.class_id
+    JOIN subjects s ON c.subject_id = s.subject_id
+    WHERE ur.status = 'pending' AND c.professor_id = ?
+    ORDER BY ur.requested_at DESC
+";
+$pending_unenrollment_stmt = $pdo->prepare($pending_unenrollment_requests_query);
+$pending_unenrollment_stmt->execute([$professor_id]);
+$pending_unenrollment_requests = $pending_unenrollment_stmt->fetchAll();
+
+// Add pending requests count for notification badge (enrollment + unenrollment)
+$pending_requests_count = count($pending_requests) + count($pending_unenrollment_requests);
 
 // Get sections and students for professor's classes
 $query = "SELECT DISTINCT c.section, st.student_id, st.first_name, st.last_name, st.email, sc.enrolled_at, c.class_name
@@ -183,7 +199,6 @@ foreach ($subjects as $subject) {
         'students' => $students
     ];
 }
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1425,25 +1440,25 @@ foreach ($subjects as $subject) {
             </div>
             <div class="modal-body">
                 <div class="notification-list" id="notificationList">
-                    <?php if (empty($pending_requests)): ?>
+                    <?php if (empty($pending_requests) && empty($pending_unenrollment_requests)): ?>
                         <div class="no-notifications">
                             <div class="no-notifications-icon">
                                 <i class="fas fa-bell-slash"></i>
                             </div>
                             <div class="no-notifications-text">No new notifications</div>
-                            <div class="no-notifications-subtext">You have no pending enrollment requests.</div>
+                            <div class="no-notifications-subtext">You have no pending requests.</div>
                         </div>
                     <?php else: ?>
                         <?php foreach ($pending_requests as $request): ?>
-                            <div class="notification-item" data-request-id="<?php echo $request['request_id']; ?>">
+                            <div class="notification-item" data-request-id="<?php echo $request['request_id']; ?>" data-type="enrollment">
                                 <div class="notification-icon">
-                                    <i class="fas fa-user-graduate"></i>
+                                    <i class="fas fa-user-plus"></i>
                                 </div>
                                 <div class="notification-content">
                                     <div class="notification-title">Enrollment Request</div>
                                     <div class="notification-message">
-                                        <?php echo htmlspecialchars($request['first_name'] . ' ' . $request['last_name']); ?> has requested to enroll in 
-                                        <strong><?php echo htmlspecialchars($request['subject_name']); ?></strong> 
+                                        <?php echo htmlspecialchars($request['first_name'] . ' ' . $request['last_name']); ?> has requested to enroll in
+                                        <strong><?php echo htmlspecialchars($request['subject_name']); ?></strong>
                                         (Class Code: <?php echo htmlspecialchars($request['class_code']); ?>).
                                     </div>
                                     <div class="notification-meta">
@@ -1456,6 +1471,33 @@ foreach ($subjects as $subject) {
                                     <div class="notification-actions" style="margin-top: 10px;">
                                         <button class="btn-enhanced btn-primary" onclick="handleEnrollmentRequest('<?php echo $request['request_id']; ?>', 'accept')">Accept</button>
                                         <button class="btn-enhanced btn-secondary" onclick="handleEnrollmentRequest('<?php echo $request['request_id']; ?>', 'reject')">Reject</button>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+
+                        <?php foreach ($pending_unenrollment_requests as $request): ?>
+                            <div class="notification-item" data-request-id="<?php echo $request['request_id']; ?>" data-type="unenrollment">
+                                <div class="notification-icon">
+                                    <i class="fas fa-user-minus"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <div class="notification-title">Unenrollment Request</div>
+                                    <div class="notification-message">
+                                        <?php echo htmlspecialchars($request['first_name'] . ' ' . $request['last_name']); ?> has requested to unenroll from
+                                        <strong><?php echo htmlspecialchars($request['subject_name']); ?></strong>
+                                        (Class Code: <?php echo htmlspecialchars($request['class_code']); ?>).
+                                    </div>
+                                    <div class="notification-meta">
+                                        <div class="notification-time">
+                                            <i class="fas fa-clock"></i>
+                                            <?php echo date('M j, Y, g:i a', strtotime($request['requested_at'])); ?>
+                                        </div>
+                                        <div class="notification-status status-unread">PENDING</div>
+                                    </div>
+                                    <div class="notification-actions" style="margin-top: 10px;">
+                                        <button class="btn-enhanced btn-primary" onclick="handleUnenrollmentRequest('<?php echo $request['request_id']; ?>', 'accept')">Accept</button>
+                                        <button class="btn-enhanced btn-secondary" onclick="handleUnenrollmentRequest('<?php echo $request['request_id']; ?>', 'reject')">Reject</button>
                                     </div>
                                 </div>
                             </div>
@@ -1735,7 +1777,7 @@ foreach ($subjects as $subject) {
                                     <i class="fas fa-bell-slash"></i>
                                 </div>
                                 <div class="no-notifications-text">No new notifications</div>
-                                <div class="no-notifications-subtext">You have no pending enrollment requests.</div>
+                                <div class="no-notifications-subtext">You have no pending requests.</div>
                             </div>
                         `;
                     }
@@ -1763,6 +1805,69 @@ foreach ($subjects as $subject) {
             })
             .catch(error => {
                 console.error('Error handling enrollment request:', error);
+                alert('An error occurred while processing the request.');
+            });
+        }
+
+        // Handle unenrollment request accept/reject
+        function handleUnenrollmentRequest(requestId, action) {
+            if (!['accept', 'reject'].includes(action)) return;
+
+            fetch('../php/handle_unenrollment_request.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `request_id=${encodeURIComponent(requestId)}&action=${encodeURIComponent(action)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+
+                    // Remove the notification item from the list
+                    const notificationList = document.getElementById('notificationList');
+                    const item = notificationList.querySelector(`.notification-item[data-request-id="${requestId}"]`);
+                    if (item) {
+                        item.remove();
+                    }
+
+                    // If no more notifications, show no notifications message
+                    if (notificationList.children.length === 0) {
+                        notificationList.innerHTML = `
+                            <div class="no-notifications">
+                                <div class="no-notifications-icon">
+                                    <i class="fas fa-bell-slash"></i>
+                                </div>
+                                <div class="no-notifications-text">No new notifications</div>
+                                <div class="no-notifications-subtext">You have no pending requests.</div>
+                            </div>
+                        `;
+                    }
+
+                    // Update notification badge count
+                    const badge = document.getElementById('notificationBadge');
+                    if (badge) {
+                        let count = parseInt(badge.textContent) || 0;
+                        count = Math.max(0, count - 1);
+                        if (count === 0) {
+                            badge.style.display = 'none';
+                        } else {
+                            badge.textContent = count;
+                        }
+                    }
+
+                    // If accepted, refresh the enrolled students list by reloading the page or dynamically updating
+                    if (action === 'accept') {
+                        // For simplicity, reload the page to reflect changes
+                        location.reload();
+                    }
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error handling unenrollment request:', error);
                 alert('An error occurred while processing the request.');
             });
         }

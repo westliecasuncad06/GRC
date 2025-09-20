@@ -45,21 +45,21 @@ try {
         exit();
     }
 
-    // Check if there is a pending or accepted enrollment request for this class
-    $stmt = $pdo->prepare("SELECT status FROM enrollment_requests WHERE student_id = ? AND class_id = ?");
+    // Check if student already has a pending or accepted request for this class
+    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM enrollment_requests WHERE student_id = ? AND class_id = ? AND status IN ('pending', 'accepted')");
     $stmt->execute([$student_id, $class_id]);
-    $existing_request = $stmt->fetch();
+    $existing_request = $stmt->fetch()['count'];
 
-    if ($existing_request && $existing_request['status'] !== 'rejected') {
+    if ($existing_request > 0) {
         echo json_encode(['success' => false, 'message' => 'You already have a pending or accepted enrollment request for this class']);
         exit();
     }
 
-    // Insert new enrollment request
+    // Insert enrollment request instead of direct enrollment
     $stmt = $pdo->prepare("INSERT INTO enrollment_requests (student_id, class_id, status, requested_at) VALUES (?, ?, 'pending', NOW())");
     $stmt->execute([$student_id, $class_id]);
 
-    echo json_encode(['success' => true, 'message' => 'Enrollment request submitted successfully']);
+    echo json_encode(['success' => true, 'message' => 'Enrollment request submitted successfully. Please wait for professor approval.']);
 
 } catch (PDOException $e) {
     if ($e->getCode() == 23000) { // Integrity constraint violation

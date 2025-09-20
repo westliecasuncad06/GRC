@@ -69,22 +69,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 
             case 'delete_subject':
                 $subject_id = $_POST['subject_id'];
-                
+
                 try {
-                    // First delete associated classes
+                    // First delete attendance records for the classes to be deleted
+                    $stmt = $pdo->prepare("DELETE FROM attendance WHERE class_id IN (SELECT class_id FROM classes WHERE subject_id = ? AND professor_id = ?)");
+                    $stmt->execute([$subject_id, $professor_id]);
+
+                    // Delete student enrollments for the classes to be deleted
+                    $stmt = $pdo->prepare("DELETE FROM student_classes WHERE class_id IN (SELECT class_id FROM classes WHERE subject_id = ? AND professor_id = ?)");
+                    $stmt->execute([$subject_id, $professor_id]);
+
+                    // Then delete associated classes
                     $stmt = $pdo->prepare("DELETE FROM classes WHERE subject_id = ? AND professor_id = ?");
                     $stmt->execute([$subject_id, $professor_id]);
-                    
+
                     // Then delete the subject if no other professors are using it
                     $check_stmt = $pdo->prepare("SELECT COUNT(*) as count FROM classes WHERE subject_id = ?");
                     $check_stmt->execute([$subject_id]);
                     $class_count = $check_stmt->fetch()['count'];
-                    
+
                     if ($class_count == 0) {
                         $stmt = $pdo->prepare("DELETE FROM subjects WHERE subject_id = ?");
                         $stmt->execute([$subject_id]);
                     }
-                    
+
                     $success = "Subject deleted successfully!";
                 } catch (PDOException $e) {
                     $error = "Error deleting subject: " . $e->getMessage();
