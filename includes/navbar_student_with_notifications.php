@@ -320,4 +320,3 @@ document.addEventListener('DOMContentLoaded', function() {
     color: #6c757d;
     font-size: 0.9rem;
 }
-</style>

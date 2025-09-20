@@ -10,13 +10,13 @@ require_once '../php/db.php';
 $student_id = $_SESSION['user_id'];
 
 // Get archived classes for the student
-$query = "SELECT c.*, s.subject_name, s.subject_code, p.first_name, p.last_name, sys.school_year, sys.semester
+$query = "SELECT c.*, s.subject_name, p.first_name, p.last_name, sys.school_year, sys.semester
           FROM student_classes sc
           JOIN classes c ON sc.class_id = c.class_id
           JOIN subjects s ON c.subject_id = s.subject_id
-          LEFT JOIN professors p ON c.professor_id = p.professor_id
-          LEFT JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
-          WHERE sc.student_id = ? AND c.status = 'archived'
+          JOIN professors p ON c.professor_id = p.professor_id
+          JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
+          WHERE sc.student_id = ? AND sys.status = 'Archived'
           ORDER BY sys.school_year DESC, sys.semester DESC, s.subject_name ASC";
 
 $stmt = $pdo->prepare($query);
@@ -153,91 +153,6 @@ foreach ($archived_classes as $class) {
             border-radius: 6px;
         }
 
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            max-width: 800px;
-            width: 100%;
-            max-height: 90%;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--gray);
-        }
-
-        .modal-close:hover {
-            color: var(--dark);
-        }
-
-        .attendance-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        .attendance-table th {
-            background: var(--primary);
-            color: white;
-            padding: 1rem;
-            text-align: left;
-        }
-
-        .attendance-table td {
-            padding: 1rem;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .attendance-status {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-
-        .status-present {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-        }
-
-        .status-absent {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-        }
-
-        .status-late {
-            background: rgba(255, 193, 7, 0.1);
-            color: #ffc107;
-        }
-
-        .status-excused {
-            background: rgba(23, 162, 184, 0.1);
-            color: #17a2b8;
-        }
-
         .archive-class-item:last-child {
             border-bottom: none;
         }
@@ -322,15 +237,12 @@ foreach ($archived_classes as $class) {
 
                         <div class="archive-classes">
                             <?php foreach ($classes as $class): ?>
-                                <div class="archive-class-item" onclick="openAttendanceModal('<?php echo $class['class_id']; ?>', '<?php echo htmlspecialchars($class['subject_name']); ?>')">
+                                <div class="archive-class-item">
                                     <i class="fas fa-book archive-class-icon"></i>
                                     <span class="archive-class-text">
-                                        <?php echo htmlspecialchars($class['subject_name']); ?> (<?php echo htmlspecialchars($class['subject_code']); ?>) -
-                                        <?php
-                                        $professor_name = (!empty($class['first_name']) && !empty($class['last_name'])) ? 'Prof. ' . htmlspecialchars($class['first_name'] . ' ' . $class['last_name']) : 'N/A';
-                                        echo $professor_name;
-                                        ?> -
-                                        <?php echo htmlspecialchars($class['schedule']); ?> -
+                                        <?php echo htmlspecialchars($class['subject_name']); ?> (<?php echo htmlspecialchars($class['subject_code']); ?>) - 
+                                        Prof. <?php echo htmlspecialchars($class['first_name'] . ' ' . $class['last_name']); ?> - 
+                                        <?php echo htmlspecialchars($class['schedule']); ?> - 
                                         <?php echo htmlspecialchars($class['room']); ?>
                                     </span>
                                 </div>
@@ -341,72 +253,5 @@ foreach ($archived_classes as $class) {
             <?php endif; ?>
         </div>
     </main>
-
-    <!-- Attendance Modal -->
-    <div id="attendanceModal" class="modal">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeAttendanceModal()">&times;</span>
-            <h2 id="modalTitle">Attendance Records</h2>
-            <div id="modalBody">
-                <p>Loading attendance data...</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function openAttendanceModal(classId, subjectName) {
-            document.getElementById('modalTitle').innerText = `Attendance Records - ${subjectName}`;
-            document.getElementById('attendanceModal').style.display = 'flex';
-            loadAttendanceData(classId);
-        }
-
-        function closeAttendanceModal() {
-            document.getElementById('attendanceModal').style.display = 'none';
-        }
-
-        async function loadAttendanceData(classId) {
-            const modalBody = document.getElementById('modalBody');
-            modalBody.innerHTML = '<p>Loading attendance data...</p>';
-
-            try {
-                const response = await fetch(`../php/get_student_attendance.php?class_id=${classId}&student_id=<?php echo $student_id; ?>`);
-                if (!response.ok) throw new Error('Failed to fetch attendance data');
-                const attendanceRecords = await response.json();
-
-                if (attendanceRecords.length === 0) {
-                    modalBody.innerHTML = '<p>No attendance records found for this class.</p>';
-                    return;
-                }
-
-                let html = '<table class="attendance-table">';
-                html += '<thead><tr><th>Date</th><th>Status</th><th>Remarks</th></tr></thead><tbody>';
-
-                attendanceRecords.forEach(record => {
-                    const statusClass = record.status === 'Present' ? 'status-present' :
-                                        record.status === 'Absent' ? 'status-absent' :
-                                        record.status === 'Late' ? 'status-late' : 'status-excused';
-                    html += `<tr>
-                        <td>${record.date}</td>
-                        <td><span class="attendance-status ${statusClass}">${record.status || 'No status'}</span></td>
-                        <td>${record.remarks || ''}</td>
-                    </tr>`;
-                });
-
-                html += '</tbody></table>';
-                modalBody.innerHTML = html;
-            } catch (error) {
-                modalBody.innerHTML = '<p>Error loading attendance data.</p>';
-                console.error(error);
-            }
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('attendanceModal');
-            if (event.target === modal) {
-                closeAttendanceModal();
-            }
-        }
-    </script>
 </body>
 </html>
