@@ -331,3 +331,22 @@ if ($professor_id) {
     background-color: #c82333;
 }
 </style>
+
+<script>
+// User dropdown functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const dropdownToggle = document.querySelector('.user-dropdown .dropdown-toggle');
+    const dropdownMenu = document.querySelector('.user-dropdown .dropdown-menu');
+    if (dropdownToggle && dropdownMenu) {
+        dropdownToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
+        document.addEventListener('click', function(e) {
+            if (!dropdownMenu.contains(e.target) && !dropdownToggle.contains(e.target)) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+    }
+});
+</script>
