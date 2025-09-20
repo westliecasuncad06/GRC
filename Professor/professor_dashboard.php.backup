@@ -198,9 +198,7 @@ foreach ($subjects as $subject) {
         'monthly' => $monthly,
         'students' => $students
     ];
- }
-
-?>
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
