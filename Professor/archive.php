@@ -59,21 +59,26 @@ foreach ($sample_subjects as $sample) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action']) && $_POST['action'] === 'archive_all_2025_1st') {
         // Get the current school year and semester
-        $stmt = $pdo->prepare("SELECT school_year, semester FROM school_year_semester WHERE status = 'active'");
+        $stmt = $pdo->prepare("SELECT id, school_year, semester FROM school_year_semester WHERE status = 'Active'");
         $stmt->execute();
         $active_term = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($active_term) {
+            $school_year_semester_id = $active_term['id'];
             $school_year = $active_term['school_year'];
             $semester = $active_term['semester'];
 
             // Archive all classes for the active school year and semester for this professor
+            // First update the school_year_semester status to 'Archived'
+            $stmt = $pdo->prepare("UPDATE school_year_semester SET status = 'Archived' WHERE id = ?");
+            $stmt->execute([$school_year_semester_id]);
+
+            // Then update the classes.status for backward compatibility
             $archiveQuery = "UPDATE classes c
-                             JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
                              SET c.status = 'archived'
-                             WHERE c.professor_id = ? AND sys.school_year = ? AND sys.semester = ?";
+                             WHERE c.professor_id = ? AND c.school_year_semester_id = ?";
             $stmt = $pdo->prepare($archiveQuery);
-            $stmt->execute([$professor_id, $school_year, $semester]);
+            $stmt->execute([$professor_id, $school_year_semester_id]);
 
             header('Location: archive.php');
             exit();
@@ -84,12 +89,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } elseif (isset($_POST['action']) && $_POST['action'] === 'unarchive_all_1st') {
         // Unarchive all classes for 1st semester 2025-2026 for this professor
-        $unarchiveQuery = "UPDATE classes c
-                         JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
-                         SET c.status = 'active'
-                         WHERE c.professor_id = ? AND sys.school_year = '2025-2026' AND sys.semester = '1st Semester'";
-        $stmt = $pdo->prepare($unarchiveQuery);
-        $stmt->execute([$professor_id]);
+        // First get the school_year_semester_id for 2025-2026 1st Semester
+        $stmt = $pdo->prepare("SELECT id FROM school_year_semester WHERE school_year = '2025-2026' AND semester = '1st Semester'");
+        $stmt->execute();
+        $term = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($term) {
+            $school_year_semester_id = $term['id'];
+
+            // Update the school_year_semester status to 'Active'
+            $stmt = $pdo->prepare("UPDATE school_year_semester SET status = 'Active' WHERE id = ?");
+            $stmt->execute([$school_year_semester_id]);
+
+            // Then update the classes.status for backward compatibility
+            $unarchiveQuery = "UPDATE classes c
+                             SET c.status = 'active'
+                             WHERE c.professor_id = ? AND c.school_year_semester_id = ?";
+            $stmt = $pdo->prepare($unarchiveQuery);
+            $stmt->execute([$professor_id, $school_year_semester_id]);
+        }
 
         header('Location: archive.php');
         exit();
@@ -98,9 +116,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $action = $_POST['action'];
 
         if ($action === 'archive') {
+            // Get the school_year_semester_id for this class
+            $stmt = $pdo->prepare("SELECT school_year_semester_id FROM classes WHERE class_id = ?");
+            $stmt->execute([$class_id]);
+            $class_data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($class_data) {
+                // Update the school_year_semester status to 'Archived'
+                $stmt = $pdo->prepare("UPDATE school_year_semester SET status = 'Archived' WHERE id = ?");
+                $stmt->execute([$class_data['school_year_semester_id']]);
+            }
+
+            // Update the classes.status for backward compatibility
             $stmt = $pdo->prepare("UPDATE classes SET status = 'archived' WHERE class_id = ? AND professor_id = ?");
             $stmt->execute([$class_id, $professor_id]);
         } elseif ($action === 'unarchive') {
+            // Get the school_year_semester_id for this class
+            $stmt = $pdo->prepare("SELECT school_year_semester_id FROM classes WHERE class_id = ?");
+            $stmt->execute([$class_id]);
+            $class_data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($class_data) {
+                // Update the school_year_semester status to 'Active'
+                $stmt = $pdo->prepare("UPDATE school_year_semester SET status = 'Active' WHERE id = ?");
+                $stmt->execute([$class_data['school_year_semester_id']]);
+            }
+
+            // Update the classes.status for backward compatibility
             $stmt = $pdo->prepare("UPDATE classes SET status = 'active' WHERE class_id = ? AND professor_id = ?");
             $stmt->execute([$class_id, $professor_id]);
         }
@@ -554,7 +596,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </form>
                 <?php
                 $active_classes = array_filter($classes, function($class) {
-                    return $class['status'] !== 'archived';
+                    return $class['term_status'] !== 'Archived';
                 });
 
                 if (!empty($active_classes)):
@@ -618,7 +660,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Group archived classes by school_year and semester
                 $grouped_archived = [];
                 foreach ($classes as $class) {
-                    if ($class['status'] === 'archived') {
+                    if ($class['term_status'] === 'Archived') {
                         $year = $class['school_year'] ?? 'Unknown Year';
                         $semester = $class['semester'] ?? 'Unknown Semester';
                         $grouped_archived[$year][$semester][] = $class;
@@ -808,3 +850,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Collapse toggle function
+        function toggleCollapse(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('i');
+
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                button.classList.add('collapsed');
+            } else {
+                content.style.display = 'none';
+                button.classList.remove('collapsed');
+            }
+        }
+
+        // Archive confirmation modal functions
+        function showArchiveConfirmModal() {
+            document.getElementById('archiveConfirmModal').style.display = 'flex';
+        }
+
+        function closeArchiveConfirmModal() {
+            document.getElementById('archiveConfirmModal').style.display = 'none';
+        }
+
+        function confirmArchiveAll() {
+            // Submit the archive form
+            document.querySelector('form input[name="action"][value="archive_all_2025_1st"]').closest('form').submit();
+        }
+
+        // Unarchive confirmation modal functions
+        function showUnarchiveConfirmModal() {
+            document.getElementById('unarchiveConfirmModal').style.display = 'flex';
+        }
+
+        function closeUnarchiveConfirmModal() {
+            document.getElementById('unarchiveConfirmModal').style.display = 'none';
+        }
+
+        function confirmUnarchiveAll() {
+            // Submit the unarchive form
+            document.querySelector('form input[name="action"][value="unarchive_all_1st"]').closest('form').submit();
+        }
+
+        // Attendance modal functions
+        function closeAttendanceModal() {
+            document.getElementById('attendanceModal').style.display = 'none';
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const archiveModal = document.getElementById('archiveConfirmModal');
+            const unarchiveModal = document.getElementById('unarchiveConfirmModal');
+            const attendanceModal = document.getElementById('attendanceModal');
+
+            if (event.target === archiveModal) {
+                closeArchiveConfirmModal();
+            }
+            if (event.target === unarchiveModal) {
+                closeUnarchiveConfirmModal();
+            }
+            if (event.target === attendanceModal) {
+                closeAttendanceModal();
+            }
+        }
+    </script>
+</body>
+</html>

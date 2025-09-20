@@ -2,6 +2,13 @@
 session_start();
 require_once '../db.php';
 
+// Check if database connection is available
+if ($pdo === null) {
+    error_log("Database connection is null - redirecting to error page");
+    header('Location: ../index.php?error=database_connection_failed');
+    exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
