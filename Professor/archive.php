@@ -766,6 +766,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
+    <!-- Unarchive Confirmation Modal -->
+    <div id="unarchiveConfirmModal" class="modal">
+        <div class="modal-content" style="max-width: 500px; padding: 2rem; text-align: center;">
+            <h3 style="margin: 0 0 1rem 0; color: var(--dark); font-size: 1.5rem;">Confirm Unarchive</h3>
+            <p style="margin: 0 0 2rem 0; color: var(--gray); font-size: 1rem;">Are you sure you want to unarchive all classes for 2025-2026 1st Semester?</p>
+            <div style="display: flex; justify-content: center; gap: 1rem;">
+                <button class="btn" style="background: #f8f9fa; color: var(--dark); padding: 0.75rem 1.5rem;" onclick="closeUnarchiveConfirmModal()">Cancel</button>
+                <button class="btn btn-unarchive" style="padding: 0.75rem 1.5rem;" onclick="confirmUnarchiveAll()">OK</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         function showTab(tabName) {
             // Hide all tabs
