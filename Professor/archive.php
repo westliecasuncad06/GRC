@@ -116,33 +116,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $action = $_POST['action'];
 
         if ($action === 'archive') {
-            // Get the school_year_semester_id for this class
-            $stmt = $pdo->prepare("SELECT school_year_semester_id FROM classes WHERE class_id = ?");
-            $stmt->execute([$class_id]);
-            $class_data = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($class_data) {
-                // Update the school_year_semester status to 'Archived'
-                $stmt = $pdo->prepare("UPDATE school_year_semester SET status = 'Archived' WHERE id = ?");
-                $stmt->execute([$class_data['school_year_semester_id']]);
-            }
-
-            // Update the classes.status for backward compatibility
+            // Only update the status of the specific class
             $stmt = $pdo->prepare("UPDATE classes SET status = 'archived' WHERE class_id = ? AND professor_id = ?");
             $stmt->execute([$class_id, $professor_id]);
         } elseif ($action === 'unarchive') {
-            // Get the school_year_semester_id for this class
-            $stmt = $pdo->prepare("SELECT school_year_semester_id FROM classes WHERE class_id = ?");
-            $stmt->execute([$class_id]);
-            $class_data = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($class_data) {
-                // Update the school_year_semester status to 'Active'
-                $stmt = $pdo->prepare("UPDATE school_year_semester SET status = 'Active' WHERE id = ?");
-                $stmt->execute([$class_data['school_year_semester_id']]);
-            }
-
-            // Update the classes.status for backward compatibility
+            // Only update the status of the specific class
             $stmt = $pdo->prepare("UPDATE classes SET status = 'active' WHERE class_id = ? AND professor_id = ?");
             $stmt->execute([$class_id, $professor_id]);
         }
@@ -596,7 +574,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </form>
                 <?php
                 $active_classes = array_filter($classes, function($class) {
-                    return $class['term_status'] !== 'Archived';
+                    return $class['status'] === 'active';
                 });
 
                 if (!empty($active_classes)):
@@ -660,7 +638,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Group archived classes by school_year and semester
                 $grouped_archived = [];
                 foreach ($classes as $class) {
-                    if ($class['term_status'] === 'Archived') {
+                    if ($class['status'] === 'archived') {
                         $year = $class['school_year'] ?? 'Unknown Year';
                         $semester = $class['semester'] ?? 'Unknown Semester';
                         $grouped_archived[$year][$semester][] = $class;
