@@ -1798,3 +1798,311 @@ body {
         max-width: none;
     }
 }
+/* Enhanced Table Alignment Classes */
+.table-container-aligned {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.table-aligned {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.table-aligned th,
+.table-aligned td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle;
+}
+
+.table-aligned th {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table-aligned tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.table-aligned .text-center {
+    text-align: center;
+}
+
+.table-aligned .text-right {
+    text-align: right;
+}
+
+.table-aligned .action-cell {
+    text-align: center;
+    width: 150px;
+}
+
+/* Enhanced spacing utilities */
+.section-spacing {
+    margin-bottom: 3rem;
+}
+
+.content-spacing {
+    padding: 2rem;
+}
+
+.table-section {
+    margin-bottom: 2rem;
+}
+
+/* Enhanced responsive table */
+@media (max-width: 768px) {
+    .table-aligned {
+        font-size: 0.875rem;
+    }
+
+    .table-aligned th,
+    .table-aligned td {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .table-aligned .action-cell {
+        width: 120px;
+    }
+
+    .table-aligned .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Enhanced modal alignment */
+.modal-aligned {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+.modal-content-aligned {
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Enhanced button alignment */
+.btn-group-aligned {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-group-aligned .btn {
+    flex: 1;
+    justify-content: center;
+}
+
+/* Enhanced status badge alignment */
+.status-badge-aligned {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    min-width: 100px;
+}
+
+/* Enhanced card alignment */
+.card-aligned {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-body-aligned {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-footer-aligned {
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+/* Mobile-specific alignment fixes */
+@media (max-width: 768px) {
+    .btn-group-aligned {
+        flex-direction: column;
+    }
+
+    .status-badge-aligned {
+        width: 100%;
+        justify-content: center;
+    }
+}
+/* Enhanced Table Alignment Classes */
+.table-container-aligned {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.table-aligned {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.table-aligned th,
+.table-aligned td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle;
+}
+
+.table-aligned th {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table-aligned tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.table-aligned .text-center {
+    text-align: center;
+}
+
+.table-aligned .text-right {
+    text-align: right;
+}
+
+.table-aligned .action-cell {
+    text-align: center;
+    width: 150px;
+}
+
+/* Enhanced spacing utilities */
+.section-spacing {
+    margin-bottom: 3rem;
+}
+
+.content-spacing {
+    padding: 2rem;
+}
+
+.table-section {
+    margin-bottom: 2rem;
+}
+
+/* Enhanced responsive table */
+@media (max-width: 768px) {
+    .table-aligned {
+        font-size: 0.875rem;
+    }
+
+    .table-aligned th,
+    .table-aligned td {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .table-aligned .action-cell {
+        width: 120px;
+    }
+
+    .table-aligned .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Enhanced modal alignment */
+.modal-aligned {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+.modal-content-aligned {
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Enhanced button alignment */
+.btn-group-aligned {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-group-aligned .btn {
+    flex: 1;
+    justify-content: center;
+}
+
+/* Enhanced status badge alignment */
+.status-badge-aligned {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    min-width: 100px;
+}
+
+/* Enhanced card alignment */
+.card-aligned {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-body-aligned {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-footer-aligned {
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+/* Mobile-specific alignment fixes */
+@media (max-width: 768px) {
+    .btn-group-aligned {
+        flex-direction: column;
+    }
+
+    .status-badge-aligned {
+        width: 100%;
+        justify-content: center;
+    }
+}
