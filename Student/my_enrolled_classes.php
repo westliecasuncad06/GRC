@@ -46,13 +46,12 @@ $pending_unenrollment_requests = $stmt->fetchAll();
     <?php include '../includes/navbar_student.php'; ?>
     <?php include '../includes/sidebar_student.php'; ?>
 
-    <main class="main-content content-spacing">
+    <main class="main-content">
         <div class="table-header-enhanced">
             <h2 class="table-title-enhanced"><i class="fas fa-book"></i> My Enrolled Classes</h2>
         </div>
-
-        <div class="table-container-aligned table-section">
-            <table class="table-aligned">
+        <div class="table-container" style="margin-top: 1rem;">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Class Name</th>
@@ -60,7 +59,7 @@ $pending_unenrollment_requests = $stmt->fetchAll();
                         <th>Professor</th>
                         <th>Schedule</th>
                         <th>Room</th>
-                        <th class="action-cell">Actions</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,21 +82,17 @@ $pending_unenrollment_requests = $stmt->fetchAll();
                         $button_disabled = $has_pending_request ? 'disabled' : '';
 
                         echo '<tr>
-                            <td>' . htmlspecialchars($class['class_name']) . '</td>
-                            <td>' . htmlspecialchars($class['subject_name']) . '</td>
-                            <td>' . htmlspecialchars($professor_name) . '</td>
-                            <td>' . htmlspecialchars($class['schedule']) . '</td>
-                            <td>' . htmlspecialchars($class['room']) . '</td>
-                            <td class="action-cell">
-                                <button class="btn ' . $button_class . ' btn-sm" ' . $button_disabled . ' onclick="unenrollFromClass(\'' . $class['class_id'] . '\')">
-                                    <i class="' . $button_icon . '"></i> ' . $button_text . '
-                                </button>
-                            </td>
+                            <td>' . $class['class_name'] . '</td>
+                            <td>' . $class['subject_name'] . '</td>
+                            <td>' . $professor_name . '</td>
+                            <td>' . $class['schedule'] . '</td>
+                            <td>' . $class['room'] . '</td>
+                            <td><button class="btn ' . $button_class . '" ' . $button_disabled . ' onclick="unenrollFromClass(\'' . $class['class_id'] . '\')"><i class="' . $button_icon . '"></i> ' . $button_text . '</button></td>
                         </tr>';
                     }
 
                     if (empty($enrolled_classes)) {
-                        echo "<tr><td colspan='6' class='text-center'>No classes enrolled yet</td></tr>";
+                        echo "<tr><td colspan='6' style='text-align: center;'>No classes enrolled yet</td></tr>";
                     }
                     ?>
                 </tbody>
@@ -106,18 +101,18 @@ $pending_unenrollment_requests = $stmt->fetchAll();
 
         <!-- Pending Unenrollment Requests Section -->
         <?php if (!empty($pending_unenrollment_requests)): ?>
-            <div class="table-header-enhanced section-spacing" style="background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);">
+            <div class="table-header-enhanced" style="margin-top: 3rem; background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);">
                 <h2 class="table-title-enhanced"><i class="fas fa-clock" style="margin-right: 10px;"></i>Pending Unenrollment Requests</h2>
             </div>
-            <div class="table-container-aligned table-section">
-                <table class="table-aligned">
+            <div class="table-container" style="margin-top: 1rem;">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>Class Name</th>
                             <th>Subject</th>
                             <th>Professor</th>
                             <th>Request Date</th>
-                            <th class="text-center">Status</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -130,7 +125,7 @@ $pending_unenrollment_requests = $stmt->fetchAll();
                                 <td><?php echo htmlspecialchars($request['subject_name']); ?></td>
                                 <td><?php echo htmlspecialchars($professor_name); ?></td>
                                 <td><?php echo date('M j, Y g:i A', strtotime($request['requested_at'])); ?></td>
-                                <td class="text-center"><span class="status-badge-aligned">Pending Approval</span></td>
+                                <td><span class="status-badge pending">Pending Approval</span></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -140,19 +135,19 @@ $pending_unenrollment_requests = $stmt->fetchAll();
     </main>
 
     <!-- Confirmation Modal -->
-    <div id="confirmationModal" class="modal-aligned">
-        <div class="modal-content-aligned">
+    <div id="confirmationModal" class="modal confirmation-modal">
+        <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title"><i class="fas fa-exclamation-triangle"></i> Confirm Unenrollment Request</h3>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
-            <div class="modal-body content-spacing">
+            <div class="modal-body">
                 <p>Are you sure you want to submit an unenrollment request for this class? This will send a request to your professor for approval.</p>
-                <div id="requestInfo" class="content-spacing" style="background: #f8f9fa; border-radius: 8px; border-left: 4px solid #ffc107;">
+                <div id="requestInfo" style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #ffc107;">
                     <p><strong>Note:</strong> Your professor will need to approve this request before you are unenrolled from the class.</p>
                 </div>
             </div>
-            <div class="modal-footer btn-group-aligned">
+            <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
                 <button class="btn btn-warning" id="confirmUnenrollBtn"><i class="fas fa-paper-plane"></i> Submit Request</button>
             </div>
@@ -162,6 +157,258 @@ $pending_unenrollment_requests = $stmt->fetchAll();
     <!-- Toast Container -->
     <div id="toastContainer" class="toast-container"></div>
 
+    <style>
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+            border: none;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-1px);
+        }
+
+        .btn-warning:disabled {
+            background: #ffc107;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            display: inline-block;
+            min-width: 100px;
+        }
+
+        .status-badge.pending {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 16px;
+            padding: 0;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem;
+            border-bottom: 1px solid #e9ecef;
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: #212529;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: rgba(0, 0, 0, 0.1);
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #212529;
+            padding: 0.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.2);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #e9ecef;
+            background: #f8f9fa;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #28a745;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 300px;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left-color: #28a745;
+        }
+
+        .toast.error {
+            border-left-color: #dc3545;
+        }
+
+        .toast-icon {
+            font-size: 1.25rem;
+        }
+
+        .toast-message {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: #6c757d;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast-close:hover {
+            color: #343a40;
+        }
+    </style>
 
     <script>
         let currentClassId = null;
