@@ -1099,11 +1099,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Archive confirmation modal functions
         function showArchiveConfirmModal() {
-            document.getElementById('archiveConfirmModal').style.display = 'flex';
+            document.getElementById('archiveConfirmModal').classList.add('show');
         }
 
         function closeArchiveConfirmModal() {
-            document.getElementById('archiveConfirmModal').style.display = 'none';
+            document.getElementById('archiveConfirmModal').classList.remove('show');
         }
 
         function confirmArchiveAll() {
@@ -1113,11 +1113,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Unarchive confirmation modal functions
         function showUnarchiveConfirmModal() {
-            document.getElementById('unarchiveConfirmModal').style.display = 'flex';
+            document.getElementById('unarchiveConfirmModal').classList.add('show');
         }
 
         function closeUnarchiveConfirmModal() {
-            document.getElementById('unarchiveConfirmModal').style.display = 'none';
+            document.getElementById('unarchiveConfirmModal').classList.remove('show');
         }
 
         function confirmUnarchiveAll() {
