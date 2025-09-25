@@ -5,8 +5,13 @@ require_once 'db.php';
 $message = '';
 $error = '';
 
+// Always clear session unless just checked email
+if (!isset($_POST['check_email']) && !isset($_POST['reset_password'])) {
+    unset($_SESSION['reset_email']);
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = trim($_POST['email']);
+    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
     $new_password = isset($_POST['new_password']) ? trim($_POST['new_password']) : '';
     $confirm_password = isset($_POST['confirm_password']) ? trim($_POST['confirm_password']) : '';
 
@@ -237,7 +242,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
                 <button type="submit" name="check_email" class="btn">Check Email</button>
             </form>
-        <?php else: ?>
+        <?php elseif (isset($_SESSION['reset_email']) && $message === 'Email found. Please enter your new password.'): ?>
             <form action="forgot_password.php" method="POST">
                 <div class="form-group">
                     <label for="new_password">New Password</label>
