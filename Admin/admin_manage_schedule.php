@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
 }
 
 // Fetch data for display
-$subjects = $pdo->query("SELECT s.*, p.first_name, p.last_name, c.class_id, c.class_code, c.schedule, c.room, c.school_year
+$subjects = $pdo->query("SELECT s.*, p.first_name, p.last_name, c.class_id, c.class_code, c.professor_id, c.schedule, c.room, c.school_year
                         FROM subjects s
                         JOIN classes c ON s.subject_id = c.subject_id
                         LEFT JOIN professors p ON c.professor_id = p.professor_id
@@ -467,8 +467,13 @@ foreach ($subjects as $subject) {
         }
         @media (max-width: 768px) {
             .enhanced-header {
+                flex-direction: column;
                 gap: 1rem;
                 text-align: center;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: center;
             }
             .search-container {
                 width: 100%;
@@ -483,6 +488,16 @@ foreach ($subjects as $subject) {
             }
             .action-buttons {
                 justify-content: center;
+                flex-wrap: wrap;
+            }
+            .table-container {
+                overflow-x: auto;
+            }
+            .table {
+                min-width: 600px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
         }
         .stats-grid {
@@ -706,8 +721,6 @@ foreach ($subjects as $subject) {
                 </div>
             </div>
         </div>
-            </div>
-        </div>
 
         <!-- Edit Subject Modal -->
         <div id="editSubjectModal" class="modal">
@@ -823,28 +836,6 @@ foreach ($subjects as $subject) {
     </main>
 
     <script>
-        // Hamburger menu toggle
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('show');
-            // Optionally add overlay for mobile
-            if (window.innerWidth <= 900) {
-                document.body.classList.toggle('sidebar-open');
-            }
-        });
-
-        // Optional: Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const sidebar = document.querySelector('.sidebar');
-            const toggle = document.getElementById('sidebarToggle');
-            if (window.innerWidth <= 900 && sidebar.classList.contains('show')) {
-                if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
-                    sidebar.classList.remove('show');
-                    document.body.classList.remove('sidebar-open');
-                }
-            }
-        });
-
         function filterSubjects() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const tbody = document.querySelector('.table tbody');

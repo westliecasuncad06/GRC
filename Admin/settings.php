@@ -1,4 +1,4 @@
- <?php
+<?php
 session_start();
 if (!isset($_SESSION['user_id'])) {
     header('Location: index.php');
@@ -41,8 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $_SESSION['email'] = $email;
                     $_SESSION['mobile'] = $mobile;
                 } elseif ($role == 'admin') {
-                    $stmt = $pdo->prepare("UPDATE administrators SET first_name = ?, last_name = ?, email = ?, updated_at = NOW() WHERE admin_id = ?");
-                    $stmt->execute([$first_name, $last_name, $email, $user_id]);
+                    $stmt = $pdo->prepare("UPDATE administrators SET first_name = ?, last_name = ?, email = ?, mobile = ?, updated_at = NOW() WHERE admin_id = ?");
+                    $stmt->execute([$first_name, $last_name, $email, $mobile, $user_id]);
 
                     // Update session data
                     $_SESSION['first_name'] = $first_name;
@@ -537,38 +537,17 @@ if ($role == 'professor') {
     </main>
 
     <script>
-        // Hamburger menu toggle
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('show');
-            if (window.innerWidth <= 900) {
-                document.body.classList.toggle('sidebar-open');
-            }
-        });
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const sidebar = document.querySelector('.sidebar');
-            const toggle = document.getElementById('sidebarToggle');
-            if (window.innerWidth <= 900 && sidebar.classList.contains('show')) {
-                if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
-                    sidebar.classList.remove('show');
-                    document.body.classList.remove('sidebar-open');
-                }
-            }
-        });
-
-    // Dropdown behaviour is handled in the included navbar script (../includes/navbar_admin.php)
-    </script>
-
-    <script>
         // Add toggle password visibility for Change Password inputs
         document.addEventListener('DOMContentLoaded', function () {
             const newPasswordInput = document.querySelector('input[name="new_password"]');
             const confirmPasswordInput = document.querySelector('input[name="confirm_password"]');
+            const currentPasswordInput = document.querySelector('input[name="current_password"]');
 
             // Create toggle buttons
             function createToggleButton(input) {
+                const wrapper = input.parentElement;
+                wrapper.style.position = 'relative';
+
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = 'toggle-password';
@@ -583,9 +562,10 @@ if ($role == 'professor') {
                 btn.style.color = 'var(--gray)';
                 btn.style.fontSize = '1.2rem';
                 btn.style.padding = '5px';
+                btn.style.zIndex = '1';
 
-                const eyeVisible = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"></circle></svg>`;
-                const eyeHidden = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"></circle><line x1="3" y1="3" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line></svg>`;
+                const eyeVisible = `<i class="fas fa-eye"></i>`;
+                const eyeHidden = `<i class="fas fa-eye-slash"></i>`;
 
                 btn.innerHTML = eyeHidden;
 
@@ -595,19 +575,17 @@ if ($role == 'professor') {
                     this.innerHTML = type === 'password' ? eyeHidden : eyeVisible;
                 });
 
-                return btn;
+                wrapper.appendChild(btn);
             }
 
+            if (currentPasswordInput) {
+                createToggleButton(currentPasswordInput);
+            }
             if (newPasswordInput) {
-                const wrapper = newPasswordInput.parentElement;
-                wrapper.style.position = 'relative';
-                wrapper.appendChild(createToggleButton(newPasswordInput));
+                createToggleButton(newPasswordInput);
             }
-
             if (confirmPasswordInput) {
-                const wrapper = confirmPasswordInput.parentElement;
-                wrapper.style.position = 'relative';
-                wrapper.appendChild(createToggleButton(confirmPasswordInput));
+                createToggleButton(confirmPasswordInput);
             }
         });
     </script>

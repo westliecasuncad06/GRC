@@ -139,6 +139,31 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Sidebar toggle functionality
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('show');
+        });
+    }
+
+    // Close sidebar when clicking on a sidebar link (for mobile)
+    document.querySelectorAll('.sidebar-link').forEach(function(link) {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('show');
+            }
+        });
+    });
+
+    // Close sidebar when clicking outside (for mobile)
+    document.addEventListener('click', function(event) {
+        if (window.innerWidth <= 768 && sidebar && !sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
+            sidebar.classList.remove('show');
+        }
+    });
 });
 </script>
 

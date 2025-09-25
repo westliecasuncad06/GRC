@@ -804,28 +804,6 @@ $students = $pdo->query($query)->fetchAll();
     </main>
 
     <script>
-        // Hamburger menu toggle
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('show');
-            // Optionally add overlay for mobile
-            if (window.innerWidth <= 900) {
-                document.body.classList.toggle('sidebar-open');
-            }
-        });
-
-        // Optional: Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const sidebar = document.querySelector('.sidebar');
-            const toggle = document.getElementById('sidebarToggle');
-            if (window.innerWidth <= 900 && sidebar.classList.contains('show')) {
-                if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
-                    sidebar.classList.remove('show');
-                    document.body.classList.remove('sidebar-open');
-                }
-            }
-        });
-
         function filterStudents() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const tbody = document.querySelector('.table tbody');

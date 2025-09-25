@@ -177,6 +177,82 @@ require_once '../php/db.php';
                 padding: 1.5rem;
             }
         }
+
+        /* Sidebar and Main Content Overrides */
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            height: calc(100vh - 70px);
+            position: fixed;
+            left: 0;
+            top: 70px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 999;
+            transform: translateX(0);
+        }
+
+        /* Collapsed state on desktop */
+        @media (min-width: 901px) {
+            body.sidebar-collapsed .sidebar {
+                transform: translateX(-280px);
+            }
+
+            body.sidebar-collapsed .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Mobile styles - sidebar hidden by default */
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-280px); /* Hidden by default on mobile */
+            }
+
+            .main-content {
+                margin-left: 0; /* No margin on mobile */
+            }
+
+            /* Show sidebar when not collapsed */
+            body:not(.sidebar-collapsed) .sidebar {
+                transform: translateX(0);
+            }
+
+            body:not(.sidebar-collapsed) {
+                overflow: hidden; /* Prevent body scroll when sidebar open */
+            }
+
+            body:not(.sidebar-collapsed)::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 998; /* Below sidebar */
+            }
+
+            .hamburger-menu {
+                display: flex; /* Show hamburger on mobile */
+            }
+
+            .navbar-title {
+                display: none;
+            }
+
+            .navbar-title-mobile {
+                display: inline;
+            }
+        }
     </style>
 </head>
 <body>

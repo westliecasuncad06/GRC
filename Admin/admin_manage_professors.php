@@ -451,8 +451,13 @@ $professors = $pdo->query($query)->fetchAll();
         }
         @media (max-width: 768px) {
             .enhanced-header {
+                flex-direction: column;
                 gap: 1rem;
                 text-align: center;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: center;
             }
             .search-container {
                 width: 100%;
@@ -467,6 +472,13 @@ $professors = $pdo->query($query)->fetchAll();
             }
             .action-buttons {
                 justify-content: center;
+                flex-wrap: wrap;
+            }
+            .table-container {
+                overflow-x: auto;
+            }
+            .table {
+                min-width: 600px;
             }
         }
     </style>
@@ -656,28 +668,6 @@ $professors = $pdo->query($query)->fetchAll();
     </main>
 
     <script>
-        // Hamburger menu toggle
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('show');
-            // Optionally add overlay for mobile
-            if (window.innerWidth <= 900) {
-                document.body.classList.toggle('sidebar-open');
-            }
-        });
-
-        // Optional: Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const sidebar = document.querySelector('.sidebar');
-            const toggle = document.getElementById('sidebarToggle');
-            if (window.innerWidth <= 900 && sidebar.classList.contains('show')) {
-                if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
-                    sidebar.classList.remove('show');
-                    document.body.classList.remove('sidebar-open');
-                }
-            }
-        });
-
         function filterProfessors() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const tbody = document.querySelector('.table tbody');

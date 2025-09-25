@@ -38,7 +38,7 @@ $pending_unenrollment_requests = $stmt->fetchAll();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>My Enrolled Classes - Global Reciprocal College</title>
-    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/styles_fixed.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
@@ -273,7 +273,6 @@ $pending_unenrollment_requests = $stmt->fetchAll();
     <style>
         /* Page Layout */
         .main-content {
-            margin-left: 250px;
             padding: 2rem;
             min-height: calc(100vh - 70px);
             background: var(--light);
