@@ -118,10 +118,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
 }
 
 // Fetch data for display
-$subjects = $pdo->query("SELECT s.*, p.first_name, p.last_name, c.class_id, c.class_code, c.professor_id, c.schedule, c.room, c.school_year
+$subjects = $pdo->query("SELECT s.*, p.first_name, p.last_name, c.class_id, c.class_code, c.professor_id, c.schedule, c.room, sys.school_year
                         FROM subjects s
                         JOIN classes c ON s.subject_id = c.subject_id
                         LEFT JOIN professors p ON c.professor_id = p.professor_id
+                        LEFT JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
                         ORDER BY s.created_at DESC")->fetchAll();
 
 $professors = $pdo->query("SELECT * FROM professors ORDER BY first_name, last_name")->fetchAll();
