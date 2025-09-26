@@ -2,14 +2,7 @@
 session_start();
 
 // BYPASS FOR TESTING - REMOVE AFTER TESTING
-$bypass_enabled = true; // Set to false to remove bypass
-if ($bypass_enabled) {
-    // Allow access without authentication for testing
-    $_SESSION['user_id'] = $_SESSION['user_id'] ?? 'TEST_PROFESSOR';
-    $_SESSION['role'] = 'professor';
-    $_SESSION['first_name'] = 'Test';
-    $_SESSION['last_name'] = 'Professor';
-}
+// BYPASS REMOVED: Use real session data
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'professor') {
     header('Location: ../index.php');

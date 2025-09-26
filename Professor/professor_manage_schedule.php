@@ -940,12 +940,12 @@ foreach ($subjects as $subject) {
                                 <span class="stat-detail-text"><?php echo $enrollment_counts[$subject['subject_id']] ?? 0; ?> students enrolled</span>
                             </div>
                         </div>
-
+                        
                         <div class="stat-actions-enhanced">
-                            <button class="stat-action-btn" onclick="event.stopPropagation(); openAttendanceModal('<?php echo $subject['class_id']; ?>', '<?php echo $subject['subject_name']; ?>')">
+                            <button class="stat-action-btn" style="margin-bottom:5px;" onclick="event.stopPropagation(); openAttendanceModal('<?php echo $subject['class_id']; ?>', '<?php echo $subject['subject_name']; ?>')">
                                 <i class="fas fa-clipboard-check"></i> Take Attendance
                             </button>
-                            <button class="stat-action-btn secondary" onclick="event.stopPropagation(); regenerateCode('<?php echo $subject['subject_id']; ?>')">
+                            <button class="stat-action-btn" onclick="event.stopPropagation(); regenerateCode('<?php echo $subject['subject_id']; ?>')">
                                 <i class="fas fa-sync-alt"></i> Regenerate Code
                             </button>
                         </div>

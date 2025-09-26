@@ -62,7 +62,16 @@ if ($professor_id) {
         <span class="navbar-title-mobile">GRC</span>
     </div>
     <div class="navbar-user">
-        <span>Welcome, <?php echo htmlspecialchars($_SESSION['first_name'] ?? ''); ?></span>
+    <?php
+    // Try to use professor name from database if available
+    $prof_name = '';
+    if (isset($professor) && is_array($professor) && isset($professor['first_name'])) {
+        $prof_name = $professor['first_name'] . ' ' . $professor['last_name'];
+    } else {
+        $prof_name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? '');
+    }
+    ?>
+    <span>Welcome, <?php echo htmlspecialchars($prof_name); ?></span>
         <button type="button" class="notification-btn" onclick="openNotificationModal()" title="Notifications" style="position: relative;">
             <i class="fas fa-bell" aria-hidden="true"></i>
             <?php if ($pending_requests_count > 0): ?>
