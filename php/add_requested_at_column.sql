@@ -1,3 +1,0 @@
-ALTER TABLE enrollment_requests 
-ADD COLUMN handled_at DATETIME DEFAULT NULL,
-ADD COLUMN handled_by VARCHAR(20) DEFAULT NULL;

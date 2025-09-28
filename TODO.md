@@ -1,29 +1,11 @@
-# My Enrolled Classes Page Redesign - Alignment Fixes
+# TODO: Delete unrelated PHP files
 
-## Plan Overview
-Redesign the my_enrolled_classes.php page to fix alignment issues and improve overall design consistency.
-
-## Steps to Complete
-
-### 1. Update CSS File (css/styles_fixed.css)
-- [ ] Add enhanced table alignment classes
-- [ ] Improve responsive design rules
-- [ ] Add better spacing utilities
-- [ ] Enhance modal alignment
-
-### 2. Redesign Main File (Student/my_enrolled_classes.php)
-- [ ] Remove embedded CSS and use external CSS files
-- [ ] Improve table structure and alignment
-- [ ] Add proper responsive design classes
-- [ ] Fix column alignment in tables
-- [ ] Improve spacing and margins
-
-### 3. Testing
-- [ ] Test table column alignment
-- [ ] Verify responsive behavior
-- [ ] Check modal positioning
-- [ ] Ensure proper spacing throughout
-
-## Current Status
-- Plan approved by user
-- Ready to start implementation
+- [x] Delete diagnostic/check scripts: check_classes_columns.php, check_professors_columns.php
+- [x] Delete utility/setup scripts: sync_sections.php, setup_database.php, migrate_add_school_year.php
+- [x] Delete test files: test_database_connection.php, test_unenroll.php
+- [x] Delete migration scripts: run_migration.php, run_complete_migration.php, run_simple_migration.php, run_unenrollment_migration.php, add_missing_columns_migration.php, add_requested_at_column.php, fix_unenrollment_issues.php
+- [x] Delete table creation scripts: create_enrollment_requests_table.php, create_notifications_table.php, create_unenrollment_requests_table.php
+- [x] Delete old versions: Professor/archive_redesigned.php, Professor/archive_updated.php, Professor/professor_manage_schedule_archive.php, php/handle_enrollment_request.php
+- [x] Delete additional migration files: php/add_requested_at_column.php, php/run_complete_migration.php, php/run_simple_migration.php, php/run_unenrollment_migration.php, php/fix_unenrollment_issues.php, php/test_unenroll.php
+- [x] Delete assets.php and add_requested_at_column.sql
+- [ ] Test the system: Check login, dashboards, functionalities
