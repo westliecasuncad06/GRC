@@ -741,16 +741,6 @@ $students = $stmt->fetchAll();
                 </div>
                 <div class="stat-main-metric"><?php echo count(array_filter($students, function($s) { return strtotime($s['created_at']) > strtotime('-30 days'); })); ?></div>
             </div>
-            <div class="stat-card-enhanced fade-in">
-                <div class="stat-header-enhanced">
-                    <div class="stat-icon-enhanced"><i class="fas fa-envelope"></i></div>
-                    <div class="stat-info-enhanced">
-                        <h3 class="stat-title-enhanced">Unique Emails</h3>
-                        <p class="stat-subtitle-enhanced">Distinct email addresses</p>
-                    </div>
-                </div>
-                <div class="stat-main-metric"><?php echo count(array_unique(array_column($students, 'email'))); ?></div>
-            </div>
         </div>
 
         <div class="table-container-enhanced">
