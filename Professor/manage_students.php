@@ -845,8 +845,14 @@ $students = $stmt->fetchAll();
                             <textarea id="add_address" name="address" required></textarea>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn-secondary-enhanced" onclick="closeModal('addStudentModal')">Cancel</button>
-                            <button type="submit" class="btn-primary-enhanced">Add Student</button>
+                            <button type="button" class="btn-enhanced btn-secondary-enhanced" onclick="closeModal('addStudentModal')">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn-enhanced btn-primary-enhanced">
+                                <i class="fas fa-plus"></i>
+                                Add Student
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -901,19 +907,18 @@ $students = $stmt->fetchAll();
     <script>
         function filterStudents() {
             const query = document.getElementById('searchInput').value.toLowerCase();
-            const tbody = document.querySelector('.table tbody');
+            const tbody = document.querySelector('.table-enhanced tbody');
             const rows = tbody.getElementsByTagName('tr');
 
             for (let i = 0; i < rows.length; i++) {
                 const cells = rows[i].getElementsByTagName('td');
-                let match = false;
-                for (let j = 0; j < cells.length; j++) {
-                    if (cells[j].textContent.toLowerCase().includes(query)) {
-                        match = true;
-                        break;
-                    }
+                // Only check the Name column (index 1)
+                const nameCell = cells[1];
+                if (nameCell && nameCell.textContent.toLowerCase().includes(query)) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
                 }
-                rows[i].style.display = match ? '' : 'none';
             }
         }
 
