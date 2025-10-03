@@ -38,6 +38,12 @@ try {
     $student_id = $request['student_id'];
     $class_id = $request['class_id'];
 
+    // Get professor name
+    $stmt = $pdo->prepare("SELECT first_name, last_name FROM professors WHERE professor_id = ?");
+    $stmt->execute([$professor_id]);
+    $professor = $stmt->fetch();
+    $professor_name = $professor ? $professor['first_name'] . ' ' . $professor['last_name'] : 'Professor';
+
     if ($action === 'accept') {
         // Remove from student_classes table
         $stmt = $pdo->prepare("DELETE FROM student_classes WHERE student_id = ? AND class_id = ?");
@@ -47,7 +53,7 @@ try {
 
         // Create notification for student
         $notification_title = 'Unenrollment Request Approved';
-        $notification_message = 'Your unenrollment request has been approved. You have been unenrolled from the class.';
+        $notification_message = "Your unenrollment request has been approved by Professor $professor_name. You have been unenrolled from the class.";
         $notification_type = 'unenrollment_approved';
 
         $notificationManager->createNotification(
@@ -65,7 +71,7 @@ try {
 
         // Create notification for student
         $notification_title = 'Unenrollment Request Rejected';
-        $notification_message = 'Your unenrollment request has been rejected by the professor.';
+        $notification_message = "Your unenrollment request has been rejected by Professor $professor_name.";
         $notification_type = 'unenrollment_rejected';
 
         $notificationManager->createNotification(
@@ -81,7 +87,10 @@ try {
 
     // Update the unenrollment request
     $stmt = $pdo->prepare("UPDATE unenrollment_requests SET status = ?, processed_at = NOW(), processed_by = ? WHERE request_id = ?");
-    $stmt->execute([$action === 'accept' ? 'approved' : 'rejected', $professor_id, $request_id]);
+    if (!$stmt->execute([$action === 'accept' ? 'approved' : 'rejected', $professor_id, $request_id])) {
+        echo json_encode(['success' => false, 'message' => 'Failed to update unenrollment request status']);
+        exit();
+    }
 
     echo json_encode([
         'success' => true,

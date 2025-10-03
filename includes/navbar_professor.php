@@ -223,7 +223,7 @@ if ($professor_id) {
             alert('Invalid action');
             return;
         }
-        fetch('../php/handle_enrollment_request.php', {
+        fetch('../php/handle_enrollment_request_with_notifications.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -269,7 +269,7 @@ if ($professor_id) {
             alert('Invalid action');
             return;
         }
-        fetch('../php/handle_unenrollment_request.php', {
+        fetch('../php/handle_unenrollment_request_with_notifications.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

@@ -1,2 +1,3 @@
-- [x] Fix the selector in filterStudents function from '.table tbody' to '.table-enhanced tbody'
-- [ ] Test the search functionality in the browser
+- [x] Update php/handle_enrollment_request_with_notifications.php to include professor name in notification messages
+- [x] Update php/handle_unenrollment_request_with_notifications.php to include professor name in notification messages
+- [x] Test notifications display with new messages

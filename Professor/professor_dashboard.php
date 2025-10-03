@@ -1706,20 +1706,25 @@ foreach ($subjects as $subject) {
             <?php endif; endforeach; ?>
 
             // Hamburger menu toggle
-            document.getElementById('sidebarToggle').addEventListener('click', function() {
-                const sidebar = document.querySelector('.sidebar');
-                sidebar.classList.toggle('show');
-                if (window.innerWidth <= 900) {
-                    document.body.classList.toggle('sidebar-open');
-                }
-            });
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    const sidebar = document.querySelector('.sidebar');
+                    if (sidebar) {
+                        sidebar.classList.toggle('show');
+                    }
+                    if (window.innerWidth <= 900) {
+                        document.body.classList.toggle('sidebar-open');
+                    }
+                });
+            }
 
             // Close sidebar when clicking outside on mobile
             document.addEventListener('click', function(event) {
                 const sidebar = document.querySelector('.sidebar');
                 const toggle = document.getElementById('sidebarToggle');
-                if (window.innerWidth <= 900 && sidebar.classList.contains('show')) {
-                    if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+                if (window.innerWidth <= 900 && sidebar && sidebar.classList.contains('show')) {
+                    if (!sidebar.contains(event.target) && (!toggle || !toggle.contains(event.target))) {
                         sidebar.classList.remove('show');
                         document.body.classList.remove('sidebar-open');
                     }
@@ -1733,7 +1738,7 @@ foreach ($subjects as $subject) {
         function handleEnrollmentRequest(requestId, action) {
             if (!['accept', 'reject'].includes(action)) return;
 
-            fetch('../php/handle_enrollment_request.php', {
+            fetch('../php/handle_enrollment_request_with_notifications.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -1796,7 +1801,7 @@ foreach ($subjects as $subject) {
         function handleUnenrollmentRequest(requestId, action) {
             if (!['accept', 'reject'].includes(action)) return;
 
-            fetch('../php/handle_unenrollment_request.php', {
+            fetch('../php/handle_unenrollment_request_with_notifications.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'

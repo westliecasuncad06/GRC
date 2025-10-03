@@ -38,6 +38,12 @@ try {
     $student_id = $request['student_id'];
     $class_id = $request['class_id'];
 
+    // Get professor name
+    $stmt = $pdo->prepare("SELECT first_name, last_name FROM professors WHERE professor_id = ?");
+    $stmt->execute([$professor_id]);
+    $professor = $stmt->fetch();
+    $professor_name = $professor ? $professor['first_name'] . ' ' . $professor['last_name'] : 'Professor';
+
     if ($action === 'accept') {
         // Check if student is already enrolled in this class
         $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM student_classes WHERE student_id = ? AND class_id = ?");
@@ -57,7 +63,7 @@ try {
 
         // Create notification for student
         $notification_title = 'Enrollment Request Approved';
-        $notification_message = 'Your enrollment request has been approved. You are now enrolled in the class.';
+        $notification_message = "Your enrollment request has been approved by Professor $professor_name. You are now enrolled in the class.";
         $notification_type = 'enrollment_approved';
 
         $notificationManager->createNotification(
@@ -75,7 +81,7 @@ try {
 
         // Create notification for student
         $notification_title = 'Enrollment Request Rejected';
-        $notification_message = 'Your enrollment request has been rejected by the professor.';
+        $notification_message = "Your enrollment request has been rejected by Professor $professor_name.";
         $notification_type = 'enrollment_rejected';
 
         $notificationManager->createNotification(
@@ -91,7 +97,10 @@ try {
 
     // Update the enrollment request
     $stmt = $pdo->prepare("UPDATE enrollment_requests SET status = ?, processed_at = NOW(), processed_by = ? WHERE request_id = ?");
-    $stmt->execute([$action === 'accept' ? 'approved' : 'rejected', $professor_id, $request_id]);
+    if (!$stmt->execute([$action === 'accept' ? 'approved' : 'rejected', $professor_id, $request_id])) {
+        echo json_encode(['success' => false, 'message' => 'Failed to update enrollment request status']);
+        exit();
+    }
 
     echo json_encode([
         'success' => true,
