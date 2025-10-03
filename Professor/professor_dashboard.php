@@ -1135,29 +1135,10 @@ foreach ($subjects as $subject) {
             to { transform: translateY(0); opacity: 1; }
         }
 
-        @media (max-width: 768px) {
-            .stat-card-enhanced {
-                padding: 1.5rem;
-            }
 
-            .stat-breakdown-enhanced {
-                grid-template-columns: 1fr;
-            }
-
-            .stat-recent-item {
-                flex-direction: column;
-                gap: 0.75rem;
-                align-items: flex-start;
-            }
-
-            .stat-action-btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
     </style>
 </head>
-<body>
+<body class="professor">
     <?php include '../includes/navbar_professor.php'; ?>
 
     <?php include '../includes/sidebar_professor.php'; ?>

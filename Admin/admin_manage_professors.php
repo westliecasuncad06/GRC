@@ -449,6 +449,20 @@ $professors = $pdo->query($query)->fetchAll();
             from { opacity: 1; }
             to { opacity: 0; }
         }
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            /* Remove align-items center to avoid centering all content */
+            /* align-items: center; */
+            width: 100%;
+            padding: 0 2rem;
+            box-sizing: border-box;
+        }
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
         @media (max-width: 768px) {
             .enhanced-header {
                 flex-direction: column;
@@ -481,6 +495,8 @@ $professors = $pdo->query($query)->fetchAll();
                 min-width: 600px;
             }
         }
+
+
     </style>
 
 </head>

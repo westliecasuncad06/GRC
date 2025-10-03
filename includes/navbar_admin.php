@@ -1,16 +1,27 @@
 <!-- Navbar -->
+<style>
+.navbar-title {
+    display: block;
+}
+.navbar-title-mobile {
+    display: none;
+}
+@media (max-width: 768px) {
+    .navbar-title {
+        display: none;
+    }
+    .navbar-title-mobile {
+        display: block;
+    }
+}
+</style>
 <nav class="navbar">
     <div class="navbar-brand">
-        <button type="button" class="hamburger-menu" id="sidebarToggle">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
         <span class="navbar-title">Global Reciprocal Colleges</span>
         <span class="navbar-title-mobile">GRC</span>
     </div>
     <div class="navbar-user">
-        <span>Welcome, <?php echo $_SESSION['first_name']; ?></span>
+        <span>Welcome, <?php echo isset($_SESSION['first_name']) ? htmlspecialchars($_SESSION['first_name']) : 'Admin'; ?></span>
         <div class="user-dropdown">
             <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-cog" aria-hidden="true"></i>
@@ -57,34 +68,5 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
-    // Sidebar toggle functionality
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            document.body.classList.toggle('sidebar-collapsed');
-        });
-    }
-
-    // Close sidebar when clicking outside (for mobile)
-    document.addEventListener('click', function(event) {
-        const sidebar = document.querySelector('.sidebar');
-        const toggle = document.getElementById('sidebarToggle');
-        const isCollapsed = document.body.classList.contains('sidebar-collapsed');
-        const isMobile = window.innerWidth <= 900;
-
-        if (isMobile && !isCollapsed && sidebar && !sidebar.contains(event.target) && toggle && !toggle.contains(event.target)) {
-            document.body.classList.add('sidebar-collapsed');
-        }
-    });
-
-    // Prevent sidebar click from closing it
-    const sidebar = document.querySelector('.sidebar');
-    if (sidebar) {
-        sidebar.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-    }
 });
 </script>

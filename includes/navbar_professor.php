@@ -51,13 +51,24 @@ if ($professor_id) {
 ?>
 
 <!-- Navbar -->
+<style>
+.navbar-title {
+    display: block;
+}
+.navbar-title-mobile {
+    display: none;
+}
+@media (max-width: 768px) {
+    .navbar-title {
+        display: none;
+    }
+    .navbar-title-mobile {
+        display: block;
+    }
+}
+</style>
 <nav class="navbar">
     <div class="navbar-brand">
-        <button type="button" class="hamburger-menu" id="sidebarToggle">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
         <span class="navbar-title">Global Reciprocal Colleges</span>
         <span class="navbar-title-mobile">GRC</span>
     </div>
@@ -83,7 +94,7 @@ if ($professor_id) {
                 <i class="fas fa-cog" aria-hidden="true"></i>
             </button>
             <div class="dropdown-menu">
-                <a href="../Admin/settings.php" class="dropdown-item">Settings</a>
+                <a href="settings.php" class="dropdown-item">Settings</a>
                 <a href="../php/logout.php" class="dropdown-item">Logout</a>
             </div>
         </div>
