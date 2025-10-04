@@ -757,7 +757,7 @@ $students = $stmt->fetchAll();
                 </thead>
                 <tbody>
                     <?php foreach ($students as $student): ?>
-                    <tr>
+                    <tr onclick="viewStudent(<?php echo htmlspecialchars(json_encode($student)); ?>)">
                         <td><?php echo htmlspecialchars($student['student_id']); ?></td>
                         <td><?php echo htmlspecialchars($student['first_name'] . ' ' . ($student['middle_name'] ? $student['middle_name'] . ' ' : '') . $student['last_name']); ?></td>
                         <td><?php echo htmlspecialchars($student['email']); ?></td>
@@ -765,13 +765,10 @@ $students = $stmt->fetchAll();
                         <td><?php echo htmlspecialchars($student['address']); ?></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="btn-sm-enhanced btn-primary-enhanced" onclick="viewStudentDetails('<?php echo htmlspecialchars($student['student_id']); ?>')">
-                                    <i class="fas fa-eye"></i> View
-                                </button>
-                                <button class="btn-sm-enhanced btn-warning-enhanced" onclick='editStudent(<?php echo json_encode($student); ?>)'>
+                                <button class="btn-sm-enhanced btn-warning-enhanced" onclick="event.stopPropagation(); editStudent(<?php echo htmlspecialchars(json_encode($student)); ?>)">
                                     <i class="fas fa-edit"></i> Edit
                                 </button>
-                                <form action="" method="POST" style="display:inline;">
+                                <form action="" method="POST" style="display:inline;" onclick="event.stopPropagation();">
                                     <input type="hidden" name="action" value="delete_student" />
                                     <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($student['student_id']); ?>" />
                                     <button type="submit" class="btn-sm-enhanced btn-danger-enhanced" onclick="return confirm('Are you sure you want to delete this student?')">
@@ -902,6 +899,55 @@ $students = $stmt->fetchAll();
                 </div>
             </div>
         </div>
+
+        <!-- View Student Modal -->
+        <div id="viewStudentModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="viewStudentTitle" tabindex="-1">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="viewStudentTitle">View Student</h3>
+                    <button class="modal-close" aria-label="Close" onclick="closeModal('viewStudentModal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="view_student_id">Student ID</label>
+                        <input type="text" id="view_student_id" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="view_first_name">First Name</label>
+                        <input type="text" id="view_first_name" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="view_middle_name">Middle Name</label>
+                        <input type="text" id="view_middle_name" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="view_last_name">Last Name</label>
+                        <input type="text" id="view_last_name" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="view_email">Email</label>
+                        <input type="email" id="view_email" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="view_mobile">Mobile Number</label>
+                        <input type="tel" id="view_mobile" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="view_address">Address</label>
+                        <textarea id="view_address" readonly></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-enhanced btn-primary-enhanced" onclick="editStudentFromView()">Edit</button>
+                        <form action="" method="POST" style="display:inline;">
+                            <input type="hidden" name="action" value="delete_student" />
+                            <input type="hidden" name="student_id" id="view_delete_student_id" />
+                            <button type="submit" class="btn-enhanced btn-danger-enhanced" onclick="return confirm('Are you sure you want to delete this student?')">Delete</button>
+                        </form>
+                        <button type="button" class="btn-enhanced btn-secondary-enhanced" onclick="closeModal('viewStudentModal')">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script>
@@ -931,50 +977,30 @@ $students = $stmt->fetchAll();
             document.getElementById(modalId).classList.remove('show');
         }
 
-        function viewStudentDetails(studentId) {
-            fetch('../php/get_student_details.php?student_id=' + encodeURIComponent(studentId))
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const student = data.student;
-                        const classes = data.classes;
-                        const attendance = data.attendance;
-                        let classesHtml = '';
-                        if (classes.length > 0) {
-                            classesHtml = classes.map(cls => `<p>${cls.class_name} (${cls.subject_name}) - ${cls.schedule}</p>`).join('');
-                        } else {
-                            classesHtml = '<p>No classes enrolled</p>';
-                        }
-                        const content = `
-                            <div class="student-info">
-                                <h4>Student Information</h4>
-                                <p><strong>ID:</strong> ${student.student_id}</p>
-                                <p><strong>Name:</strong> ${student.first_name} ${student.middle_name || ''} ${student.last_name}</p>
-                                <p><strong>Email:</strong> ${student.email}</p>
-                                <p><strong>Mobile:</strong> ${student.mobile}</p>
-                                <p><strong>Address:</strong> ${student.address}</p>
-                            </div>
-                            <div class="student-classes">
-                                <h4>Enrolled Classes</h4>
-                                ${classesHtml}
-                            </div>
-                            <div class="student-attendance">
-                                <h4>Attendance Summary</h4>
-                                <p><strong>Total Present:</strong> ${attendance.present}</p>
-                                <p><strong>Total Absent:</strong> ${attendance.absent}</p>
-                                <p><strong>Total Late:</strong> ${attendance.late}</p>
-                            </div>
-                        `;
-                        document.getElementById('studentDetailsContent').innerHTML = content;
-                        openModal('studentDetailsModal');
-                    } else {
-                        alert('Error loading student details');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error loading student details');
-                });
+        function viewStudent(student) {
+            document.getElementById('view_student_id').value = student.student_id;
+            document.getElementById('view_first_name').value = student.first_name;
+            document.getElementById('view_middle_name').value = student.middle_name || '';
+            document.getElementById('view_last_name').value = student.last_name;
+            document.getElementById('view_email').value = student.email;
+            document.getElementById('view_mobile').value = student.mobile;
+            document.getElementById('view_address').value = student.address;
+            document.getElementById('view_delete_student_id').value = student.student_id;
+            openModal('viewStudentModal');
+        }
+
+        function editStudentFromView() {
+            const student = {
+                student_id: document.getElementById('view_student_id').value,
+                first_name: document.getElementById('view_first_name').value,
+                middle_name: document.getElementById('view_middle_name').value,
+                last_name: document.getElementById('view_last_name').value,
+                email: document.getElementById('view_email').value,
+                mobile: document.getElementById('view_mobile').value,
+                address: document.getElementById('view_address').value
+            };
+            closeModal('viewStudentModal');
+            editStudent(student);
         }
 
         function editStudent(student) {

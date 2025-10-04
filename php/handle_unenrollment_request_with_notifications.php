@@ -53,10 +53,10 @@ try {
 
         // Create notification for student
         $notification_title = 'Unenrollment Request Approved';
-        $notification_message = "Your unenrollment request has been approved by Professor $professor_name. You have been unenrolled from the class.";
+        $notification_message = "Your unenrollment request has been approved by Professor $professor_name on " . date('M j, Y') . ". You have been unenrolled from the class.";
         $notification_type = 'unenrollment_approved';
 
-        $notificationManager->createNotification(
+        $notification_created = $notificationManager->createNotification(
             $student_id,
             'student',
             $notification_title,
@@ -65,13 +65,16 @@ try {
             $request_id,
             $class_id
         );
+        if (!$notification_created) {
+            error_log("Failed to create unenrollment approved notification for student_id: $student_id, request_id: $request_id");
+        }
 
     } else {
         $message = 'Unenrollment request rejected';
 
         // Create notification for student
         $notification_title = 'Unenrollment Request Rejected';
-        $notification_message = "Your unenrollment request has been rejected by Professor $professor_name.";
+        $notification_message = "Your unenrollment request has been rejected by Professor $professor_name on " . date('M j, Y') . ".";
         $notification_type = 'unenrollment_rejected';
 
         $notificationManager->createNotification(
@@ -87,7 +90,7 @@ try {
 
     // Update the unenrollment request
     $stmt = $pdo->prepare("UPDATE unenrollment_requests SET status = ?, processed_at = NOW(), processed_by = ? WHERE request_id = ?");
-    if (!$stmt->execute([$action === 'accept' ? 'approved' : 'rejected', $professor_id, $request_id])) {
+    if (!$stmt->execute([$action === 'accept' ? 'accepted' : 'rejected', $professor_id, $request_id])) {
         echo json_encode(['success' => false, 'message' => 'Failed to update unenrollment request status']);
         exit();
     }

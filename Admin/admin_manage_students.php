@@ -325,6 +325,9 @@ $students = $pdo->query($query)->fetchAll();
             background-color: #e3f2fd;
             transition: background-color 0.3s ease;
         }
+        .table tbody tr {
+            cursor: pointer;
+        }
         .action-buttons {
             display: flex;
             gap: 5px;
@@ -527,77 +530,176 @@ $students = $pdo->query($query)->fetchAll();
             to { opacity: 0; }
         }
         @media (max-width: 768px) {
+            .main-content {
+                padding: 0 1rem;
+            }
+            .dashboard-container {
+                padding: 0;
+            }
             .enhanced-header {
+                flex-direction: column;
                 gap: 1rem;
                 text-align: center;
+                padding: 1.5rem 1rem;
+            }
+            .header-title {
+                font-size: 1.8rem;
+            }
+            .header-actions {
+                flex-direction: column;
+                gap: 1rem;
+                width: 100%;
+                max-width: none;
             }
             .search-container {
                 width: 100%;
-                max-width: 300px;
+                max-width: none;
+                padding-top: 0;
             }
+            .search-input {
+                height: 44px;
+                font-size: 1rem;
+            }
+            .add-professor-btn {
+                width: 100%;
+                justify-content: center;
+                height: 44px;
+                font-size: 1rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .stats-card {
+                padding: 2rem 1.5rem;
+                border-radius: 20px;
+            }
+            .stats-icon {
+                font-size: 4rem;
+                margin-bottom: 1.5rem;
+            }
+            .stats-number {
+                font-size: 4rem;
+                margin-bottom: 0.75rem;
+            }
+            .stats-label {
+                font-size: 1.2rem;
+            }
+            .table-container {
+                padding: 1rem;
+                border-radius: 16px;
+            }
+            .table {
+                font-size: 0.9rem;
+            }
+            .table th, .table td {
+                padding: 0.75rem 0.5rem;
+            }
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: stretch;
+            }
+            .btn-sm {
+                width: 100%;
+                justify-content: center;
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+            .table th:nth-child(1), .table td:nth-child(1) { display: none; } /* Student ID */
+            .table th:nth-child(4), .table td:nth-child(4) { display: none; } /* Mobile */
+            .table th:nth-child(5), .table td:nth-child(5) { display: none; } /* Address */
+            .table th:nth-child(6), .table td:nth-child(6) { display: none; } /* Section */
+            .table th:nth-child(7), .table td:nth-child(7) { display: none; } /* Actions */
             .modal-content {
                 width: 95%;
                 margin: 10px;
+                max-height: 95vh;
+            }
+            .modal-header {
+                padding: 1.5rem 1rem;
+            }
+            .modal-title {
+                font-size: 1.5rem;
             }
             .modal-body {
+                padding: 1.5rem 1rem;
+            }
+            .modal-footer {
                 padding: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
             }
-            .action-buttons {
+            .modal-footer .btn {
+                width: 100%;
                 justify-content: center;
+                padding: 12px;
+            }
+            .form-group input, .form-group select {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            .alert {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
             }
         }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 0 0.5rem;
+            }
+            .enhanced-header {
+                padding: 1rem 0.5rem;
+            }
+            .header-title {
+                font-size: 1.5rem;
+            }
+            .stats-card {
+                padding: 1.5rem 1rem;
+            }
+            .stats-icon {
+                font-size: 3.5rem;
+                margin-bottom: 1rem;
+            }
+            .stats-number {
+                font-size: 3.5rem;
+                margin-bottom: 0.5rem;
+            }
+            .stats-label {
+                font-size: 1.1rem;
+            }
+            .table-container {
+                padding: 0.5rem;
+            }
+            .table {
+                font-size: 0.8rem;
+            }
+            .table th, .table td {
+                padding: 0.5rem 0.25rem;
+            }
+            .modal-content {
+                width: 98%;
+                margin: 5px;
+            }
+            .modal-header {
+                padding: 1rem 0.5rem;
+            }
+            .modal-title {
+                font-size: 1.3rem;
+            }
+            .modal-body {
+                padding: 1rem 0.5rem;
+            }
+            .modal-footer {
+                padding: 0.5rem;
+            }
+            .form-group input, .form-group select {
+                padding: 12px 14px;
+                font-size: 0.95rem;
+            }
         }
-        .stats-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            border-top: 4px solid var(--primary);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .stats-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-        }
-        .stats-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        }
-        .stats-icon {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-            opacity: 0.8;
-        }
-        .stats-number {
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .stats-label {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--gray);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-
     </style>
 </head>
 <body>
@@ -664,7 +766,7 @@ $students = $pdo->query($query)->fetchAll();
         </thead>
         <tbody>
             <?php foreach ($students as $student): ?>
-            <tr>
+            <tr onclick="viewStudent(<?php echo htmlspecialchars(json_encode($student)); ?>)">
                 <td><?php echo htmlspecialchars($student['student_id']); ?></td>
                 <td><?php echo htmlspecialchars($student['first_name'] . ' ' . ($student['middle_name'] ? $student['middle_name'] . ' ' : '') . $student['last_name']); ?></td>
                 <td><?php echo htmlspecialchars($student['email']); ?></td>
@@ -673,10 +775,10 @@ $students = $pdo->query($query)->fetchAll();
                 <td><?php echo htmlspecialchars($student['section']); ?></td>
                 <td>
                     <div class="action-buttons">
-                        <button class="btn btn-sm btn-primary" onclick="editStudent(<?php echo htmlspecialchars(json_encode($student)); ?>)">
+                        <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); editStudent(<?php echo htmlspecialchars(json_encode($student)); ?>)">
                             <i class="fas fa-edit"></i> Edit
                         </button>
-                        <form action="" method="POST" style="display:inline;">
+                        <form action="" method="POST" style="display:inline;" onclick="event.stopPropagation();">
                             <input type="hidden" name="action" value="delete_student">
                             <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($student['student_id']); ?>">
                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this student?')">
@@ -805,6 +907,62 @@ $students = $pdo->query($query)->fetchAll();
                 </div>
             </div>
         </div>
+
+        <!-- View Student Modal -->
+        <div id="viewStudentModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">View Student</h3>
+                    <button class="modal-close" onclick="closeModal('viewStudentModal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Student ID</label>
+                        <input type="text" id="view_student_id" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" id="view_first_name" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" id="view_last_name" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Middle Name</label>
+                        <input type="text" id="view_middle_name" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="view_email" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <input type="tel" id="view_mobile" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" id="view_address" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Section</label>
+                        <input type="text" id="view_section" readonly>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="editStudentFromView()">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <form action="" method="POST" style="display:inline;">
+                            <input type="hidden" name="action" value="delete_student">
+                            <input type="hidden" name="student_id" id="view_delete_student_id">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this student?')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </main>
 
@@ -845,6 +1003,34 @@ $students = $pdo->query($query)->fetchAll();
             document.getElementById('edit_address').value = student.address;
             document.getElementById('edit_section').value = student.section || '';
             openModal('editStudentModal');
+        }
+
+        function viewStudent(student) {
+            document.getElementById('view_student_id').value = student.student_id;
+            document.getElementById('view_first_name').value = student.first_name;
+            document.getElementById('view_last_name').value = student.last_name;
+            document.getElementById('view_middle_name').value = student.middle_name || '';
+            document.getElementById('view_email').value = student.email;
+            document.getElementById('view_mobile').value = student.mobile;
+            document.getElementById('view_address').value = student.address;
+            document.getElementById('view_section').value = student.section || '';
+            document.getElementById('view_delete_student_id').value = student.student_id;
+            openModal('viewStudentModal');
+        }
+
+        function editStudentFromView() {
+            const student = {
+                student_id: document.getElementById('view_student_id').value,
+                first_name: document.getElementById('view_first_name').value,
+                last_name: document.getElementById('view_last_name').value,
+                middle_name: document.getElementById('view_middle_name').value,
+                email: document.getElementById('view_email').value,
+                mobile: document.getElementById('view_mobile').value,
+                address: document.getElementById('view_address').value,
+                section: document.getElementById('view_section').value
+            };
+            closeModal('viewStudentModal');
+            editStudent(student);
         }
 
         // Close modal when clicking outside

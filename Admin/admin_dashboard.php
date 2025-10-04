@@ -170,8 +170,6 @@ require_once '../php/db.php';
         .main-content {
             display: flex;
             flex-direction: column;
-            /* Remove align-items center to avoid centering all content */
-            /* align-items: center; */
             width: 100%;
             padding: 0 2rem;
             box-sizing: border-box;
@@ -182,14 +180,105 @@ require_once '../php/db.php';
             width: 100%;
         }
         @media (max-width: 768px) {
+            .main-content {
+                padding: 0 1rem;
+            }
+            .dashboard-container {
+                padding: 0;
+            }
             .dashboard-title-enhanced {
                 font-size: 2rem;
+                padding: 1.5rem;
+            }
+            .dashboard-subtitle {
+                font-size: 1rem;
             }
             .stats-grid {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
             .stats-card {
+                padding: 2rem 1.5rem;
+                border-radius: 20px;
+            }
+            .stats-icon {
+                font-size: 4rem;
+                margin-bottom: 1.5rem;
+            }
+            .stats-number {
+                font-size: 4rem;
+                margin-bottom: 0.75rem;
+            }
+            .stats-label {
+                font-size: 1.2rem;
+            }
+            .recent-activities-section {
                 padding: 1.5rem;
+            }
+            .section-header {
+                margin-bottom: 1rem;
+            }
+            .section-title {
+                font-size: 1.3rem;
+            }
+            .activity-item {
+                padding: 1.5rem 1rem;
+                margin-bottom: 1rem;
+                border-radius: 12px;
+            }
+            .activity-icon {
+                font-size: 1.5rem;
+                margin-right: 20px;
+                min-width: 25px;
+            }
+            .activity-text {
+                font-size: 1.1rem;
+            }
+            .activity-meta {
+                font-size: 0.9rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 0 0.5rem;
+            }
+            .dashboard-title-enhanced {
+                font-size: 1.8rem;
+                padding: 1rem;
+            }
+            .dashboard-subtitle {
+                font-size: 0.95rem;
+            }
+            .stats-card {
+                padding: 1.5rem 1rem;
+            }
+            .stats-icon {
+                font-size: 3.5rem;
+                margin-bottom: 1rem;
+            }
+            .stats-number {
+                font-size: 3.5rem;
+                margin-bottom: 0.5rem;
+            }
+            .stats-label {
+                font-size: 1.1rem;
+            }
+            .recent-activities-section {
+                padding: 1rem;
+            }
+            .activity-item {
+                padding: 1.25rem 0.75rem;
+            }
+            .activity-icon {
+                font-size: 1.3rem;
+                margin-right: 15px;
+                min-width: 20px;
+            }
+            .activity-text {
+                font-size: 1rem;
+            }
+            .activity-meta {
+                font-size: 0.85rem;
             }
         }
 

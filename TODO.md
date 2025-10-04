@@ -1,3 +1,6 @@
 - [x] Update php/handle_enrollment_request_with_notifications.php to include professor name in notification messages
 - [x] Update php/handle_unenrollment_request_with_notifications.php to include professor name in notification messages
-- [x] Test notifications display with new messages
+- [x] Create student_request_history.php page for viewing request history
+- [x] Add Request History menu item to student sidebar
+- [x] Test the notification creation to ensure messages include professor name
+- [x] Verify notifications display correctly in student navbar modal

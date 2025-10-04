@@ -17,10 +17,15 @@ class NotificationManager {
                 INSERT INTO notifications (user_id, user_type, title, message, type, related_request_id, related_class_id)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             ");
-            $stmt->execute([$user_id, $user_type, $title, $message, $type, $related_request_id, $related_class_id]);
+            $result = $stmt->execute([$user_id, $user_type, $title, $message, $type, $related_request_id, $related_class_id]);
+            if (!$result) {
+                $errorInfo = $stmt->errorInfo();
+                error_log("Error creating notification: " . implode(", ", $errorInfo));
+                return false;
+            }
             return $this->pdo->lastInsertId();
         } catch (PDOException $e) {
-            error_log("Error creating notification: " . $e->getMessage());
+            error_log("Exception creating notification: " . $e->getMessage());
             return false;
         }
     }

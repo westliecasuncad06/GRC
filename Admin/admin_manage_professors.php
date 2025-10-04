@@ -546,32 +546,32 @@ $professors = $pdo->query($query)->fetchAll();
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php foreach ($professors as $professor): ?>
-                    <tr>
-                        <td><?php echo $professor['professor_id']; ?></td>
-                        <td><?php echo $professor['employee_id']; ?></td>
-                        <td><?php echo $professor['first_name'] . ' ' . $professor['last_name']; ?></td>
-                        <td><?php echo $professor['email']; ?></td>
-                        <td><?php echo $professor['department']; ?></td>
-                        <td><?php echo $professor['mobile']; ?></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-sm btn-primary" onclick="editProfessor(<?php echo htmlspecialchars(json_encode($professor)); ?>)">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <form action="" method="POST" style="display:inline;">
-                                    <input type="hidden" name="action" value="delete_professor">
-                                    <input type="hidden" name="professor_id" value="<?php echo $professor['professor_id']; ?>">
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this professor?')">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
+        <tbody>
+            <?php foreach ($professors as $professor): ?>
+            <tr onclick="viewProfessor(<?php echo htmlspecialchars(json_encode($professor)); ?>)">
+                <td><?php echo $professor['professor_id']; ?></td>
+                <td><?php echo $professor['employee_id']; ?></td>
+                <td><?php echo $professor['first_name'] . ' ' . $professor['last_name']; ?></td>
+                <td><?php echo $professor['email']; ?></td>
+                <td><?php echo $professor['department']; ?></td>
+                <td><?php echo $professor['mobile']; ?></td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); editProfessor(<?php echo htmlspecialchars(json_encode($professor)); ?>)">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <form action="" method="POST" style="display:inline;" onclick="event.stopPropagation();">
+                            <input type="hidden" name="action" value="delete_professor">
+                            <input type="hidden" name="professor_id" value="<?php echo $professor['professor_id']; ?>">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this professor?')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
             </table>
         </div>
 
@@ -683,6 +683,55 @@ $professors = $pdo->query($query)->fetchAll();
         </div>
     </main>
 
+    <!-- View Professor Modal -->
+    <div id="viewProfessorModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="viewProfessorTitle" tabindex="-1">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="viewProfessorTitle">View Professor</h3>
+                <button class="modal-close" aria-label="Close" onclick="closeModal('viewProfessorModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="view_professor_id">Professor ID</label>
+                    <input type="text" id="view_professor_id" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="view_employee_id">Employee ID</label>
+                    <input type="text" id="view_employee_id" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="view_first_name">First Name</label>
+                    <input type="text" id="view_first_name" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="view_last_name">Last Name</label>
+                    <input type="text" id="view_last_name" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="view_email">Email</label>
+                    <input type="email" id="view_email" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="view_department">Department</label>
+                    <input type="text" id="view_department" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="view_mobile">Mobile Number</label>
+                    <input type="tel" id="view_mobile" readonly />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="editProfessorFromView()">Edit</button>
+                    <form action="" method="POST" style="display:inline;">
+                        <input type="hidden" name="action" value="delete_professor" />
+                        <input type="hidden" name="professor_id" id="view_delete_professor_id" />
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this professor?')">Delete</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('viewProfessorModal')">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         function filterProfessors() {
             const query = document.getElementById('searchInput').value.toLowerCase();
@@ -719,6 +768,32 @@ $professors = $pdo->query($query)->fetchAll();
             document.getElementById('edit_department').value = professor.department;
             document.getElementById('edit_mobile').value = professor.mobile;
             openModal('editProfessorModal');
+        }
+
+        function viewProfessor(professor) {
+            document.getElementById('view_professor_id').value = professor.professor_id;
+            document.getElementById('view_employee_id').value = professor.employee_id;
+            document.getElementById('view_first_name').value = professor.first_name;
+            document.getElementById('view_last_name').value = professor.last_name;
+            document.getElementById('view_email').value = professor.email;
+            document.getElementById('view_department').value = professor.department;
+            document.getElementById('view_mobile').value = professor.mobile;
+            document.getElementById('view_delete_professor_id').value = professor.professor_id;
+            openModal('viewProfessorModal');
+        }
+
+        function editProfessorFromView() {
+            const professor = {
+                professor_id: document.getElementById('view_professor_id').value,
+                employee_id: document.getElementById('view_employee_id').value,
+                first_name: document.getElementById('view_first_name').value,
+                last_name: document.getElementById('view_last_name').value,
+                email: document.getElementById('view_email').value,
+                department: document.getElementById('view_department').value,
+                mobile: document.getElementById('view_mobile').value
+            };
+            closeModal('viewProfessorModal');
+            editProfessor(professor);
         }
 
         // Add toggle password visibility for Add Professor Modal
