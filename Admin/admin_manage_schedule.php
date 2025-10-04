@@ -480,6 +480,48 @@ foreach ($subjects as $subject) {
             margin: 0 auto;
             width: 100%;
         }
+        .mobile-cards {
+            display: none;
+        }
+        .subject-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--light-gray);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .card-header h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+        .enrolled-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .card-body p {
+            margin: 0.25rem 0;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
         @media (max-width: 768px) {
             .enhanced-header {
                 flex-direction: column;
@@ -506,16 +548,13 @@ foreach ($subjects as $subject) {
                 flex-wrap: wrap;
             }
             .table-container {
-                overflow-x: auto;
-            }
-            .table {
-                min-width: 600px;
-            }
-            .mobile-hidden {
                 display: none;
             }
+            .mobile-cards {
+                display: block;
+            }
             .stats-grid {
-                grid-template-columns: 1fr;
+                display: none;
             }
         }
         .stats-grid {
@@ -523,6 +562,9 @@ foreach ($subjects as $subject) {
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
+        }
+        .stats-grid.mobile-hidden {
+            display: none !important;
         }
         .stats-card {
             background: white;
@@ -741,7 +783,7 @@ foreach ($subjects as $subject) {
             </div>
         <?php endif; ?>
 
-        <div class="stats-grid">
+        <div class="stats-grid mobile-hidden">
             <div class="stats-card fade-in">
                 <i class="fas fa-book stats-icon"></i>
                 <div class="stats-number"><?php echo count($subjects); ?></div>
@@ -820,6 +862,37 @@ foreach ($subjects as $subject) {
                     <?php endforeach; ?>
                 </tbody>
             </table>
+        </div>
+
+        <div class="mobile-cards">
+            <?php foreach ($subjects as $subject): ?>
+            <div class="subject-card">
+                <div class="card-header">
+                    <h4 onclick="viewSubject(<?php echo htmlspecialchars(json_encode($subject)); ?>)"><?php echo $subject['subject_name']; ?></h4>
+                    <span class="enrolled-badge"><?php echo $enrollment_counts[$subject['subject_id']] ?? 0; ?> students</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Professor:</strong> <?php echo $subject['first_name'] ? $subject['first_name'] . ' ' . $subject['last_name'] : 'Not Assigned'; ?></p>
+                    <p><strong>Class Code:</strong> <?php echo $subject['class_code']; ?></p>
+                    <p><strong>Subject Code:</strong> <?php echo $subject['subject_code']; ?></p>
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-sm btn-primary" onclick="editSubject(<?php echo htmlspecialchars(json_encode($subject)); ?>)">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-sm btn-info" onclick="viewEnrolledStudents('<?php echo $subject['class_id']; ?>')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                    <form action="" method="POST" style="display:inline;">
+                        <input type="hidden" name="action" value="delete_subject">
+                        <input type="hidden" name="subject_id" value="<?php echo $subject['subject_id']; ?>">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this subject?')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <?php endforeach; ?>
         </div>
 
         <!-- Add Subject Modal -->
@@ -1041,6 +1114,49 @@ foreach ($subjects as $subject) {
                 </div>
             </div>
         </div>
+
+        <!-- View Student Modal -->
+        <div id="viewStudentModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">View Student</h3>
+                    <button class="modal-close" onclick="closeModal('viewStudentModal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Student ID</label>
+                            <input type="text" id="view_student_id" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" id="view_student_first_name" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" id="view_student_last_name" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="text" id="view_student_email" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Section</label>
+                            <input type="text" id="view_student_section" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Enrolled At</label>
+                            <input type="text" id="view_student_enrolled_at" readonly>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" onclick="closeModal('viewStudentModal')">
+                                <i class="fas fa-times"></i> Close
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script>
@@ -1092,26 +1208,43 @@ foreach ($subjects as $subject) {
             document.getElementById('enrolledStudentsList').innerHTML = '<p>Loading enrolled students...</p>';
             openModal('viewStudentsModal');
 
-            fetch('../php/get_class_students.php?class_id=' + classId)
+            // Fetch and display subject name and professor name
+            fetch('../php/get_class_details.php?class_id=' + classId)
                 .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        document.getElementById('enrolledStudentsList').innerHTML = '<p>Error: ' + data.error + '</p>';
+                .then(classData => {
+                    if (classData.error) {
+                        document.getElementById('enrolledStudentsList').innerHTML = '<p>Error: ' + classData.error + '</p>';
                         return;
                     }
-                    if (data.length === 0) {
-                        document.getElementById('enrolledStudentsList').innerHTML = '<p>No students enrolled in this class.</p>';
-                        return;
-                    }
-                    let html = '<table class="table"><thead><tr><th>Student Name</th><th>Email</th></tr></thead><tbody>';
-                    data.forEach(student => {
-                        html += '<tr><td>' + student.first_name + ' ' + student.last_name + '</td><td>' + student.email + '</td></tr>';
-                    });
-                    html += '</tbody></table>';
-                    document.getElementById('enrolledStudentsList').innerHTML = html;
+                    let headerHtml = '<h4>Subject: ' + classData.subject_name + '</h4>';
+                    headerHtml += '<h5>Professor: ' + classData.professor_name + '</h5>';
+                    document.getElementById('enrolledStudentsList').innerHTML = headerHtml;
+
+                    // Fetch enrolled students
+                    fetch('../php/get_class_students.php?class_id=' + classId)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                document.getElementById('enrolledStudentsList').innerHTML += '<p>Error: ' + data.error + '</p>';
+                                return;
+                            }
+                            if (data.length === 0) {
+                                document.getElementById('enrolledStudentsList').innerHTML += '<p>No students enrolled in this class.</p>';
+                                return;
+                            }
+                            let html = '<table class="table"><thead><tr><th>Student Name</th><th>Email</th></tr></thead><tbody>';
+                            data.forEach(student => {
+                                html += '<tr><td onclick="viewStudent(' + JSON.stringify(student) + ')" style="cursor:pointer;">' + student.first_name + ' ' + student.last_name + '</td><td>' + student.email + '</td></tr>';
+                            });
+                            html += '</tbody></table>';
+                            document.getElementById('enrolledStudentsList').innerHTML += html;
+                        })
+                        .catch(error => {
+                            document.getElementById('enrolledStudentsList').innerHTML += '<p>Error loading students: ' + error.message + '</p>';
+                        });
                 })
                 .catch(error => {
-                    document.getElementById('enrolledStudentsList').innerHTML = '<p>Error loading students: ' + error.message + '</p>';
+                    document.getElementById('enrolledStudentsList').innerHTML = '<p>Error loading class details: ' + error.message + '</p>';
                 });
         }
 
