@@ -219,7 +219,7 @@ if (empty($enrolled_classes)) {
             gap: 1rem;
         }
 
-        /* Enhanced Modal Styles */
+        /* Modern Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -228,8 +228,7 @@ if (empty($enrolled_classes)) {
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
+            background-color: rgba(0, 0, 0, 0.5);
         }
 
         .modal.show {
@@ -240,64 +239,50 @@ if (empty($enrolled_classes)) {
 
         .modal-content {
             background-color: white;
-            border-radius: 16px;
+            border-radius: 12px;
             padding: 0;
             width: 90%;
-            max-width: 900px;
+            max-width: 800px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: modalSlideIn 0.3s ease-out;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 2rem;
-            border-bottom: 1px solid #e9ecef;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            border-radius: 16px 16px 0 0;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #dee2e6;
+            background: #f8f9fa;
+            color: #333;
+            border-radius: 12px 12px 0 0;
         }
 
         .modal-title {
             margin: 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-size: 1.25rem;
+            font-weight: 600;
         }
 
         .modal-close {
-            background: rgba(255, 255, 255, 0.2);
+            background: none;
             border: none;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             cursor: pointer;
-            color: white;
-            padding: 0.5rem;
-            width: 40px;
-            height: 40px;
+            color: #6c757d;
+            padding: 0.25rem;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            transition: all 0.2s ease;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
         }
 
         .modal-close:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
+            background: #e9ecef;
         }
 
         .modal-body {
@@ -307,11 +292,11 @@ if (empty($enrolled_classes)) {
         .modal-footer {
             display: flex;
             justify-content: flex-end;
-            gap: 1rem;
-            padding: 1.5rem 2rem;
-            border-top: 1px solid #e9ecef;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            border-top: 1px solid #dee2e6;
             background: #f8f9fa;
-            border-radius: 0 0 16px 16px;
+            border-radius: 0 0 12px 12px;
         }
 
         /* Enhanced Attendance Table */

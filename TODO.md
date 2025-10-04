@@ -1,4 +1,2 @@
-- [ ] Add CSS for mobile cards layout
-- [ ] Add HTML structure for mobile subject cards
-- [ ] Style the subject cards
-- [ ] Test the mobile view
+- [x] Update modal CSS in Student/student_manage_schedule.php for modern, clean layout
+- [ ] Test modal alignment and responsiveness in browser

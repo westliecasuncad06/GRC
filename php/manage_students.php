@@ -141,10 +141,5 @@ if (isset($_GET['ajax'])) {
     exit();
 }
 
-// For regular page loads, redirect back to the manage students page
-if (isset($success) || isset($error)) {
-    $message = isset($success) ? 'success=' . urlencode($success) : 'error=' . urlencode($error);
-    header('Location: ../UI_UX/Professor/manage_students.html?' . $message);
-    exit();
-}
+
 ?>

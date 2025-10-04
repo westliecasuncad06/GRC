@@ -662,7 +662,14 @@ $students = $stmt->fetchAll();
                 width: 100%;
                 justify-content: center;
             }
-        }
+
+            .stats-grid {
+                display: none;
+            }
+
+            .mobile-hidden {
+                display: none;
+            }
 
         .password-container {
             position: relative;
@@ -749,10 +756,10 @@ $students = $stmt->fetchAll();
                     <tr>
                         <th>Student ID</th>
                         <th>Name</th>
-                        <th>Email</th>
-                        <th>Mobile</th>
-                        <th>Address</th>
-                        <th>Actions</th>
+                        <th class="mobile-hidden">Email</th>
+                        <th class="mobile-hidden">Mobile</th>
+                        <th class="mobile-hidden">Address</th>
+                        <th class="mobile-hidden">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -760,18 +767,18 @@ $students = $stmt->fetchAll();
                     <tr onclick="viewStudent(<?php echo htmlspecialchars(json_encode($student)); ?>)">
                         <td><?php echo htmlspecialchars($student['student_id']); ?></td>
                         <td><?php echo htmlspecialchars($student['first_name'] . ' ' . ($student['middle_name'] ? $student['middle_name'] . ' ' : '') . $student['last_name']); ?></td>
-                        <td><?php echo htmlspecialchars($student['email']); ?></td>
-                        <td><?php echo htmlspecialchars($student['mobile']); ?></td>
-                        <td><?php echo htmlspecialchars($student['address']); ?></td>
-                        <td>
+                        <td class="mobile-hidden"><?php echo htmlspecialchars($student['email']); ?></td>
+                        <td class="mobile-hidden"><?php echo htmlspecialchars($student['mobile']); ?></td>
+                        <td class="mobile-hidden"><?php echo htmlspecialchars($student['address']); ?></td>
+                        <td class="mobile-hidden">
                             <div class="action-buttons">
                                 <button class="btn-sm-enhanced btn-warning-enhanced" onclick="event.stopPropagation(); editStudent(<?php echo htmlspecialchars(json_encode($student)); ?>)">
                                     <i class="fas fa-edit"></i> Edit
                                 </button>
-                                <form action="" method="POST" style="display:inline;" onclick="event.stopPropagation();">
+                                <form action="" method="POST" style="display:inline;">
                                     <input type="hidden" name="action" value="delete_student" />
                                     <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($student['student_id']); ?>" />
-                                    <button type="submit" class="btn-sm-enhanced btn-danger-enhanced" onclick="return confirm('Are you sure you want to delete this student?')">
+                                    <button type="submit" class="btn-sm-enhanced btn-danger-enhanced" onclick="event.stopPropagation(); return confirm('Are you sure you want to delete this student?')">
                                         <i class="fas fa-trash"></i> Delete
                                     </button>
                                 </form>
@@ -891,10 +898,14 @@ $students = $stmt->fetchAll();
                             <label for="edit_address">Address</label>
                             <textarea id="edit_address" name="address" required></textarea>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn-secondary-enhanced" onclick="closeModal('editStudentModal')">Cancel</button>
-                            <button type="submit" class="btn-primary-enhanced">Update Student</button>
-                        </div>
+<div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; padding: 1rem 2rem;">
+    <button type="button" class="btn-secondary-enhanced" onclick="closeModal('editStudentModal')" style="padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; background-color: #6c757d; color: white; border: none; transition: background-color 0.2s ease;">
+        Cancel
+    </button>
+    <button type="submit" class="btn-primary-enhanced" style="padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; background: linear-gradient(135deg, #F75270 0%, #DC143C 100%); color: white; border: none; transition: box-shadow 0.2s ease;">
+        Update Student
+    </button>
+</div>
                     </form>
                 </div>
             </div>

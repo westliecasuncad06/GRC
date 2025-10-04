@@ -98,21 +98,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $error = "Error deleting subject: " . $e->getMessage();
                 }
                 break;
-                
-            case 'regenerate_code':
-                $subject_id = $_POST['subject_id'];
-                
-                try {
-                    $new_code = generateUniqueClassCode($pdo);
-                    $stmt = $pdo->prepare("UPDATE classes SET class_code = ?, updated_at = NOW() 
-                                          WHERE subject_id = ? AND professor_id = ?");
-                    $stmt->execute([$new_code, $subject_id, $professor_id]);
-                    
-                    $success = "Class code regenerated successfully! New Code: " . $new_code;
-                } catch (PDOException $e) {
-                    $error = "Error regenerating code: " . $e->getMessage();
-                }
-                break;
         }
     }
 }
@@ -444,6 +429,14 @@ foreach ($subjects as $subject) {
         .subject-link:hover {
             color: var(--primary-dark);
             text-decoration: underline;
+        }
+
+        @media (min-width: 769px) {
+            .subject-link {
+                pointer-events: none;
+                color: inherit;
+                text-decoration: none;
+            }
         }
 
         .class-code-display {
@@ -818,6 +811,100 @@ foreach ($subjects as $subject) {
             word-break: break-word;
         }
 
+        .subject-details-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .subject-details-list li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .subject-details-list li:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .subject-details-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 2px 0 0 2px;
+        }
+
+        .subject-details-list li:nth-child(1)::before {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        .subject-details-list li:nth-child(2)::before {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary) 100%);
+        }
+
+        .subject-details-list li:nth-child(3)::before {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent) 100%);
+        }
+
+        .subject-details-list li:nth-child(4)::before {
+            background: linear-gradient(135deg, var(--warning) 0%, var(--warning) 100%);
+        }
+
+        .subject-details-list .detail-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1;
+        }
+
+        .subject-details-list .detail-content {
+            flex: 1;
+            z-index: 1;
+        }
+
+        .subject-details-list .detail-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .subject-details-list .detail-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--dark);
+            word-break: break-word;
+        }
+
+        .subject-details-list .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            z-index: 1;
+        }
+
         .students-list {
             background: white;
             border-radius: 12px;
@@ -897,6 +984,50 @@ foreach ($subjects as $subject) {
 
         /* Responsive Design */
         @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+
+            .stat-card-enhanced {
+                padding: 1.5rem;
+            }
+
+            .stat-breakdown-enhanced {
+                grid-template-columns: 1fr;
+            }
+
+            .table-header-enhanced {
+                padding: 1.5rem;
+            }
+
+            .table-title-enhanced {
+                font-size: 1.25rem;
+            }
+
+            .table-actions-enhanced {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-input-enhanced {
+                width: 100%;
+            }
+
+            .table-container-enhanced {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table-enhanced th,
+            .table-enhanced td {
+                font-size: 0.8rem;
+                padding: 0.75rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
             .modal-content {
                 width: 95%;
                 max-height: 90vh;
@@ -918,6 +1049,10 @@ foreach ($subjects as $subject) {
                 gap: 1rem;
             }
 
+            .stats-grid {
+                display: none;
+            }
+
             .modal-footer {
                 flex-direction: column;
                 gap: 0.75rem;
@@ -926,6 +1061,10 @@ foreach ($subjects as $subject) {
             .btn-enhanced {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .mobile-hidden {
+                display: none;
             }
         }
 
@@ -999,12 +1138,24 @@ foreach ($subjects as $subject) {
         }
 
         @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+
             .stat-card-enhanced {
                 padding: 1.5rem;
             }
 
             .stat-breakdown-enhanced {
                 grid-template-columns: 1fr;
+            }
+
+            .table-header-enhanced {
+                padding: 1.5rem;
+            }
+
+            .table-title-enhanced {
+                font-size: 1.25rem;
             }
 
             .table-actions-enhanced {
@@ -1016,8 +1167,219 @@ foreach ($subjects as $subject) {
                 width: 100%;
             }
 
+            .table-container-enhanced {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table-enhanced th,
+            .table-enhanced td {
+                font-size: 0.8rem;
+                padding: 0.75rem;
+            }
+
             .action-buttons {
                 flex-direction: column;
+            }
+        }
+
+        /* Custom Alert Styles */
+        .custom-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            z-index: 9999;
+            max-width: 400px;
+            animation: slideInRight 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .custom-alert.success {
+            background: linear-gradient(135deg, var(--success) 0%, #28a745 100%);
+        }
+
+        .custom-alert.error {
+            background: linear-gradient(135deg, var(--danger) 0%, #dc3545 100%);
+        }
+
+        .custom-alert::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .custom-alert.success::before {
+            content: '✓';
+        }
+
+        .custom-alert.error::before {
+            content: '✕';
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .custom-alert {
+                left: 20px;
+                right: 20px;
+                max-width: none;
+            }
+        }
+
+        /* Extra Small Mobile Devices */
+        @media (max-width: 480px) {
+            .dashboard-container {
+                padding: 0.5rem;
+            }
+
+            .stat-card-enhanced {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .stat-icon-enhanced {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .stat-title-enhanced {
+                font-size: 1rem;
+            }
+
+            .stat-value-enhanced {
+                font-size: 2rem;
+            }
+
+            .table-header-enhanced {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .table-title-enhanced {
+                font-size: 1.1rem;
+            }
+
+            .stat-primary-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+
+            .search-input-enhanced {
+                font-size: 0.85rem;
+                padding: 0.6rem 0.8rem;
+            }
+
+            .table-enhanced th,
+            .table-enhanced td {
+                font-size: 0.75rem;
+                padding: 0.5rem;
+                min-width: 80px;
+            }
+
+            .btn-sm-enhanced {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+                min-height: 36px;
+                min-width: 36px;
+            }
+
+            .modal-content {
+                width: 98%;
+                margin: 0.5rem;
+                max-height: 95vh;
+            }
+
+            .modal-header,
+            .modal-body,
+            .modal-footer {
+                padding: 1rem;
+            }
+
+            .modal-title {
+                font-size: 1.1rem;
+            }
+
+            .form-group input,
+            .form-group select {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+                min-height: 44px;
+            }
+
+            .btn-enhanced {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.9rem;
+                min-height: 44px;
+            }
+
+            .subject-details-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .detail-card {
+                padding: 1rem;
+            }
+
+            .students-list {
+                padding: 1rem;
+            }
+
+            .student-item {
+                padding: 0.75rem;
+            }
+
+            .custom-alert {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Touch-friendly enhancements */
+        @media (hover: none) and (pointer: coarse) {
+            .stat-card-enhanced:hover {
+                transform: none;
+            }
+
+            .btn-enhanced:hover {
+                transform: none;
+            }
+
+            .subject-link:hover {
+                text-decoration: none;
+            }
+
+            .table-enhanced tr:hover {
+                background-color: #f8f9fa;
             }
         }
     </style>
@@ -1090,19 +1452,19 @@ foreach ($subjects as $subject) {
                 <table class="table-enhanced">
                     <thead>
                         <tr>
-                            <th>Subject Code</th>
+                            <th class="mobile-hidden">Subject Code</th>
                             <th>Subject Name</th>
                             <th>Class Code</th>
-                            <th>Schedule</th>
-                            <th>Room</th>
-                            <th>Enrolled</th>
-                            <th>Actions</th>
+                            <th class="mobile-hidden">Schedule</th>
+                            <th class="mobile-hidden">Room</th>
+                            <th class="mobile-hidden">Enrolled</th>
+                            <th class="mobile-hidden">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($subjects as $subject): ?>
                         <tr>
-                            <td><?php echo $subject['subject_code']; ?></td>
+                            <td class="mobile-hidden"><?php echo $subject['subject_code']; ?></td>
                             <td>
                                 <a href="javascript:void(0)" onclick="viewSubjectDetails('<?php echo $subject['subject_id']; ?>')" class="subject-link">
                                     <?php echo $subject['subject_name']; ?>
@@ -1111,15 +1473,15 @@ foreach ($subjects as $subject) {
                             <td>
                                 <div class="class-code-display">
                                     <span><?php echo $subject['class_code']; ?></span>
-                                    <button class="btn-sm-enhanced btn-warning-enhanced" onclick="regenerateCode('<?php echo $subject['subject_id']; ?>')">
-                                        <i class="fas fa-sync-alt"></i> Regenerate
+                                    <button class="btn-sm-enhanced btn-warning-enhanced" onclick="regenerateCode('<?php echo $subject['class_code']; ?>')">
+                                        <i class="fas fa-copy"></i> Copy
                                     </button>
                                 </div>
                             </td>
-                            <td><?php echo $subject['schedule']; ?></td>
-                            <td><?php echo $subject['room']; ?></td>
-                            <td><?php echo $enrollment_counts[$subject['subject_id']] ?? 0; ?> students</td>
-                            <td>
+                            <td class="mobile-hidden"><?php echo $subject['schedule']; ?></td>
+                            <td class="mobile-hidden"><?php echo $subject['room']; ?></td>
+                            <td class="mobile-hidden"><?php echo $enrollment_counts[$subject['subject_id']] ?? 0; ?> students</td>
+                            <td class="mobile-hidden">
                                 <div class="action-buttons">
                                     <button class="btn-sm-enhanced btn-primary-enhanced" onclick="editSubject(<?php echo htmlspecialchars(json_encode($subject)); ?>)">
                                         <i class="fas fa-edit"></i> Edit
@@ -1138,7 +1500,7 @@ foreach ($subjects as $subject) {
 
                         <?php if (empty($subjects)): ?>
                         <tr>
-                            <td colspan="7" class="no-data">
+                            <td colspan="2" class="no-data">
                                 <div class="stat-empty-enhanced">
                                     <div class="stat-empty-icon">
                                         <i class="fas fa-book"></i>
@@ -1308,11 +1670,7 @@ foreach ($subjects as $subject) {
             </div>
         </div>
 
-        <!-- Regenerate Code Form -->
-        <form id="regenerateForm" action="" method="POST" style="display: none;">
-            <input type="hidden" name="action" value="regenerate_code">
-            <input type="hidden" name="subject_id" id="regenerate_subject_id">
-        </form>
+
     </main>
 
     <script>
@@ -1344,41 +1702,77 @@ foreach ($subjects as $subject) {
 
         function viewSubjectDetails(subjectId) {
             // Load subject details via AJAX
-            fetch('../php/get_subject_details.php?subject_id=' + subjectId)
+            fetch('../php/get_subject_details.php?subject_id=' + subjectId + '&format=json')
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         const subject = data.subject;
-                        const content = `
-                            <div class="subject-info">
-                                <h4>Subject Information</h4>
-                                <p><strong>Subject Code:</strong> ${subject.subject_code}</p>
-                                <p><strong>Subject Name:</strong> ${subject.subject_name}</p>
-                                <p><strong>Class Code:</strong> ${subject.class_code}</p>
-                                <p><strong>Schedule:</strong> ${subject.schedule}</p>
-                                <p><strong>Room:</strong> ${subject.room}</p>
+                        const students = data.students;
+                        const attendance = data.attendance;
+
+                        let content = `
+                            <div class="subject-info-list">
+                                <div class="info-item">
+                                    <div class="info-label"><i class="fas fa-hashtag"></i> Subject Code:</div>
+                                    <div class="info-value">${subject.subject_code}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label"><i class="fas fa-calendar-alt"></i> Schedule:</div>
+                                    <div class="info-value">${subject.schedule}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label"><i class="fas fa-users"></i> Enrolled:</div>
+                                    <div class="info-value">${students.length} students</div>
+                                </div>
                             </div>
-                            <div class="enrolled-students">
-                                <h4>Enrolled Students (${data.students.length})</h4>
-                                ${data.students.length > 0 ? 
-                                    data.students.map(student => `
-                                        <div class="student-item">
-                                            <p><strong>${student.student_id}</strong> - ${student.first_name} ${student.last_name}</p>
-                                            <p>Email: ${student.email} | Mobile: ${student.mobile}</p>
-                                        </div>
-                                    `).join('') : 
-                                    '<p>No students enrolled yet</p>'}
+                            <h4>Additional Details</h4>
+                            <div class="subject-details-grid">
+                                <div class="detail-card">
+                                    <div class="detail-icon"><i class="fas fa-book"></i></div>
+                                    <div class="detail-label">Subject Name</div>
+                                    <div class="detail-value">${subject.subject_name}</div>
+                                </div>
                             </div>
-                            <div class="attendance-summary">
-                                <h4>Attendance Summary</h4>
-                                <p><strong>Total Classes:</strong> ${data.attendance.total_classes}</p>
-                                <p><strong>Average Attendance:</strong> ${data.attendance.average_attendance}%</p>
-                            </div>
+                            <h4>Enrolled Students</h4>
+                            <div class="students-list">
                         `;
+
+                        if (students.length === 0) {
+                            content += `<p>No students enrolled in this subject.</p>`;
+                        } else {
+                            students.forEach(student => {
+                                content += `
+                                    <div class="student-item">
+                                        <div class="student-name">${student.first_name} ${student.last_name}</div>
+                                        <div class="student-info">Email: ${student.email} | Mobile: ${student.mobile}</div>
+                                    </div>
+                                `;
+                            });
+                        }
+
+                        content += `</div>`;
+
                         document.getElementById('subjectDetailsContent').innerHTML = content;
+
+                        // Add action buttons to the modal footer
+                        const modalFooter = document.querySelector('#subjectDetailsModal .modal-footer');
+                        if (modalFooter) {
+                            modalFooter.innerHTML = `
+                                <button type="button" class="btn-enhanced btn-primary-enhanced" onclick='editSubject(${JSON.stringify(subject)})'>
+                                    <i class="fas fa-edit"></i> Edit Subject
+                                </button>
+                                <button type="button" class="btn-enhanced btn-danger-enhanced" onclick="deleteSubject('${subject.subject_id}')">
+                                    <i class="fas fa-trash"></i> Delete Subject
+                                </button>
+                                <button type="button" class="btn-enhanced btn-secondary-enhanced" onclick="closeModal('subjectDetailsModal')">
+                                    <i class="fas fa-times"></i> Close
+                                </button>
+                            `;
+                        }
+
                         openModal('subjectDetailsModal');
                     } else {
-                        alert('Error loading subject details');
+                        alert('Error loading subject details: ' + data.message);
                     }
                 })
                 .catch(error => {
@@ -1396,11 +1790,55 @@ foreach ($subjects as $subject) {
             openModal('editSubjectModal');
         }
 
-        function regenerateCode(subjectId) {
-            if (confirm('Are you sure you want to regenerate the class code? Students will need the new code to enroll.')) {
-                document.getElementById('regenerate_subject_id').value = subjectId;
-                document.getElementById('regenerateForm').submit();
+        function deleteSubject(subjectId) {
+            if (confirm('Are you sure you want to delete this subject?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '';
+                const actionInput = document.createElement('input');
+                actionInput.type = 'hidden';
+                actionInput.name = 'action';
+                actionInput.value = 'delete_subject';
+                const subjectIdInput = document.createElement('input');
+                subjectIdInput.type = 'hidden';
+                subjectIdInput.name = 'subject_id';
+                subjectIdInput.value = subjectId;
+                form.appendChild(actionInput);
+                form.appendChild(subjectIdInput);
+                document.body.appendChild(form);
+                form.submit();
             }
+        }
+
+        function regenerateCode(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                showAlert('Code copied to clipboard!', 'success');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showAlert('Failed to copy code.', 'error');
+            });
+        }
+
+        function showAlert(message, type) {
+            // Remove existing alert if any
+            const existingAlert = document.getElementById('customAlert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+
+            // Create alert element
+            const alertDiv = document.createElement('div');
+            alertDiv.id = 'customAlert';
+            alertDiv.textContent = message;
+            alertDiv.className = `custom-alert ${type}`;
+
+            // Append to body
+            document.body.appendChild(alertDiv);
+
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
         }
 
         // Close modal when clicking outside

@@ -57,6 +57,12 @@ require_once '../php/db.php';
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
+        .desktop-stats {
+            display: block;
+        }
+        .mobile-stats {
+            display: none;
+        }
         .stats-card {
             background: white;
             padding: 2rem;
@@ -80,6 +86,12 @@ require_once '../php/db.php';
         .stats-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
         }
         .stats-icon {
             font-size: 3rem;
@@ -193,24 +205,30 @@ require_once '../php/db.php';
             .dashboard-subtitle {
                 font-size: 1rem;
             }
+            .desktop-stats {
+                display: none;
+            }
+            .mobile-stats {
+                display: none;
+            }
             .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
             }
             .stats-card {
-                padding: 2rem 1.5rem;
-                border-radius: 20px;
+                padding: 1rem;
+                border-radius: 12px;
             }
             .stats-icon {
-                font-size: 4rem;
-                margin-bottom: 1.5rem;
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
             }
             .stats-number {
-                font-size: 4rem;
-                margin-bottom: 0.75rem;
+                font-size: 2rem;
+                margin-bottom: 0.25rem;
             }
             .stats-label {
-                font-size: 1.2rem;
+                font-size: 0.9rem;
             }
             .recent-activities-section {
                 padding: 1.5rem;
@@ -249,19 +267,23 @@ require_once '../php/db.php';
             .dashboard-subtitle {
                 font-size: 0.95rem;
             }
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
             .stats-card {
-                padding: 1.5rem 1rem;
+                padding: 0.75rem 0.5rem;
             }
             .stats-icon {
-                font-size: 3.5rem;
-                margin-bottom: 1rem;
+                font-size: 1.5rem;
+                margin-bottom: 0.25rem;
             }
             .stats-number {
-                font-size: 3.5rem;
-                margin-bottom: 0.5rem;
+                font-size: 1.5rem;
+                margin-bottom: 0.25rem;
             }
             .stats-label {
-                font-size: 1.1rem;
+                font-size: 0.8rem;
             }
             .recent-activities-section {
                 padding: 1rem;
@@ -299,7 +321,7 @@ require_once '../php/db.php';
         </div>
 
         <!-- Dashboard Stats -->
-        <div class="stats-grid">
+        <div class="stats-grid desktop-stats">
             <?php
             // Get statistics
             $stats = [];
@@ -335,6 +357,26 @@ require_once '../php/db.php';
                 <div class="stats-label">Total Classes</div>
             </div>
 
+        </div>
+
+        <div class="stats-grid mobile-stats">
+            <div class="stats-card fade-in" style="display: flex; flex-direction: column; padding: 1rem;">
+                <div class="stat-item" style="text-align: center; padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                    <i class="fas fa-user-graduate stats-icon" style="font-size: 2.5rem;"></i>
+                    <div class="stats-number" style="font-size: 2rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;"><?php echo $stats['students']; ?></div>
+                    <div class="stats-label" style="font-size: 0.9rem;">Total Students</div>
+                </div>
+                <div class="stat-item" style="text-align: center; padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                    <i class="fas fa-chalkboard-teacher stats-icon" style="font-size: 2.5rem;"></i>
+                    <div class="stats-number" style="font-size: 2rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;"><?php echo $stats['professors']; ?></div>
+                    <div class="stats-label" style="font-size: 0.9rem;">Total Professors</div>
+                </div>
+                <div class="stat-item" style="text-align: center; padding: 0.5rem 0;">
+                    <i class="fas fa-school stats-icon" style="font-size: 2.5rem;"></i>
+                    <div class="stats-number" style="font-size: 2rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;"><?php echo $stats['classes']; ?></div>
+                    <div class="stats-label" style="font-size: 0.9rem;">Total Classes</div>
+                </div>
+            </div>
         </div>
 
         <!-- User Management Section -->

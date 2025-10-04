@@ -567,23 +567,7 @@ $students = $pdo->query($query)->fetchAll();
                 font-size: 1rem;
             }
             .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            .stats-card {
-                padding: 2rem 1.5rem;
-                border-radius: 20px;
-            }
-            .stats-icon {
-                font-size: 4rem;
-                margin-bottom: 1.5rem;
-            }
-            .stats-number {
-                font-size: 4rem;
-                margin-bottom: 0.75rem;
-            }
-            .stats-label {
-                font-size: 1.2rem;
+                display: none;
             }
             .table-container {
                 padding: 1rem;
