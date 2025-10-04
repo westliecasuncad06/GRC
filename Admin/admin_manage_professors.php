@@ -491,8 +491,12 @@ $professors = $pdo->query($query)->fetchAll();
             .table-container {
                 overflow-x: auto;
             }
-            .table {
-                min-width: 600px;
+            .table th:nth-child(1), .table td:nth-child(1),
+            .table th:nth-child(2), .table td:nth-child(2),
+            .table th:nth-child(5), .table td:nth-child(5),
+            .table th:nth-child(6), .table td:nth-child(6),
+            .table th:nth-child(7), .table td:nth-child(7) {
+                display: none;
             }
         }
 
@@ -548,19 +552,19 @@ $professors = $pdo->query($query)->fetchAll();
                 </thead>
         <tbody>
             <?php foreach ($professors as $professor): ?>
-            <tr onclick="viewProfessor(<?php echo htmlspecialchars(json_encode($professor)); ?>)">
+            <tr>
                 <td><?php echo $professor['professor_id']; ?></td>
                 <td><?php echo $professor['employee_id']; ?></td>
-                <td><?php echo $professor['first_name'] . ' ' . $professor['last_name']; ?></td>
-                <td><?php echo $professor['email']; ?></td>
+                <td onclick="viewProfessor(<?php echo htmlspecialchars(json_encode($professor)); ?>)"><?php echo $professor['first_name'] . ' ' . $professor['last_name']; ?></td>
+                <td onclick="viewProfessor(<?php echo htmlspecialchars(json_encode($professor)); ?>)"><?php echo $professor['email']; ?></td>
                 <td><?php echo $professor['department']; ?></td>
                 <td><?php echo $professor['mobile']; ?></td>
                 <td>
                     <div class="action-buttons">
-                        <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); editProfessor(<?php echo htmlspecialchars(json_encode($professor)); ?>)">
+                        <button class="btn btn-sm btn-primary" onclick="editProfessor(<?php echo htmlspecialchars(json_encode($professor)); ?>)">
                             <i class="fas fa-edit"></i> Edit
                         </button>
-                        <form action="" method="POST" style="display:inline;" onclick="event.stopPropagation();">
+                        <form action="" method="POST" style="display:inline;">
                             <input type="hidden" name="action" value="delete_professor">
                             <input type="hidden" name="professor_id" value="<?php echo $professor['professor_id']; ?>">
                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this professor?')">

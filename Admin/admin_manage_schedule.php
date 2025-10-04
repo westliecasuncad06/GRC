@@ -511,6 +511,9 @@ foreach ($subjects as $subject) {
             .table {
                 min-width: 600px;
             }
+            .mobile-hidden {
+                display: none;
+            }
             .stats-grid {
                 grid-template-columns: 1fr;
             }
@@ -760,26 +763,26 @@ foreach ($subjects as $subject) {
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Subject Code</th>
+                        <th class="mobile-hidden">Subject Code</th>
                         <th>Subject Name</th>
-                        <th>Class Code</th>
+                        <th class="mobile-hidden">Class Code</th>
                         <th>Professor</th>
-                        <th>Schedule</th>
-                        <th>Room</th>
-                        <th>School Year</th>
-                        <th>Enrolled</th>
-                        <th>Actions</th>
+                        <th class="mobile-hidden">Schedule</th>
+                        <th class="mobile-hidden">Room</th>
+                        <th class="mobile-hidden">School Year</th>
+                        <th class="mobile-hidden">Enrolled</th>
+                        <th class="mobile-hidden">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($subjects as $subject): ?>
                     <tr>
                         <td><?php echo $subject['subject_code']; ?></td>
-                        <td><?php echo $subject['subject_name']; ?></td>
+                        <td onclick="viewSubject(<?php echo htmlspecialchars(json_encode($subject)); ?>)"><?php echo $subject['subject_name']; ?></td>
                         <td><?php echo $subject['class_code']; ?></td>
                         <td>
                             <?php if ($subject['first_name']): ?>
-                                <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="viewSubject(<?php echo htmlspecialchars(json_encode($subject)); ?>)">
                                     <i class="fas fa-user-tie" style="color: var(--primary);"></i>
                                     <?php echo $subject['first_name'] . ' ' . $subject['last_name']; ?>
                                 </div>
@@ -984,6 +987,60 @@ foreach ($subjects as $subject) {
                 </div>
             </div>
         </div>
+
+        <!-- View Subject Modal -->
+        <div id="viewSubjectModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">View Subject</h3>
+                    <button class="modal-close" onclick="closeModal('viewSubjectModal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Subject Code</label>
+                            <input type="text" id="view_subject_code" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject Name</label>
+                            <input type="text" id="view_subject_name" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Professor</label>
+                            <input type="text" id="view_professor" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Class Code</label>
+                            <input type="text" id="view_class_code" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Schedule</label>
+                            <input type="text" id="view_schedule" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Room</label>
+                            <input type="text" id="view_room" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>School Year</label>
+                            <input type="text" id="view_school_year" readonly>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="editSubjectFromView()">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <form action="" method="POST" style="display:inline;">
+                                <input type="hidden" name="action" value="delete_subject">
+                                <input type="hidden" name="subject_id" id="view_subject_id">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this subject?')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script>
@@ -1056,6 +1113,23 @@ foreach ($subjects as $subject) {
                 .catch(error => {
                     document.getElementById('enrolledStudentsList').innerHTML = '<p>Error loading students: ' + error.message + '</p>';
                 });
+        }
+
+        function viewSubject(subject) {
+            document.getElementById('view_subject_code').value = subject.subject_code;
+            document.getElementById('view_subject_name').value = subject.subject_name;
+            document.getElementById('view_professor').value = subject.first_name ? subject.first_name + ' ' + subject.last_name : 'Not Assigned';
+            document.getElementById('view_class_code').value = subject.class_code;
+            document.getElementById('view_schedule').value = subject.schedule;
+            document.getElementById('view_room').value = subject.room;
+            document.getElementById('view_school_year').value = subject.school_year;
+            document.getElementById('view_subject_id').value = subject.subject_id;
+            window.currentSubject = subject;
+            openModal('viewSubjectModal');
+        }
+
+        function editSubjectFromView() {
+            editSubject(window.currentSubject);
         }
 
         // Close modal when clicking outside
