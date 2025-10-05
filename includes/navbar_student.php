@@ -124,85 +124,76 @@
                         <div class="no-notifications-subtext">You haven't submitted any enrollment or unenrollment requests yet.</div>
                     </div>
                 <?php else: ?>
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th><i class="fas fa-book-open"></i> Subject</th>
-                                    <th class="text-center"><i class="fas fa-info-circle"></i> Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($all_requests as $request): ?>
-                                    <?php
-                                    $status_class = '';
-                                    $status_icon = '';
-                                    $status_text = '';
-                                    switch ($request['status']) {
-                                        case 'approved':
-                                            $status_class = 'status-approved';
-                                            $status_icon = 'fa-check-circle';
-                                            $status_text = 'Accepted';
-                                            break;
-                                        case 'rejected':
-                                            $status_class = 'status-rejected';
-                                            $status_icon = 'fa-times-circle';
-                                            $status_text = 'Rejected';
-                                            break;
-                                        case 'pending':
-                                            $status_class = 'status-pending';
-                                            $status_icon = 'fa-clock';
-                                            $status_text = 'Pending';
-                                            break;
-                                    }
+                    <div class="notifications-container">
+                        <?php foreach ($all_requests as $request): ?>
+                            <?php
+                            $status_class = '';
+                            $status_icon = '';
+                            $status_text = '';
+                            switch ($request['status']) {
+                                case 'approved':
+                                    $status_class = 'status-approved';
+                                    $status_icon = 'fa-check-circle';
+                                    $status_text = 'Accepted';
+                                    break;
+                                case 'rejected':
+                                    $status_class = 'status-rejected';
+                                    $status_icon = 'fa-times-circle';
+                                    $status_text = 'Rejected';
+                                    break;
+                                case 'pending':
+                                    $status_class = 'status-pending';
+                                    $status_icon = 'fa-clock';
+                                    $status_text = 'Pending';
+                                    break;
+                            }
 
-                                    $request_type_class = $request['request_type'] === 'enrollment' ? 'request-enrollment' : 'request-unenrollment';
-                                    $request_type_icon = $request['request_type'] === 'enrollment' ? 'fa-plus-circle' : 'fa-minus-circle';
-                                    $request_type_text = ucfirst($request['request_type']);
-                                    ?>
-                                    <tr class="notification-row" onclick="toggleDetails(this)">
-                                        <td class="subject-cell">
-                                            <span class="subject-name"><?php echo htmlspecialchars($request['subject_name']); ?></span>
-                                            <i class="fas fa-chevron-down expand-icon"></i>
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="status-badge <?php echo $status_class; ?>">
-                                                <i class="fas <?php echo $status_icon; ?>"></i>
-                                                <?php echo $status_text; ?>
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr class="details-row" style="display: none;">
-                                        <td colspan="2">
-                                            <div class="notification-details">
-                                                <div class="detail-item">
-                                                    <strong>Type:</strong>
-                                                    <span class="request-type-badge <?php echo $request_type_class; ?>">
-                                                        <i class="fas <?php echo $request_type_icon; ?>"></i>
-                                                        <?php echo $request_type_text; ?>
-                                                    </span>
-                                                </div>
-                                                <div class="detail-item">
-                                                    <strong>Class:</strong>
-                                                    <span class="class-tag"><?php echo htmlspecialchars($request['class_name']); ?></span>
-                                                </div>
-                                                <div class="detail-item">
-                                                    <strong>Requested:</strong>
-                                                    <div class="date-info">
-                                                        <i class="fas fa-calendar-day"></i>
-                                                        <span><?php echo date('M j, Y', strtotime($request['requested_at'])); ?></span>
-                                                    </div>
-                                                    <div class="time-info">
-                                                        <i class="fas fa-clock"></i>
-                                                        <span><?php echo date('g:i A', strtotime($request['requested_at'])); ?></span>
-                                                    </div>
-                                                </div>
+                            $request_type_class = $request['request_type'] === 'enrollment' ? 'request-enrollment' : 'request-unenrollment';
+                            $request_type_icon = $request['request_type'] === 'enrollment' ? 'fa-plus-circle' : 'fa-minus-circle';
+                            $request_type_text = ucfirst($request['request_type']);
+                            ?>
+                            <div class="notification-card" onclick="toggleDetails(this)">
+                                <div class="notification-header">
+                                    <div class="notification-subject">
+                                        <i class="fas fa-book-open subject-icon"></i>
+                                        <span class="subject-name"><?php echo htmlspecialchars($request['subject_name']); ?></span>
+                                    </div>
+                                    <div class="notification-meta">
+                                        <span class="status-badge <?php echo $status_class; ?>">
+                                            <i class="fas <?php echo $status_icon; ?>"></i>
+                                            <?php echo $status_text; ?>
+                                        </span>
+                                        <i class="fas fa-chevron-down expand-icon"></i>
+                                    </div>
+                                </div>
+                                <div class="notification-details" style="display: none;">
+                                    <div class="detail-item">
+                                        <strong>Type:</strong>
+                                        <span class="request-type-badge <?php echo $request_type_class; ?>">
+                                            <i class="fas <?php echo $request_type_icon; ?>"></i>
+                                            <?php echo $request_type_text; ?>
+                                        </span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Class:</strong>
+                                        <span class="class-tag"><?php echo htmlspecialchars($request['class_name']); ?></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Requested:</strong>
+                                        <div class="date-time-info">
+                                            <div class="date-info">
+                                                <i class="fas fa-calendar-day"></i>
+                                                <span><?php echo date('M j, Y', strtotime($request['requested_at'])); ?></span>
                                             </div>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                                            <div class="time-info">
+                                                <i class="fas fa-clock"></i>
+                                                <span><?php echo date('g:i A', strtotime($request['requested_at'])); ?></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
             </div>
@@ -491,51 +482,103 @@
     gap: 1rem;
 }
 
-.table-container {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0, 0, 0, 0.05);
+.notifications-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
+.notification-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.notification-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.notification-subject {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.subject-icon {
+    color: var(--primary);
+    font-size: 1.2rem;
+}
+
+.subject-name {
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 1rem;
+}
+
+.notification-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.expand-icon {
+    color: var(--gray);
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.notification-details {
+    padding: 1.5rem;
+    background: white;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
     font-size: 0.9rem;
 }
 
-.data-table thead {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    color: white;
+.detail-item:last-child {
+    margin-bottom: 0;
 }
 
-.data-table th {
-    padding: 1rem 1.5rem;
-    text-align: left;
+.detail-item strong {
+    min-width: 80px;
+    color: var(--gray);
     font-weight: 600;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
-.data-table th i {
-    margin-right: 0.5rem;
-    opacity: 0.8;
+.class-tag {
+    background: rgba(247, 82, 112, 0.1);
+    color: var(--primary);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
 }
 
-.data-table tbody tr {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    transition: background-color 0.2s ease;
-}
-
-.data-table tbody tr:hover {
-    background: rgba(247, 82, 112, 0.02);
-}
-
-.data-table td {
-    padding: 1.25rem 1.5rem;
-    vertical-align: middle;
+.date-time-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
 .request-type-badge {
@@ -656,15 +699,15 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.classList.remove('show');
     };
 
-    window.toggleDetails = function(row) {
-        const detailsRow = row.nextElementSibling;
-        const icon = row.querySelector('.expand-icon');
-        if (detailsRow.style.display === 'none' || detailsRow.style.display === '') {
-            detailsRow.style.display = 'table-row';
+    window.toggleDetails = function(card) {
+        const detailsDiv = card.querySelector('.notification-details');
+        const icon = card.querySelector('.expand-icon');
+        if (detailsDiv.style.display === 'none' || detailsDiv.style.display === '') {
+            detailsDiv.style.display = 'block';
             icon.classList.remove('fa-chevron-down');
             icon.classList.add('fa-chevron-up');
         } else {
-            detailsRow.style.display = 'none';
+            detailsDiv.style.display = 'none';
             icon.classList.remove('fa-chevron-up');
             icon.classList.add('fa-chevron-down');
         }
