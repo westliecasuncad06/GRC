@@ -1,4 +1,4 @@
-    <!-- Navbar -->
+<!-- Navbar -->
 <style>
 .navbar-title {
     display: block;
@@ -128,10 +128,7 @@
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th><i class="fas fa-tag"></i> Type</th>
                                     <th><i class="fas fa-book-open"></i> Subject</th>
-                                    <th><i class="fas fa-graduation-cap"></i> Class</th>
-                                    <th><i class="fas fa-calendar-plus"></i> Requested</th>
                                     <th class="text-center"><i class="fas fa-info-circle"></i> Status</th>
                                 </tr>
                             </thead>
@@ -140,18 +137,22 @@
                                     <?php
                                     $status_class = '';
                                     $status_icon = '';
+                                    $status_text = '';
                                     switch ($request['status']) {
                                         case 'approved':
                                             $status_class = 'status-approved';
                                             $status_icon = 'fa-check-circle';
+                                            $status_text = 'Accepted';
                                             break;
                                         case 'rejected':
                                             $status_class = 'status-rejected';
                                             $status_icon = 'fa-times-circle';
+                                            $status_text = 'Rejected';
                                             break;
                                         case 'pending':
                                             $status_class = 'status-pending';
                                             $status_icon = 'fa-clock';
+                                            $status_text = 'Pending';
                                             break;
                                     }
 
@@ -159,34 +160,44 @@
                                     $request_type_icon = $request['request_type'] === 'enrollment' ? 'fa-plus-circle' : 'fa-minus-circle';
                                     $request_type_text = ucfirst($request['request_type']);
                                     ?>
-                                    <tr>
-                                        <td class="request-type-cell">
-                                            <span class="request-type-badge <?php echo $request_type_class; ?>">
-                                                <i class="fas <?php echo $request_type_icon; ?>"></i>
-                                                <?php echo $request_type_text; ?>
-                                            </span>
-                                        </td>
+                                    <tr class="notification-row" onclick="toggleDetails(this)">
                                         <td class="subject-cell">
-                                            <span class="subject-tag"><?php echo htmlspecialchars($request['subject_name']); ?></span>
-                                        </td>
-                                        <td class="class-cell">
-                                            <span class="class-name"><?php echo htmlspecialchars($request['class_name']); ?></span>
-                                        </td>
-                                        <td class="date-cell">
-                                            <div class="date-info">
-                                                <i class="fas fa-calendar-day"></i>
-                                                <span><?php echo date('M j, Y', strtotime($request['requested_at'])); ?></span>
-                                            </div>
-                                            <div class="time-info">
-                                                <i class="fas fa-clock"></i>
-                                                <span><?php echo date('g:i A', strtotime($request['requested_at'])); ?></span>
-                                            </div>
+                                            <span class="subject-name"><?php echo htmlspecialchars($request['subject_name']); ?></span>
+                                            <i class="fas fa-chevron-down expand-icon"></i>
                                         </td>
                                         <td class="text-center">
                                             <span class="status-badge <?php echo $status_class; ?>">
                                                 <i class="fas <?php echo $status_icon; ?>"></i>
-                                                <?php echo ucfirst($request['status']); ?>
+                                                <?php echo $status_text; ?>
                                             </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="details-row" style="display: none;">
+                                        <td colspan="2">
+                                            <div class="notification-details">
+                                                <div class="detail-item">
+                                                    <strong>Type:</strong>
+                                                    <span class="request-type-badge <?php echo $request_type_class; ?>">
+                                                        <i class="fas <?php echo $request_type_icon; ?>"></i>
+                                                        <?php echo $request_type_text; ?>
+                                                    </span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <strong>Class:</strong>
+                                                    <span class="class-tag"><?php echo htmlspecialchars($request['class_name']); ?></span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <strong>Requested:</strong>
+                                                    <div class="date-info">
+                                                        <i class="fas fa-calendar-day"></i>
+                                                        <span><?php echo date('M j, Y', strtotime($request['requested_at'])); ?></span>
+                                                    </div>
+                                                    <div class="time-info">
+                                                        <i class="fas fa-clock"></i>
+                                                        <span><?php echo date('g:i A', strtotime($request['requested_at'])); ?></span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -297,15 +308,7 @@
     overflow-y: auto;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 8px 32px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    transform: scale(0.9);
-    opacity: 0;
     position: relative;
-}
-
-.modal.show .modal-content {
-    transform: scale(1);
-    opacity: 1;
 }
 
 @keyframes modalFadeIn {
@@ -313,17 +316,6 @@
         opacity: 0;
     }
     to {
-        opacity: 1;
-    }
-}
-
-@keyframes modalSlideIn {
-    from {
-        transform: scale(0.9) translateY(-20px);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1) translateY(0);
         opacity: 1;
     }
 }
@@ -370,7 +362,7 @@
 .modal-title-icon {
     width: 40px;
     height: 40px;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(248, 243, 243, 0.2);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -405,48 +397,7 @@
     transform: scale(1.05);
 }
 
-.modal-tabs {
-    display: flex;
-    background: #f8f9fa;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
 
-.tab-button {
-    flex: 1;
-    padding: 1rem 1.5rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--gray);
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    position: relative;
-}
-
-.tab-button.active {
-    color: var(--primary);
-    background: white;
-}
-
-.tab-button.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--primary);
-}
-
-.tab-button:hover:not(.active) {
-    color: var(--primary);
-    background: rgba(247, 82, 112, 0.05);
-}
 
 .modal-body {
     padding: 2.5rem;
@@ -505,112 +456,10 @@
     box-shadow: 0 8px 24px rgba(108, 117, 125, 0.3);
 }
 
-.btn-primary {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    color: white;
-    box-shadow: 0 4px 16px rgba(247, 82, 112, 0.2);
-}
 
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(247, 82, 112, 0.3);
-}
 
-/* Notification List Styles */
-.notification-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
 
-.notification-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1.5rem;
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
 
-.notification-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.notification-item.unread {
-    background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
-    border-left: 4px solid var(--primary);
-}
-
-.notification-item.read {
-    background: #f8f9fa;
-}
-
-.notification-icon {
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.2rem;
-    flex-shrink: 0;
-}
-
-.notification-content {
-    flex: 1;
-}
-
-.notification-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--dark);
-    margin-bottom: 0.5rem;
-}
-
-.notification-message {
-    font-size: 0.9rem;
-    color: var(--gray);
-    margin-bottom: 0.75rem;
-    line-height: 1.5;
-}
-
-.notification-meta {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 0.8rem;
-    color: var(--gray);
-}
-
-.notification-time {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.notification-status {
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    text-transform: uppercase;
-}
-
-.status-unread {
-    background: rgba(247, 82, 112, 0.1);
-    color: var(--primary);
-}
-
-.status-read {
-    background: rgba(108, 117, 125, 0.1);
-    color: var(--gray);
-}
 
 .no-notifications {
     text-align: center;
@@ -689,10 +538,6 @@
     vertical-align: middle;
 }
 
-.request-type-cell {
-    width: 100px;
-}
-
 .request-type-badge {
     display: inline-flex;
     align-items: center;
@@ -717,37 +562,6 @@
 
 .subject-cell {
     width: 120px;
-}
-
-.subject-tag {
-    background: rgba(247, 82, 112, 0.1);
-    color: var(--primary);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    display: inline-block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-}
-
-.class-cell {
-    width: 120px;
-}
-
-.class-name {
-    font-weight: 600;
-    color: var(--dark);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-}
-
-.date-cell {
-    width: 140px;
 }
 
 .date-info, .time-info {
@@ -792,16 +606,6 @@
 
 .text-center {
     text-align: center;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slideIn {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
 }
 </style>
 
@@ -852,88 +656,17 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.classList.remove('show');
     };
 
-    window.markAsRead = function(notificationId) {
-        fetch('../php/mark_notification_read.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                notification_id: notificationId
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Update the notification item
-                const notificationItem = document.querySelector(`.notification-item[data-notification-id="${notificationId}"]`);
-                if (notificationItem) {
-                    notificationItem.classList.remove('unread');
-                    notificationItem.classList.add('read');
-                    const statusElement = notificationItem.querySelector('.notification-status');
-                    if (statusElement) {
-                        statusElement.classList.remove('status-unread');
-                        statusElement.classList.add('status-read');
-                        statusElement.textContent = 'READ';
-                    }
-                    const actionButton = notificationItem.querySelector('.notification-actions');
-                    if (actionButton) {
-                        actionButton.remove();
-                    }
-                }
-            } else {
-                alert('Error marking notification as read: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while marking the notification as read.');
-        });
-    };
-
-    window.markAllAsRead = function() {
-        if (!confirm('Are you sure you want to mark all notifications as read?')) {
-            return;
-        }
-
-        fetch('notifications.php?mark_read=all', {
-            method: 'GET'
-        })
-        .then(response => {
-            if (response.ok) {
-                // Reload the page to reflect changes
-                location.reload();
-            } else {
-                alert('Error marking all notifications as read.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while marking all notifications as read.');
-        });
-    };
-
-    window.switchTab = function(tabName) {
-        const tabButtons = document.querySelectorAll('.tab-button');
-        const notificationList = document.getElementById('notificationList');
-        const historyList = document.getElementById('historyList');
-
-        // Remove active class from all tabs
-        tabButtons.forEach(button => button.classList.remove('active'));
-
-        // Add active class to clicked tab
-        const activeTab = document.querySelector(`.tab-button[onclick="switchTab('${tabName}')"]`);
-        if (activeTab) {
-            activeTab.classList.add('active');
-        }
-
-        // Show/hide content based on tab
-        if (tabName === 'notifications') {
-            notificationList.style.display = 'flex';
-            historyList.style.display = 'none';
-        } else if (tabName === 'history') {
-            notificationList.style.display = 'none';
-            historyList.style.display = 'flex';
+    window.toggleDetails = function(row) {
+        const detailsRow = row.nextElementSibling;
+        const icon = row.querySelector('.expand-icon');
+        if (detailsRow.style.display === 'none' || detailsRow.style.display === '') {
+            detailsRow.style.display = 'table-row';
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+        } else {
+            detailsRow.style.display = 'none';
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
         }
     };
 

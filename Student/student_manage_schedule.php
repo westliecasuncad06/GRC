@@ -219,85 +219,7 @@ if (empty($enrolled_classes)) {
             gap: 1rem;
         }
 
-        /* Modern Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
 
-        .modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background-color: white;
-            border-radius: 12px;
-            padding: 0;
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid #dee2e6;
-            background: #f8f9fa;
-            color: #333;
-            border-radius: 12px 12px 0 0;
-        }
-
-        .modal-title {
-            margin: 0;
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.25rem;
-            cursor: pointer;
-            color: #6c757d;
-            padding: 0.25rem;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            transition: background-color 0.2s ease;
-        }
-
-        .modal-close:hover {
-            background: #e9ecef;
-        }
-
-        .modal-body {
-            padding: 2rem;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.75rem;
-            padding: 1rem 2rem;
-            border-top: 1px solid #dee2e6;
-            background: #f8f9fa;
-            border-radius: 0 0 12px 12px;
-        }
 
         /* Enhanced Attendance Table */
         .attendance-table {
@@ -373,6 +295,12 @@ if (empty($enrolled_classes)) {
             background: linear-gradient(135deg, #e2e3e5 0%, #d6d8db 100%);
             color: #383d41;
             border: 1px solid #d6d8db;
+        }
+
+        .attendance-status.Accepted {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
 
         /* Enhanced Form Styles */
@@ -473,6 +401,73 @@ if (empty($enrolled_classes)) {
             font-weight: 500;
         }
 
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: #333;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: all 0.3s ease;
+            max-width: 300px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, var(--success) 0%, #20c997 100%);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, var(--danger) 0%, #e74c3c 100%);
+        }
+
+        .toast-icon {
+            font-size: 1.2rem;
+        }
+
+        .toast-message {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast-close:hover {
+            opacity: 0.7;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .dashboard-container {
@@ -499,15 +494,7 @@ if (empty($enrolled_classes)) {
                 justify-content: center;
             }
 
-            .modal-content {
-                width: 95%;
-                margin: 1rem;
-            }
 
-            .modal-header,
-            .modal-body {
-                padding: 1.5rem;
-            }
 
             .attendance-table th,
             .attendance-table td {
@@ -526,14 +513,7 @@ if (empty($enrolled_classes)) {
                 align-self: flex-start;
             }
 
-            .modal-footer {
-                flex-direction: column;
-            }
 
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
         }
     </style>
 </head>
