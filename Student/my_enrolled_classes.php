@@ -177,10 +177,7 @@ $pending_unenrollment_requests = $stmt->fetchAll();
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th><i class="fas fa-tag"></i> Class Name</th>
-                                <th><i class="fas fa-book-open"></i> Subject</th>
-                                <th><i class="fas fa-user-tie"></i> Professor</th>
-                                <th><i class="fas fa-calendar"></i> Request Date</th>
+                                <th><i class="fas fa-graduation-cap"></i> Class</th>
                                 <th class="text-center"><i class="fas fa-info-circle"></i> Status</th>
                             </tr>
                         </thead>
@@ -191,30 +188,48 @@ $pending_unenrollment_requests = $stmt->fetchAll();
                                     ? 'Prof. ' . $request['first_name'] . ' ' . $request['last_name']
                                     : 'N/A';
                                 ?>
-                                <tr>
-                                    <td class="class-name-cell">
+                                <tr class="notification-row" onclick="toggleDetails(this)">
+                                    <td class="class-cell">
                                         <span class="class-name"><?php echo htmlspecialchars($request['class_name']); ?></span>
-                                    </td>
-                                    <td class="subject-cell">
-                                        <span class="subject-tag"><?php echo htmlspecialchars($request['subject_name']); ?></span>
-                                    </td>
-                                    <td class="professor-cell">
-                                        <div class="professor-info">
-                                            <i class="fas fa-user"></i>
-                                            <span><?php echo htmlspecialchars($professor_name); ?></span>
-                                        </div>
-                                    </td>
-                                    <td class="schedule-cell">
-                                        <div class="date-info">
-                                            <i class="fas fa-calendar-day"></i>
-                                            <span><?php echo date('M j, Y g:i A', strtotime($request['requested_at'])); ?></span>
-                                        </div>
+                                        <i class="fas fa-chevron-down expand-icon"></i>
                                     </td>
                                     <td class="text-center">
                                         <span class="status-badge pending">
                                             <i class="fas fa-clock"></i>
                                             Pending Approval
                                         </span>
+                                    </td>
+                                </tr>
+                                <tr class="details-row" style="display: none;">
+                                    <td colspan="2">
+                                        <div class="notification-details">
+                                            <div class="detail-item">
+                                                <strong>Type:</strong>
+                                                <span class="request-type-badge request-unenrollment">
+                                                    <i class="fas fa-minus-circle"></i>
+                                                    Unenrollment
+                                                </span>
+                                            </div>
+                                            <div class="detail-item">
+                                                <strong>Subject:</strong>
+                                                <span class="subject-tag"><?php echo htmlspecialchars($request['subject_name']); ?></span>
+                                            </div>
+                                            <div class="detail-item">
+                                                <strong>Professor:</strong>
+                                                <span><?php echo htmlspecialchars($professor_name); ?></span>
+                                            </div>
+                                            <div class="detail-item">
+                                                <strong>Requested:</strong>
+                                                <div class="date-info">
+                                                    <i class="fas fa-calendar-day"></i>
+                                                    <span><?php echo date('M j, Y', strtotime($request['requested_at'])); ?></span>
+                                                </div>
+                                                <div class="time-info">
+                                                    <i class="fas fa-clock"></i>
+                                                    <span><?php echo date('g:i A', strtotime($request['requested_at'])); ?></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -600,6 +615,98 @@ $pending_unenrollment_requests = $stmt->fetchAll();
             background: linear-gradient(135deg, var(--warning) 0%, var(--accent) 100%);
             color: var(--dark);
             border: 1px solid rgba(247, 82, 112, 0.2);
+        }
+
+        /* Notification Row Styles */
+        .notification-row {
+            cursor: pointer;
+        }
+
+        .notification-row:hover {
+            background: rgba(247, 82, 112, 0.05);
+        }
+
+        .class-cell {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .class-name {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .expand-icon {
+            transition: transform 0.3s ease;
+            color: var(--primary);
+        }
+
+        .notification-row.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .details-row {
+            background: rgba(247, 82, 112, 0.02);
+        }
+
+        .notification-details {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .detail-item strong {
+            min-width: 80px;
+            color: var(--dark);
+        }
+
+        .request-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .request-unenrollment {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .subject-tag {
+            background: rgba(247, 82, 112, 0.1);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .date-info, .time-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .date-info i, .time-info i {
+            width: 14px;
+            color: var(--primary);
         }
 
         /* Modal Styles */
@@ -997,6 +1104,18 @@ $pending_unenrollment_requests = $stmt->fetchAll();
                 console.error('Error:', error);
                 showToast('An error occurred while submitting the request.', 'error');
             });
+        }
+
+        window.toggleDetails = function(row) {
+            const detailsRow = row.nextElementSibling;
+            const isExpanded = detailsRow.style.display !== 'none';
+            if (isExpanded) {
+                detailsRow.style.display = 'none';
+                row.classList.remove('expanded');
+            } else {
+                detailsRow.style.display = 'table-row';
+                row.classList.add('expanded');
+            }
         }
 
         // Event listeners

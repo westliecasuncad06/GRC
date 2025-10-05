@@ -146,10 +146,6 @@
         <a href="../Student/my_enrolled_classes.php" class="nav-item <?php echo ($current_page == 'my_enrolled_classes.php') ? 'active' : ''; ?>">
             <i class="fas fa-book"></i>
             <span>My Enrolled Classes</span>
-        <a href="../Student/student_request_history.php" class="nav-item <?php echo ($current_page == 'student_request_history.php') ? 'active' : ''; ?>">
-            <i class="fas fa-history"></i>
-            <span>Request History</span>
-        </a>
         </a>
         <a href="#" onclick="openNotificationModal(); return false;" class="nav-item <?php echo ($current_page == 'notifications.php') ? 'active' : ''; ?>">
             <i class="fas fa-bell"></i>

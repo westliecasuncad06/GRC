@@ -27,12 +27,62 @@
                 <i class="fas fa-bell"></i>
                 <?php
                 require_once '../php/db.php';
-                require_once '../php/notifications.php';
-                $notificationManager = new NotificationManager($pdo);
-                $unread_count = $notificationManager->getUnreadCount($_SESSION['user_id'], 'student');
-                if ($unread_count > 0):
+
+                // Get enrollment request history
+                $stmt = $pdo->prepare("
+                    SELECT
+                        er.request_id,
+                        er.status,
+                        er.requested_at,
+                        er.processed_at,
+                        c.class_name,
+                        s.subject_name,
+                        p.first_name as prof_first_name,
+                        p.last_name as prof_last_name,
+                        'enrollment' as request_type
+                    FROM enrollment_requests er
+                    JOIN classes c ON er.class_id = c.class_id
+                    JOIN subjects s ON c.subject_id = s.subject_id
+                    LEFT JOIN professors p ON er.processed_by = p.professor_id
+                    WHERE er.student_id = ?
+                    ORDER BY er.requested_at DESC
+                ");
+                $stmt->execute([$_SESSION['user_id']]);
+                $enrollment_requests = $stmt->fetchAll();
+
+                // Get unenrollment request history
+                $stmt = $pdo->prepare("
+                    SELECT
+                        ur.request_id,
+                        ur.status,
+                        ur.requested_at,
+                        ur.processed_at,
+                        c.class_name,
+                        s.subject_name,
+                        p.first_name as prof_first_name,
+                        p.last_name as prof_last_name,
+                        'unenrollment' as request_type
+                    FROM unenrollment_requests ur
+                    JOIN classes c ON ur.class_id = c.class_id
+                    JOIN subjects s ON c.subject_id = s.subject_id
+                    LEFT JOIN professors p ON ur.processed_by = p.professor_id
+                    WHERE ur.student_id = ?
+                    ORDER BY ur.requested_at DESC
+                ");
+                $stmt->execute([$_SESSION['user_id']]);
+                $unenrollment_requests = $stmt->fetchAll();
+
+                // Combine and sort all requests
+                $all_requests = array_merge($enrollment_requests, $unenrollment_requests);
+                usort($all_requests, function($a, $b) {
+                    return strtotime($b['requested_at']) - strtotime($a['requested_at']);
+                });
+
+                $pending_count = count(array_filter($all_requests, fn($r) => $r['status'] === 'pending'));
+
+                if ($pending_count > 0):
                 ?>
-                <span class="notification-badge"><?php echo $unread_count; ?></span>
+                <span class="notification-badge"><?php echo $pending_count; ?></span>
                 <?php endif; ?>
             </button>
             <div class="user-dropdown">
@@ -57,76 +107,92 @@
                     <div class="modal-title-icon">
                         <i class="fas fa-bell"></i>
                     </div>
-                    My Notifications
+                    Notifications
                 </h3>
-                <?php if ($unread_count > 0): ?>
-                    <button class="btn-enhanced btn-primary" onclick="markAllAsRead()" style="margin-right: 1rem;">
-                        <i class="fas fa-check-double"></i> Mark All as Read
-                    </button>
-                <?php endif; ?>
             </div>
             <button class="modal-close" onclick="closeNotificationModal()">&times;</button>
         </div>
+
         <div class="modal-body">
-            <div class="notification-list" id="notificationList">
-                <?php
-                $notifications = $notificationManager->getNotifications($_SESSION['user_id'], 'student', 50, 0);
-                if (empty($notifications)):
-                ?>
+            <div class="history-list" id="historyList">
+                <?php if (empty($all_requests)): ?>
                     <div class="no-notifications">
                         <div class="no-notifications-icon">
-                            <i class="fas fa-bell-slash"></i>
+                            <i class="fas fa-history"></i>
                         </div>
-                        <div class="no-notifications-text">No notifications</div>
-                        <div class="no-notifications-subtext">You don't have any notifications at the moment.</div>
+                        <div class="no-notifications-text">No Request History</div>
+                        <div class="no-notifications-subtext">You haven't submitted any enrollment or unenrollment requests yet.</div>
                     </div>
                 <?php else: ?>
-                    <?php foreach ($notifications as $notification): ?>
-                        <div class="notification-item <?php echo $notification['is_read'] ? 'read' : 'unread'; ?>" data-notification-id="<?php echo $notification['notification_id']; ?>">
-                            <div class="notification-icon">
-                                <i class="fas <?php
-                                    echo match($notification['type']) {
-                                        'enrollment_approved' => 'fa-check-circle',
-                                        'enrollment_rejected' => 'fa-times-circle',
-                                        'unenrollment_approved' => 'fa-check-circle',
-                                        'unenrollment_rejected' => 'fa-times-circle',
-                                        'success' => 'fa-check-circle',
-                                        'warning' => 'fa-exclamation-triangle',
-                                        'info' => 'fa-info-circle',
-                                        default => 'fa-bell'
-                                    };
-                                ?>" style="color: <?php
-                                    echo match($notification['type']) {
-                                        'enrollment_approved', 'unenrollment_approved', 'success' => '#28a745',
-                                        'enrollment_rejected', 'unenrollment_rejected' => '#dc3545',
-                                        'warning' => '#ffc107',
-                                        'info' => '#17a2b8',
-                                        default => '#007bff'
-                                    };
-                                ?>"></i>
-                            </div>
-                            <div class="notification-content">
-                                <div class="notification-title"><?php echo htmlspecialchars($notification['title']); ?></div>
-                                <div class="notification-message"><?php echo htmlspecialchars($notification['message']); ?></div>
-                                <div class="notification-meta">
-                                    <div class="notification-time">
-                                        <i class="fas fa-clock"></i>
-                                        <?php echo date('M j, Y g:i A', strtotime($notification['created_at'])); ?>
-                                    </div>
-                                    <div class="notification-status <?php echo $notification['is_read'] ? 'status-read' : 'status-unread'; ?>">
-                                        <?php echo $notification['is_read'] ? 'READ' : 'UNREAD'; ?>
-                                    </div>
-                                </div>
-                                <?php if (!$notification['is_read']): ?>
-                                    <div class="notification-actions" style="margin-top: 10px;">
-                                        <button class="btn-enhanced btn-primary" onclick="markAsRead(<?php echo $notification['notification_id']; ?>)">
-                                            <i class="fas fa-check"></i> Mark as Read
-                                        </button>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-tag"></i> Type</th>
+                                    <th><i class="fas fa-book-open"></i> Subject</th>
+                                    <th><i class="fas fa-graduation-cap"></i> Class</th>
+                                    <th><i class="fas fa-calendar-plus"></i> Requested</th>
+                                    <th class="text-center"><i class="fas fa-info-circle"></i> Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($all_requests as $request): ?>
+                                    <?php
+                                    $status_class = '';
+                                    $status_icon = '';
+                                    switch ($request['status']) {
+                                        case 'approved':
+                                            $status_class = 'status-approved';
+                                            $status_icon = 'fa-check-circle';
+                                            break;
+                                        case 'rejected':
+                                            $status_class = 'status-rejected';
+                                            $status_icon = 'fa-times-circle';
+                                            break;
+                                        case 'pending':
+                                            $status_class = 'status-pending';
+                                            $status_icon = 'fa-clock';
+                                            break;
+                                    }
+
+                                    $request_type_class = $request['request_type'] === 'enrollment' ? 'request-enrollment' : 'request-unenrollment';
+                                    $request_type_icon = $request['request_type'] === 'enrollment' ? 'fa-plus-circle' : 'fa-minus-circle';
+                                    $request_type_text = ucfirst($request['request_type']);
+                                    ?>
+                                    <tr>
+                                        <td class="request-type-cell">
+                                            <span class="request-type-badge <?php echo $request_type_class; ?>">
+                                                <i class="fas <?php echo $request_type_icon; ?>"></i>
+                                                <?php echo $request_type_text; ?>
+                                            </span>
+                                        </td>
+                                        <td class="subject-cell">
+                                            <span class="subject-tag"><?php echo htmlspecialchars($request['subject_name']); ?></span>
+                                        </td>
+                                        <td class="class-cell">
+                                            <span class="class-name"><?php echo htmlspecialchars($request['class_name']); ?></span>
+                                        </td>
+                                        <td class="date-cell">
+                                            <div class="date-info">
+                                                <i class="fas fa-calendar-day"></i>
+                                                <span><?php echo date('M j, Y', strtotime($request['requested_at'])); ?></span>
+                                            </div>
+                                            <div class="time-info">
+                                                <i class="fas fa-clock"></i>
+                                                <span><?php echo date('g:i A', strtotime($request['requested_at'])); ?></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="status-badge <?php echo $status_class; ?>">
+                                                <i class="fas <?php echo $status_icon; ?>"></i>
+                                                <?php echo ucfirst($request['status']); ?>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -339,6 +405,49 @@
     transform: scale(1.05);
 }
 
+.modal-tabs {
+    display: flex;
+    background: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.tab-button {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gray);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+}
+
+.tab-button.active {
+    color: var(--primary);
+    background: white;
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary);
+}
+
+.tab-button:hover:not(.active) {
+    color: var(--primary);
+    background: rgba(247, 82, 112, 0.05);
+}
+
 .modal-body {
     padding: 2.5rem;
     background: white;
@@ -526,6 +635,165 @@
     font-size: 0.9rem;
 }
 
+/* History List Styles */
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.table-container {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.data-table thead {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+}
+
+.data-table th {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.data-table th i {
+    margin-right: 0.5rem;
+    opacity: 0.8;
+}
+
+.data-table tbody tr {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s ease;
+}
+
+.data-table tbody tr:hover {
+    background: rgba(247, 82, 112, 0.02);
+}
+
+.data-table td {
+    padding: 1.25rem 1.5rem;
+    vertical-align: middle;
+}
+
+.request-type-cell {
+    width: 100px;
+}
+
+.request-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.request-enrollment {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.request-unenrollment {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.subject-cell {
+    width: 120px;
+}
+
+.subject-tag {
+    background: rgba(247, 82, 112, 0.1);
+    color: var(--primary);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.class-cell {
+    width: 120px;
+}
+
+.class-name {
+    font-weight: 600;
+    color: var(--dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.date-cell {
+    width: 140px;
+}
+
+.date-info, .time-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.date-info i, .time-info i {
+    width: 14px;
+    color: var(--primary);
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-approved {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.status-rejected {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.status-pending {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.text-center {
+    text-align: center;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -643,6 +911,30 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error:', error);
             alert('An error occurred while marking all notifications as read.');
         });
+    };
+
+    window.switchTab = function(tabName) {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const notificationList = document.getElementById('notificationList');
+        const historyList = document.getElementById('historyList');
+
+        // Remove active class from all tabs
+        tabButtons.forEach(button => button.classList.remove('active'));
+
+        // Add active class to clicked tab
+        const activeTab = document.querySelector(`.tab-button[onclick="switchTab('${tabName}')"]`);
+        if (activeTab) {
+            activeTab.classList.add('active');
+        }
+
+        // Show/hide content based on tab
+        if (tabName === 'notifications') {
+            notificationList.style.display = 'flex';
+            historyList.style.display = 'none';
+        } else if (tabName === 'history') {
+            notificationList.style.display = 'none';
+            historyList.style.display = 'flex';
+        }
     };
 
     // Close modal when clicking outside
