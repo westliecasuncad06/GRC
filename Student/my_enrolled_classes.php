@@ -38,7 +38,7 @@ $pending_unenrollment_requests = $stmt->fetchAll();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>My Enrolled Classes - Global Reciprocal College</title>
-    <link rel="stylesheet" href="../css/styles_fixed.css" />
+    <link rel="stylesheet" href="../css/styles.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
@@ -74,15 +74,15 @@ $pending_unenrollment_requests = $stmt->fetchAll();
             </div>
 
             <div class="table-container">
-                <table class="data-table">
+                <table class="data-table desktop-table">
                     <thead>
                         <tr>
                             <th><i class="fas fa-tag"></i> Class Name</th>
                             <th><i class="fas fa-book-open"></i> Subject</th>
-                            <th><i class="fas fa-user-tie"></i> Professor</th>
-                            <th><i class="fas fa-calendar-alt"></i> Schedule</th>
-                            <th><i class="fas fa-map-marker-alt"></i> Room</th>
-                            <th class="text-center"><i class="fas fa-cogs"></i> Actions</th>
+                            <th class="mobile-hidden"><i class="fas fa-user-tie"></i> Professor</th>
+                            <th class="mobile-hidden"><i class="fas fa-calendar-alt"></i> Schedule</th>
+                            <th class="mobile-hidden"><i class="fas fa-map-marker-alt"></i> Room</th>
+                            <th class="text-center mobile-hidden"><i class="fas fa-cogs"></i> Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -123,25 +123,25 @@ $pending_unenrollment_requests = $stmt->fetchAll();
                                             <span class="class-name"><?php echo htmlspecialchars($class['class_name']); ?></span>
                                         </div>
                                     </td>
-                                    <td class="subject-cell">
+                                    <td class="subject-cell mobile-clickable" onclick="openMobileDetailsModal('<?php echo htmlspecialchars($class['subject_name']); ?>', '<?php echo htmlspecialchars($class['schedule']); ?>', '<?php echo htmlspecialchars($class['class_name']); ?>', '<?php echo htmlspecialchars($professor_name); ?>', '<?php echo htmlspecialchars($class['room']); ?>', '<?php echo $class['class_id']; ?>', <?php echo $has_pending_request ? 'true' : 'false'; ?>)">
                                         <span class="subject-tag"><?php echo htmlspecialchars($class['subject_name']); ?></span>
                                     </td>
-                                    <td class="professor-cell">
+                                    <td class="professor-cell mobile-hidden">
                                         <div class="professor-info">
                                             <i class="fas fa-user"></i>
                                             <span><?php echo htmlspecialchars($professor_name); ?></span>
                                         </div>
                                     </td>
-                                    <td class="schedule-cell">
+                                    <td class="schedule-cell mobile-hidden">
                                         <div class="schedule-info">
                                             <i class="fas fa-clock"></i>
                                             <span><?php echo htmlspecialchars($class['schedule']); ?></span>
                                         </div>
                                     </td>
-                                    <td class="room-cell">
+                                    <td class="room-cell mobile-hidden">
                                         <span class="room-badge"><?php echo htmlspecialchars($class['room']); ?></span>
                                     </td>
-                                    <td class="action-cell">
+                                    <td class="action-cell mobile-hidden">
                                         <button class="btn <?php echo $button_class; ?> <?php echo $button_disabled ? 'btn-disabled' : ''; ?>"
                                                 <?php echo $button_disabled; ?>
                                                 onclick="unenrollFromClass('<?php echo $class['class_id']; ?>')">
@@ -154,6 +154,49 @@ $pending_unenrollment_requests = $stmt->fetchAll();
                         <?php endif; ?>
                     </tbody>
                 </table>
+                <div class="mobile-table">
+                    <?php if (empty($enrolled_classes)): ?>
+                        <div class="empty-state">
+                            <div class="empty-state-content">
+                                <i class="fas fa-inbox"></i>
+                                <h3>No Classes Enrolled</h3>
+                                <p>You haven't enrolled in any classes yet. Contact your administrator to get started.</p>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($enrolled_classes as $class): ?>
+                            <?php
+                            $professor_name = (!empty($class['first_name']) && !empty($class['last_name']))
+                                ? 'Prof. ' . $class['first_name'] . ' ' . $class['last_name']
+                                : 'N/A';
+
+                            // Check if there's a pending unenrollment request for this class
+                            $has_pending_request = false;
+                            foreach ($pending_unenrollment_requests as $request) {
+                                if ($request['class_id'] == $class['class_id']) {
+                                    $has_pending_request = true;
+                                    break;
+                                }
+                            }
+
+                            $button_text = $has_pending_request ? 'Pending Approval' : 'Unenroll';
+                            $button_class = $has_pending_request ? 'btn-warning' : 'btn-danger';
+                            $button_icon = $has_pending_request ? 'fas fa-clock' : 'fas fa-times';
+                            $button_disabled = $has_pending_request ? 'disabled' : '';
+                            ?>
+<div class="mobile-table-row" onclick="openMobileDetailsModal('<?php echo htmlspecialchars($class['subject_name']); ?>', '<?php echo htmlspecialchars($class['schedule']); ?>', '<?php echo htmlspecialchars($class['class_name']); ?>', '<?php echo htmlspecialchars($professor_name); ?>', '<?php echo htmlspecialchars($class['room']); ?>', '<?php echo $class['class_id']; ?>', <?php echo $has_pending_request ? 'true' : 'false'; ?>)" style="cursor: pointer;">
+    <div class="mobile-table-cell class-name-cell">
+        <strong>Class Name:</strong>
+        <span><?php echo htmlspecialchars($class['class_name']); ?></span>
+    </div>
+    <div class="mobile-table-cell subject-cell">
+        <strong>Subject:</strong>
+        <span class="subject-tag"><?php echo htmlspecialchars($class['subject_name']); ?></span>
+    </div>
+</div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
 
@@ -197,6 +240,36 @@ $pending_unenrollment_requests = $stmt->fetchAll();
                     <i class="fas fa-paper-plane"></i>
                     Submit Request
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Details Modal -->
+    <div id="mobileDetailsModal" class="modal">
+        <div class="modal-backdrop" onclick="closeMobileModal()"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-info-circle"></i>
+                    Class Details
+                </h3>
+                <button class="modal-close" onclick="closeMobileModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-item">
+                    <strong>Class Name:</strong> <span id="modalClassName"></span>
+                </div>
+                <div class="detail-item">
+                    <strong>Professor:</strong> <span id="modalProfessor"></span>
+                </div>
+                <div class="detail-item">
+                    <strong>Room:</strong> <span id="modalRoom"></span>
+                </div>
+                <div class="detail-item">
+                    <strong>Action:</strong> <button id="modalActionBtn" class="btn btn-danger">Unenroll</button>
+                </div>
             </div>
         </div>
     </div>
@@ -536,8 +609,79 @@ $pending_unenrollment_requests = $stmt->fetchAll();
             border: 1px solid rgba(247, 82, 112, 0.2);
         }
 
+        /* Mobile Table Styles */
+        .mobile-table {
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mobile-table-row {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            border: 1px solid rgba(247, 82, 112, 0.1);
+        }
+
+        .mobile-table-cell {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(247, 82, 112, 0.05);
+        }
+
+        .mobile-table-cell:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-table-cell strong {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .mobile-table-cell span {
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+.subject-cell {
+    transition: background 0.3s ease;
+}
+
+.mobile-table-row {
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.mobile-table-row:hover {
+    background: rgba(247, 202, 201, 0.1);
+}
+
+.subject-cell:hover {
+    background: rgba(247, 202, 201, 0.1);
+}
+
+        .subject-tag {
+            background: var(--accent);
+            color: var(--dark);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
+            .mobile-hidden {
+                display: none;
+            }
+
+            .mobile-clickable {
+                cursor: pointer;
+            }
+
             .main-content {
                 margin-left: 0;
                 padding: 1rem;
@@ -567,7 +711,13 @@ $pending_unenrollment_requests = $stmt->fetchAll();
                 font-size: 0.8rem;
             }
 
+            .desktop-table {
+                display: none;
+            }
 
+            .mobile-table {
+                display: flex;
+            }
 
             .btn {
                 padding: 0.6rem 1rem;
@@ -585,8 +735,6 @@ $pending_unenrollment_requests = $stmt->fetchAll();
             .data-table td {
                 padding: 0.5rem;
             }
-
-
         }
     </style>
 
@@ -670,6 +818,28 @@ $pending_unenrollment_requests = $stmt->fetchAll();
                 console.error('Error:', error);
                 showToast('An error occurred while submitting the request.', 'error');
             });
+        }
+
+        function openMobileDetailsModal(subject, schedule, className, professor, room, classId, hasPending) {
+            document.getElementById('modalClassName').textContent = className;
+            document.getElementById('modalProfessor').textContent = professor;
+            document.getElementById('modalRoom').textContent = room;
+            const btn = document.getElementById('modalActionBtn');
+            if (hasPending) {
+                btn.textContent = 'Pending Approval';
+                btn.className = 'btn btn-warning';
+                btn.disabled = true;
+            } else {
+                btn.textContent = 'Unenroll';
+                btn.className = 'btn btn-danger';
+                btn.disabled = false;
+                btn.onclick = () => unenrollFromClass(classId);
+            }
+            document.getElementById('mobileDetailsModal').classList.add('show');
+        }
+
+        function closeMobileModal() {
+            document.getElementById('mobileDetailsModal').classList.remove('show');
         }
 
         window.toggleDetails = function(row) {

@@ -1,0 +1,5 @@
+- [x] Update table td classes: add mobile-hidden to class-name-cell, professor-cell, room-cell, action-cell; add mobile-clickable and onclick to subject-cell and schedule-cell
+- [ ] Add mobile details modal HTML
+- [ ] Add openMobileDetailsModal and closeMobileModal JS functions
+- [ ] Add CSS for .mobile-hidden and .mobile-clickable in @media (max-width: 768px)
+- [ ] Add styles for modal detail items

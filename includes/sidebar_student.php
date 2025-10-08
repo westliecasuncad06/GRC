@@ -87,6 +87,8 @@
                 justify-content: space-around;
                 align-items: center;
                 box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+                z-index: 1010;
+                background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
             }
             .sidebar-header {
                 display: none;
@@ -104,6 +106,8 @@
                 margin: 0;
                 flex-direction: column;
                 border-radius: 0;
+                position: relative;
+                z-index: 1020;
             }
             .nav-item i {
                 margin-right: 0;
@@ -117,7 +121,7 @@
             .main-content {
                 margin-left: 0;
                 width: 100%;
-                padding-bottom: 60px;
+                padding-bottom: 70px; /* Increased to ensure no overlap */
             }
             .settings-mobile-hide {
                 display: none;
