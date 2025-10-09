@@ -45,19 +45,46 @@ try {
         exit();
     }
 
-    // Check if student already has a pending or accepted request for this class
-    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM enrollment_requests WHERE student_id = ? AND class_id = ? AND status IN ('pending', 'accepted')");
+    // Check if student has a pending unenrollment request for this class, cancel it
+    $stmt = $pdo->prepare("SELECT request_id FROM unenrollment_requests WHERE student_id = ? AND class_id = ? AND status = 'pending'");
     $stmt->execute([$student_id, $class_id]);
-    $existing_request = $stmt->fetch()['count'];
+    $pending_unenrollment = $stmt->fetch();
 
-    if ($existing_request > 0) {
-        echo json_encode(['success' => false, 'message' => 'You already have a pending or accepted enrollment request for this class']);
-        exit();
+    if ($pending_unenrollment) {
+        // Cancel the pending unenrollment request by deleting it
+        $stmt = $pdo->prepare("DELETE FROM unenrollment_requests WHERE request_id = ?");
+        $stmt->execute([$pending_unenrollment['request_id']]);
     }
 
-    // Insert enrollment request instead of direct enrollment
-    $stmt = $pdo->prepare("INSERT INTO enrollment_requests (student_id, class_id, status, requested_at) VALUES (?, ?, 'pending', NOW())");
+    // Check if student already has a request for this class
+    $stmt = $pdo->prepare("SELECT status FROM enrollment_requests WHERE student_id = ? AND class_id = ?");
     $stmt->execute([$student_id, $class_id]);
+    $existing_request = $stmt->fetch();
+
+    if ($existing_request) {
+        if ($existing_request['status'] === 'pending') {
+            echo json_encode(['success' => false, 'message' => 'You already have a pending enrollment request for this class']);
+            exit();
+        } elseif ($existing_request['status'] === 'accepted') {
+            // Check if still enrolled
+            if ($enrolled > 0) {
+                echo json_encode(['success' => false, 'message' => 'You are already enrolled in this class']);
+                exit();
+            } else {
+                // Was unenrolled, allow re-enrollment by updating to pending
+                $stmt = $pdo->prepare("UPDATE enrollment_requests SET status = 'pending', requested_at = NOW(), handled_at = NULL, handled_by = NULL, processed_at = NULL, processed_by = NULL WHERE student_id = ? AND class_id = ?");
+                $stmt->execute([$student_id, $class_id]);
+            }
+        } elseif ($existing_request['status'] === 'rejected') {
+            // Update the rejected request to pending
+            $stmt = $pdo->prepare("UPDATE enrollment_requests SET status = 'pending', requested_at = NOW(), handled_at = NULL, handled_by = NULL, processed_at = NULL, processed_by = NULL WHERE student_id = ? AND class_id = ?");
+            $stmt->execute([$student_id, $class_id]);
+        }
+    } else {
+        // Insert new enrollment request
+        $stmt = $pdo->prepare("INSERT INTO enrollment_requests (student_id, class_id, status, requested_at) VALUES (?, ?, 'pending', NOW())");
+        $stmt->execute([$student_id, $class_id]);
+    }
 
     echo json_encode(['success' => true, 'message' => 'Enrollment request submitted successfully. Please wait for professor approval.']);
 

@@ -20,8 +20,8 @@ $stmt = $pdo->prepare("SELECT c.*, s.subject_name, p.first_name, p.last_name
 $stmt->execute([$student_id]);
 $enrolled_classes = $stmt->fetchAll();
 
-// Get pending unenrollment requests
-$stmt = $pdo->prepare("SELECT ur.request_id, ur.requested_at, ur.class_id, c.class_name, s.subject_name, p.first_name, p.last_name
+// Get pending unenrollment requests only
+$stmt = $pdo->prepare("SELECT ur.request_id, ur.requested_at, ur.class_id, ur.status, c.class_name, s.subject_name, p.first_name, p.last_name
                      FROM unenrollment_requests ur
                      JOIN classes c ON ur.class_id = c.class_id
                      JOIN subjects s ON c.subject_id = s.subject_id
@@ -103,7 +103,7 @@ $pending_unenrollment_requests = $stmt->fetchAll();
                                     ? 'Prof. ' . $class['first_name'] . ' ' . $class['last_name']
                                     : 'N/A';
 
-                                // Check if there's a pending unenrollment request for this class
+                                // Check if there's any unenrollment request for this class (any status)
                                 $has_pending_request = false;
                                 foreach ($pending_unenrollment_requests as $request) {
                                     if ($request['class_id'] == $class['class_id']) {
