@@ -131,10 +131,10 @@
                             $status_icon = '';
                             $status_text = '';
                             switch ($request['status']) {
-                                case 'approved':
+                                case 'accepted':
                                     $status_class = 'status-approved';
                                     $status_icon = 'fa-check-circle';
-                                    $status_text = 'Accepted';
+                                    $status_text = 'Approved';
                                     break;
                                 case 'rejected':
                                     $status_class = 'status-rejected';
@@ -697,6 +697,10 @@ document.addEventListener('DOMContentLoaded', function() {
     window.closeNotificationModal = function() {
         const modal = document.getElementById('notificationModal');
         modal.classList.remove('show');
+        // Hide the notification badges after viewing
+        document.querySelectorAll('.notification-badge').forEach(badge => {
+            badge.style.display = 'none';
+        });
     };
 
     window.toggleDetails = function(card) {
