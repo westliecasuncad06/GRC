@@ -1133,6 +1133,8 @@ foreach ($monthly_raw as $row) {
         </script>
 
         <script>
+            const studentId = '<?php echo $student_id; ?>';
+
             // Attendance Modal Functions
             function openAttendanceModal(classId, date) {
                 const modal = document.getElementById('attendanceModal');
@@ -1152,7 +1154,7 @@ foreach ($monthly_raw as $row) {
                 const modalBody = document.getElementById('attendanceModalBody');
                 modalBody.innerHTML = '<p>Loading attendance data...</p>';
                 try {
-                    const response = await fetch(`../php/get_attendance_for_date.php?class_id=${classId}&date=${date}`);
+                    const response = await fetch(`../php/get_attendance_for_date.php?class_id=${classId}&date=${date}&student_id=${studentId}`);
                     if (!response.ok) throw new Error('Failed to fetch attendance data');
                     const attendanceRecords = await response.json();
 
