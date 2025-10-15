@@ -475,7 +475,7 @@ if ($role == 'professor') {
             font-size: 1.2rem;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .settings-grid {
                 grid-template-columns: 1fr;
             }
@@ -714,7 +714,7 @@ if ($role == 'professor') {
                 btn.setAttribute('aria-label', 'Toggle password visibility');
                 btn.style.position = 'absolute';
                 btn.style.right = '12px';
-                btn.style.top = '50%';
+                btn.style.top = '68%';
                 btn.style.transform = 'translateY(-50%)';
                 btn.style.background = 'none';
                 btn.style.border = 'none';

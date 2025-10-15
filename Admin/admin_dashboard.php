@@ -104,7 +104,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         :root {
             --primary: #F75270;
@@ -122,9 +122,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
             --info: #17a2b8;
         }
 
-        body {
-            background-color: #f8f9fa;
-        }
 
         .professor-card {
             background: white;
@@ -292,13 +289,62 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
             content: "→";
         }
 
-        .dashboard-header-enhanced {
+        .enhanced-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
-            padding: 2rem;
+            padding: 1.5rem 2rem;
             border-radius: 12px;
             margin-bottom: 2rem;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        .header-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            justify-content: flex-end;
+            width: 100%;
+            max-width: 600px;
+        }
+        .search-container {
+            padding-top: 1rem;
+            position: relative;
+            flex-grow: 1;
+            min-width: 200px;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+        }
+        .search-input {
+            width: 100%;
+            height: 40px;
+            padding: 10px 16px 10px 40px;
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+            background-color: var(--light);
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-dark);
+            box-shadow: 0 0 0 3px rgba(247, 82, 112, 0.2);
+            background-color: white;
+        }
+        .search-icon {
+            position: absolute;
+            left: 11px;
+            top: 65%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 1.1rem;
         }
         .dashboard-title-enhanced {
             font-size: 2.5rem;
@@ -575,16 +621,17 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
     <!-- Main Content -->
     <main class="main-content">
         <div class="dashboard-container">
-            <div class="dashboard-header-enhanced fade-in">
-                <h1 class="dashboard-title-enhanced"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
-                <p class="dashboard-subtitle">Professor Attendance Overview</p>
+            <div class="enhanced-header fade-in">
+                <h1 class="header-title"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+                <div class="header-actions">
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search professors..." onkeyup="filterProfessors()">
+                    </div>
+                </div>
             </div>
 
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">Professor Attendance Overview</li>
-                </ol>
-            </nav>
+
 
             <?php if (empty($professors)): ?>
                 <div class="no-data">
@@ -646,9 +693,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
+
     </main>
 
-    <?php include '../includes/footbar.php'; ?>
+            <?php include '../includes/footbar.php'; ?>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -735,6 +783,18 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
                 // Collapse the subject
                 subjectItem.classList.remove('expanded');
             }
+        }
+
+        function filterProfessors() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const professorCards = document.querySelectorAll('.professor-card');
+
+            professorCards.forEach(card => {
+                const name = card.querySelector('.professor-info h5').textContent.toLowerCase();
+                const department = card.querySelector('.professor-info p').textContent.toLowerCase();
+                const match = name.includes(query) || department.includes(query);
+                card.style.display = match ? '' : 'none';
+            });
         }
 
         // Initialize the dashboard
