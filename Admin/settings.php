@@ -557,6 +557,14 @@ if ($role == 'professor') {
                 <i class="fas fa-calendar-alt"></i>
                 <span>Schedule</span>
             </a>
+            <a href="http://localhost/grc/Admin/admin_manage_academic_periods.php" class="nav-item">
+                <i class="fas fa-calendar-days"></i>
+                <span>Academic Periods</span>
+            </a>
+            <a href="admin_subjects_archive.php" class="nav-item">
+                <i class="fas fa-archive"></i>
+                <span>Subjects Archive</span>
+            </a>
             <a href="settings.php" class="nav-item active">
                 <i class="fas fa-cog"></i>
                 <span>Settings</span>

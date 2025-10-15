@@ -1,14 +1,9 @@
 <?php
 session_start();
 
-// Bypass for design access
-if (isset($_GET['bypass']) && $_GET['bypass'] == '1') {
-    // Skip session check for bypass
-} else {
-    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-        header('Location: index.php');
-        exit();
-    }
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    header('Location: index.php');
+    exit();
 }
 
 require_once '../php/db.php';

@@ -1,9 +1,6 @@
 <?php
 session_start();
 
-// BYPASS FOR TESTING - REMOVE AFTER TESTING
-// BYPASS REMOVED: Use real session data
-
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'professor') {
     header('Location: ../index.php');
     exit();
@@ -19,46 +16,17 @@ $professor = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Get professor's classes (both active and archived) with school year and semester from school_year_semester table
 $query = "SELECT s.*, c.class_id, c.class_code, c.schedule, c.room, c.section, c.status,
-                 sys.school_year, sys.semester, sys.status as term_status
+                 sys.school_year,
+                 sys.semester,
+                 sys.status as term_status
           FROM subjects s
           JOIN classes c ON s.subject_id = c.subject_id
-          JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
+          LEFT JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
           WHERE c.professor_id = ?
-          ORDER BY sys.status DESC, sys.school_year DESC, sys.semester DESC, s.subject_name";
+          ORDER BY COALESCE(sys.status, 'Active') DESC, sys.school_year DESC, sys.semester DESC, s.subject_name";
 $stmt = $pdo->prepare($query);
 $stmt->execute([$professor_id]);
 $classes = $stmt->fetchAll();
-
-// Insert sample archive subjects for years 2024-2025 and 2023-2024 if not exist
-$sample_subjects = [
-    ['subject_id' => 'SUBARCH1', 'subject_name' => 'Archived Subject 2024-2025', 'subject_code' => 'ARCH2024'],
-    ['subject_id' => 'SUBARCH2', 'subject_name' => 'Archived Subject 2023-2024', 'subject_code' => 'ARCH2023']
-];
-
-foreach ($sample_subjects as $sample) {
-    // Check if subject exists
-    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM subjects WHERE subject_id = ?");
-    $stmt->execute([$sample['subject_id']]);
-    $count = $stmt->fetch()['count'];
-
-    if ($count == 0) {
-        // Insert subject
-        $stmt = $pdo->prepare("INSERT INTO subjects (subject_id, subject_name, subject_code, credits, created_at, updated_at) VALUES (?, ?, ?, 3, NOW(), NOW())");
-        $stmt->execute([$sample['subject_id'], $sample['subject_name'], $sample['subject_code']]);
-
-        // Insert class for professor with archived status and school year
-        $class_id = 'CLASS' . time() . rand(1000, 9999);
-        $class_code = 'ARCH' . rand(1000, 9999);
-        $school_year = $sample['subject_code'] == 'ARCH2024' ? '2024-2025' : '2023-2024';
-
-        $stmt = $pdo->prepare("INSERT INTO classes (class_id, class_name, class_code, subject_id, professor_id, schedule, room, status, school_year, created_at, updated_at, section) VALUES (?, ?, ?, ?, ?, ?, ?, 'archived', ?, NOW(), NOW(), 'A')");
-        $stmt->execute([$class_id, $sample['subject_name'] . ' Class', $class_code, $sample['subject_id'], $professor_id, 'TBA', 'TBA', $school_year]);
-
-        // Insert into student_classes to register the subject for the professor as a student (archive)
-        $stmt = $pdo->prepare("INSERT INTO student_classes (student_id, class_id, enrolled_at) VALUES (?, ?, NOW())");
-        $stmt->execute([$professor_id, $class_id]);
-    }
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action']) && $_POST['action'] === 'archive_all_2025_1st') {
@@ -803,12 +771,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
             <div id="active-tab" class="tab-content active">
-                <form method="POST" style="margin-bottom: 1rem;">
-                    <input type="hidden" name="action" value="archive_all_2025_1st">
-                    <button type="button" class="btn btn-archive" style="padding: 0.75rem 1.5rem; font-size: 0.9rem; border-radius: 8px;" onclick="showArchiveConfirmModal()">
-                        <i class="fas fa-archive"></i> Archive All 2025-2026 1st Semester
-                    </button>
-                </form>
                 <?php
                 $active_classes = array_filter($classes, function($class) {
                     return $class['status'] === 'active';
@@ -892,14 +854,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div class="collapse-content" style="display:none; margin-top: 1rem;">
-                            <?php if ($year == '2025-2026' && $semester == '1st Semester'): ?>
-                            <form method="POST" style="margin-bottom: 1rem;">
-                                <input type="hidden" name="action" value="unarchive_all_1st">
-                            </form>
-                            <button type="button" class="btn btn-unarchive" style="padding: 0.75rem 1.5rem; font-size: 0.9rem; border-radius: 8px;" onclick="showUnarchiveConfirmModal()">
-                                <i class="fas fa-undo"></i> Unarchive All 1st Semester
-                            </button>
-                            <?php endif; ?>
+
                             <?php foreach ($classes_group as $class): ?>
                                 <div class="class-card" onclick="openModal('<?php echo $class['class_id']; ?>')">
                                     <div class="class-header">

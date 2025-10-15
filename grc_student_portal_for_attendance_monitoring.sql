@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 09, 2025 at 01:43 AM
+-- Generation Time: Oct 15, 2025 at 12:04 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -97,7 +97,8 @@ INSERT INTO `attendance` (`attendance_id`, `student_id`, `class_id`, `date`, `st
 (33, 'STU002', 'CLASS1756767458', '2025-09-07', 'Absent', '', '2025-09-07 20:36:30'),
 (36, 'STU004', 'CLASS005', '2025-10-04', 'Late', '', '2025-10-04 11:45:47'),
 (37, 'STU005', 'CLASS005', '2025-10-04', 'Absent', '', '2025-10-04 11:45:47'),
-(38, 'STU001', 'CLASS005', '2025-10-04', 'Excused', 'May sakit', '2025-10-04 11:45:47');
+(38, 'STU001', 'CLASS005', '2025-10-04', 'Excused', 'May sakit', '2025-10-04 11:45:47'),
+(39, 'STU001', 'CLASS1760514979', '2025-10-15', 'Present', '10 points', '2025-10-15 16:11:01');
 
 -- --------------------------------------------------------
 
@@ -116,32 +117,33 @@ CREATE TABLE `classes` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   `section` varchar(10) DEFAULT NULL,
-  `school_year_semester_id` int(11) DEFAULT NULL,
+  `semester_id` int(11) DEFAULT NULL,
   `status` enum('active','archived') DEFAULT 'active',
-  `semester` enum('1st Semester','2nd Semester') DEFAULT '1st Semester',
-  `school_year` varchar(20) DEFAULT NULL
+  `school_year_semester_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `classes`
 --
 
-INSERT INTO `classes` (`class_id`, `class_name`, `class_code`, `subject_id`, `professor_id`, `schedule`, `room`, `created_at`, `updated_at`, `section`, `school_year_semester_id`, `status`, `semester`, `school_year`) VALUES
-('CLASS001', 'CS101 Section A', '5OK7ZE0C', 'SUB001', 'PROF001', 'MWF 8:00-9:30 AM', 'Room 101', '2025-08-28 07:13:53', '2025-08-29 12:19:16', '301', 3, 'active', '1st Semester', NULL),
-('CLASS002', 'MATH101 Section B', 'MATH101-B', 'SUB002', 'PROF002', 'TTH 10:00-11:30 AM', 'Room 202', '2025-08-28 07:13:53', '2025-08-28 07:13:53', '302', 3, 'active', '1st Semester', NULL),
-('CLASS003', 'CS201 Section C', 'NOW0G94U', 'SUB003', 'PROF001', 'MWF 1:00-2:30 PM', 'Room 303', '2025-08-28 07:13:53', '2025-08-30 14:50:30', '301', 3, 'active', '1st Semester', NULL),
-('CLASS004', 'CS301 Section A', 'CS301-A', 'SUB004', 'PROF003', 'TTH 2:00-3:30 PM', 'Room 404', '2025-08-28 07:13:53', '2025-08-28 07:13:53', '302', 3, 'active', '1st Semester', NULL),
-('CLASS005', 'ENG101 Section D', '6XL8WS9V', 'SUB005', 'PROF001', 'MWF 3:00-4:30 PM', 'Room 505', '2025-08-28 07:13:53', '2025-09-02 06:47:27', '301', 3, 'active', '1st Semester', NULL),
-('CLASS1756423371', 'Database Management System. Class', '4553218', 'SUB1756423371', 'PF0F004', 'Bahala ka na', 'LAB 3', '2025-08-29 07:22:51', '2025-08-29 07:22:51', '302', 3, 'active', '1st Semester', NULL),
-('CLASS1756425193', 'System Architecture Class', 'N2X1QVPI', 'SUB1756425193', 'PROF001', '321354', 'LAB 81', '2025-08-29 07:53:13', '2025-09-02 06:24:46', '301', 3, 'active', '1st Semester', NULL),
-('CLASS1756441963', 'HOW TO BE HOTDOG Class', 'A3U3ZXL6', 'SUB1756441963', 'PROF001', 'ANYTIME', 'ANYWHERE', '2025-08-29 12:32:43', '2025-08-30 14:50:14', '302', 3, 'active', '1st Semester', NULL),
-('CLASS1756494311', 'HOW TO BE POGI Class', 'AS8O992R', 'SUB1756494311', 'PROF001', 'CCF', 'CCF', '2025-08-30 03:05:11', '2025-08-30 03:05:11', '303', 3, 'active', '1st Semester', NULL),
-('CLASS1756542883', 'EWAN Class', 'WLCV0T8N', 'SUB1756542883', 'PROF001', 'ANY', 'SA LABAS', '2025-08-30 16:34:43', '2025-09-02 06:24:30', '301', 3, 'active', '1st Semester', NULL),
-('CLASS1756767458', 'TUMESTING KA Class', 'M4FFPLJT', 'SUB1756767458', 'PROF001', 'Not sure', 'lab 3', '2025-09-02 06:57:38', '2025-10-04 04:42:50', '304', 3, 'active', '1st Semester', '2025-2026'),
-('CLASS1756900369', 'POGI Class', '7CGDOSFT', 'SUB1756900369', '111111', 'ANYTIME', 'ANYWHERE', '2025-09-03 19:52:49', '2025-09-03 19:52:49', '305', 3, 'active', '1st Semester', NULL),
-('CLASS1757248087', 'Funda Class', '6IXPRD3R', 'SUB1757248087', 'PF0F004', 'SHELL', 'SHELL CAFE', '2025-09-07 20:28:07', '2025-09-07 20:29:31', '306', 3, 'active', '1st Semester', NULL),
-('CLASS1759966921', '1 Class', 'F8B6YPIY', 'SUB1759966921', 'PROF001', '11', '1', '2025-10-09 07:42:01', '2025-10-09 07:42:01', NULL, NULL, 'active', '1st Semester', NULL),
-('CLASSTEST1', 'Test Subject Class', 'BSBJK30I', 'SUBTEST1', 'PROF001', 'MWF 9:00-10:00', 'Room 101', '2025-08-30 15:40:29', '2025-09-02 06:24:37', '306', 3, 'active', '1st Semester', NULL);
+INSERT INTO `classes` (`class_id`, `class_name`, `class_code`, `subject_id`, `professor_id`, `schedule`, `room`, `created_at`, `updated_at`, `section`, `semester_id`, `status`, `school_year_semester_id`) VALUES
+('CLASS001', 'CS101 Section A', '5OK7ZE0C', 'SUB001', 'PROF001', 'MWF 8:00-9:30 AM', 'Room 101', '2025-08-28 07:13:53', '2025-08-29 12:19:16', '301', 3, 'active', 4),
+('CLASS002', 'MATH101 Section B', 'MATH101-B', 'SUB002', 'PROF002', 'TTH 10:00-11:30 AM', 'Room 202', '2025-08-28 07:13:53', '2025-08-28 07:13:53', '302', 3, 'active', 4),
+('CLASS003', 'CS201 Section C', 'NOW0G94U', 'SUB003', 'PROF001', 'MWF 1:00-2:30 PM', 'Room 303', '2025-08-28 07:13:53', '2025-08-30 14:50:30', '301', 3, 'active', 4),
+('CLASS004', 'CS301 Section A', 'CS301-A', 'SUB004', 'PROF003', 'TTH 2:00-3:30 PM', 'Room 404', '2025-08-28 07:13:53', '2025-08-28 07:13:53', '302', 3, 'active', 4),
+('CLASS005', 'ENG101 Section D', '6XL8WS9V', 'SUB005', 'PROF001', 'MWF 3:00-4:30 PM', 'Room 505', '2025-08-28 07:13:53', '2025-09-02 06:47:27', '301', 3, 'active', 4),
+('CLASS1756423371', 'Database Management System. Class', '4553218', 'SUB1756423371', 'PF0F004', 'Bahala ka na', 'LAB 3', '2025-08-29 07:22:51', '2025-08-29 07:22:51', '302', 3, 'active', 4),
+('CLASS1756425193', 'System Architecture Class', 'N2X1QVPI', 'SUB1756425193', 'PROF001', '321354', 'LAB 81', '2025-08-29 07:53:13', '2025-09-02 06:24:46', '301', 3, 'active', 4),
+('CLASS1756441963', 'HOW TO BE HOTDOG Class', 'A3U3ZXL6', 'SUB1756441963', 'PROF001', 'ANYTIME', 'ANYWHERE', '2025-08-29 12:32:43', '2025-08-30 14:50:14', '302', 3, 'active', 4),
+('CLASS1756494311', 'HOW TO BE POGI Class', 'AS8O992R', 'SUB1756494311', 'PROF001', 'CCF', 'CCF', '2025-08-30 03:05:11', '2025-08-30 03:05:11', '303', 3, 'active', 4),
+('CLASS1756542883', 'EWAN Class', 'WLCV0T8N', 'SUB1756542883', 'PROF001', 'ANY', 'SA LABAS', '2025-08-30 16:34:43', '2025-09-02 06:24:30', '301', 3, 'active', 4),
+('CLASS1756767458', 'TUMESTING KA Class', 'M4FFPLJT', 'SUB1756767458', 'PROF001', 'Not sure', 'lab 3', '2025-09-02 06:57:38', '2025-10-04 04:42:50', '304', 3, 'active', 4),
+('CLASS1756900369', 'POGI Class', '7CGDOSFT', 'SUB1756900369', '111111', 'ANYTIME', 'ANYWHERE', '2025-09-03 19:52:49', '2025-09-03 19:52:49', '305', 3, 'active', 4),
+('CLASS1757248087', 'Funda Class', '6IXPRD3R', 'SUB1757248087', 'PF0F004', 'SHELL', 'SHELL CAFE', '2025-09-07 20:28:07', '2025-09-07 20:29:31', '306', 3, 'active', 4),
+('CLASS1759971443', '2 Class', 'WJR7ZESJ', 'SUB1759971443', 'PROF001', '2', '2', '2025-10-09 08:57:23', '2025-10-09 08:57:23', NULL, 3, 'active', 4),
+('CLASS1760512359', 'lknsdf;glnk Class', '16P84Y8J', 'SUB1760512359', 'PROF001', ';\'lkdnfg;lkn', '\';lkdnfg;\'lkn', '2025-10-15 15:12:39', '2025-10-15 15:12:39', NULL, NULL, 'active', 3),
+('CLASS1760514979', '4 Class', '68RS6M1R', 'SUB1760514979', 'PROF001', '4', '4', '2025-10-15 15:56:19', '2025-10-15 15:56:19', NULL, NULL, 'active', 3),
+('CLASSTEST1', 'Test Subject Class', 'BSBJK30I', 'SUBTEST1', 'PROF001', 'MWF 9:00-10:00', 'Room 101', '2025-08-30 15:40:29', '2025-09-02 06:24:37', '306', 3, 'active', 4);
 
 -- --------------------------------------------------------
 
@@ -246,38 +248,41 @@ INSERT INTO `enrollment_requests` (`request_id`, `student_id`, `class_id`, `stat
 (5, 'STU001', 'CLASS1758323183', 'accepted', '2025-09-20 07:06:34', NULL, NULL, NULL, NULL),
 (6, 'STU001', 'CLASS1758324051', 'pending', '2025-09-20 07:21:04', NULL, NULL, NULL, NULL),
 (7, 'STU001', 'CLASS1758324104', 'pending', '2025-09-20 07:22:02', NULL, NULL, NULL, NULL),
-(8, 'STU001', 'CLASS1758324306', '', '2025-09-20 07:25:12', NULL, NULL, '2025-09-20 07:25:18', 'PROF001'),
-(9, 'STU001', 'CLASS1758325422', '', '2025-09-20 07:45:55', NULL, NULL, '2025-09-20 07:46:02', 'PROF001'),
-(15, 'STU001', 'CLASS1758326678', '', '2025-09-20 08:04:45', NULL, NULL, '2025-09-20 08:04:52', 'PROF001'),
-(16, 'STU001', 'CLASS1758327155', '', '2025-09-20 08:12:45', NULL, NULL, '2025-09-20 08:12:52', 'PROF001'),
-(17, 'STU001', 'CLASS1758327842', '', '2025-09-20 08:24:15', NULL, NULL, '2025-09-20 08:24:24', 'PROF001'),
-(22, 'STU001', 'CLASS1758327989', '', '2025-09-20 08:26:39', NULL, NULL, '2025-09-20 08:26:46', 'PROF001'),
-(23, 'STU001', 'CLASS1758336375', '', '2025-09-20 10:46:29', NULL, NULL, '2025-09-20 10:46:38', 'PROF001'),
-(25, 'STU001', 'CLASS1758337263', '', '2025-09-20 11:01:11', NULL, NULL, '2025-09-20 11:01:19', 'PROF001'),
+(8, 'STU001', 'CLASS1758324306', 'accepted', '2025-09-20 07:25:12', NULL, NULL, '2025-09-20 07:25:18', 'PROF001'),
+(9, 'STU001', 'CLASS1758325422', 'accepted', '2025-09-20 07:45:55', NULL, NULL, '2025-09-20 07:46:02', 'PROF001'),
+(15, 'STU001', 'CLASS1758326678', 'accepted', '2025-09-20 08:04:45', NULL, NULL, '2025-09-20 08:04:52', 'PROF001'),
+(16, 'STU001', 'CLASS1758327155', 'accepted', '2025-09-20 08:12:45', NULL, NULL, '2025-09-20 08:12:52', 'PROF001'),
+(17, 'STU001', 'CLASS1758327842', 'accepted', '2025-09-20 08:24:15', NULL, NULL, '2025-09-20 08:24:24', 'PROF001'),
+(22, 'STU001', 'CLASS1758327989', 'accepted', '2025-09-20 08:26:39', NULL, NULL, '2025-09-20 08:26:46', 'PROF001'),
+(23, 'STU001', 'CLASS1758336375', 'accepted', '2025-09-20 10:46:29', NULL, NULL, '2025-09-20 10:46:38', 'PROF001'),
+(25, 'STU001', 'CLASS1758337263', 'accepted', '2025-09-20 11:01:11', NULL, NULL, '2025-09-20 11:01:19', 'PROF001'),
 (26, 'STU001', 'CLASS1758337356', 'rejected', '2025-09-20 11:02:48', NULL, NULL, '2025-09-20 11:05:22', 'PROF001'),
-(28, 'STU001', 'CLASS1758337557', '', '2025-09-20 11:06:09', NULL, NULL, '2025-09-20 11:06:18', 'PROF001'),
+(28, 'STU001', 'CLASS1758337557', 'accepted', '2025-09-20 11:06:09', NULL, NULL, '2025-09-20 11:06:18', 'PROF001'),
 (30, 'STU001', 'CLASS1758362678', 'pending', '2025-09-20 18:04:47', NULL, NULL, NULL, NULL),
-(31, 'STU001', 'CLASS1758364037', '', '2025-09-20 18:27:26', NULL, NULL, '2025-09-20 18:27:32', 'PROF001'),
-(32, 'STU001', 'CLASS1758379061', '', '2025-09-20 22:37:52', NULL, NULL, '2025-09-20 22:38:23', 'PROF001'),
-(33, 'STU001', 'CLASS1758431306', '', '2025-09-21 13:08:35', NULL, NULL, '2025-09-21 13:14:14', 'PROF001'),
-(34, 'STU001', 'CLASS1758439340', '', '2025-09-21 15:22:30', NULL, NULL, '2025-09-21 15:22:39', 'PROF001'),
-(36, 'STU001', 'CLASS1758439515', '', '2025-09-21 15:25:21', NULL, NULL, '2025-09-21 15:25:28', 'PROF001'),
-(37, 'STU001', 'CLASS1758440607', '', '2025-09-21 15:44:32', NULL, NULL, '2025-09-21 15:44:46', 'PROF001'),
+(31, 'STU001', 'CLASS1758364037', 'accepted', '2025-09-20 18:27:26', NULL, NULL, '2025-09-20 18:27:32', 'PROF001'),
+(32, 'STU001', 'CLASS1758379061', 'accepted', '2025-09-20 22:37:52', NULL, NULL, '2025-09-20 22:38:23', 'PROF001'),
+(33, 'STU001', 'CLASS1758431306', 'accepted', '2025-09-21 13:08:35', NULL, NULL, '2025-09-21 13:14:14', 'PROF001'),
+(34, 'STU001', 'CLASS1758439340', 'accepted', '2025-09-21 15:22:30', NULL, NULL, '2025-09-21 15:22:39', 'PROF001'),
+(36, 'STU001', 'CLASS1758439515', 'accepted', '2025-09-21 15:25:21', NULL, NULL, '2025-09-21 15:25:28', 'PROF001'),
+(37, 'STU001', 'CLASS1758440607', 'accepted', '2025-09-21 15:44:32', NULL, NULL, '2025-09-21 15:44:46', 'PROF001'),
 (38, 'STU001', 'CLASS1758955783', 'rejected', '2025-09-27 14:50:02', NULL, NULL, '2025-09-27 14:50:23', 'PROF001'),
 (40, 'STU001', 'CLASS1759024920', 'rejected', '2025-09-28 10:02:26', NULL, NULL, '2025-09-28 10:03:26', 'PROF001'),
 (43, 'STU001', 'CLASS1759033268', 'pending', '2025-09-28 12:21:28', NULL, NULL, NULL, NULL),
 (44, 'STU001', 'CLASS1759034012', 'pending', '2025-09-28 12:33:48', NULL, NULL, NULL, NULL),
-(45, 'STU001', 'CLASS1759034585', '', '2025-09-28 12:43:22', NULL, NULL, '2025-09-28 13:22:33', 'PROF001'),
-(46, 'STU001', 'CLASS1759042465', '', '2025-09-28 14:54:37', NULL, NULL, '2025-09-28 14:54:59', 'PROF001'),
+(45, 'STU001', 'CLASS1759034585', 'accepted', '2025-09-28 12:43:22', NULL, NULL, '2025-09-28 13:22:33', 'PROF001'),
+(46, 'STU001', 'CLASS1759042465', 'accepted', '2025-09-28 14:54:37', NULL, NULL, '2025-09-28 14:54:59', 'PROF001'),
 (47, 'STU001', 'CLASS1759528083', 'pending', '2025-10-04 05:48:17', NULL, NULL, NULL, NULL),
-(48, 'STU001', 'CLASS1759530017', '', '2025-10-04 06:20:39', NULL, NULL, '2025-10-04 06:44:47', 'PROF001'),
-(50, 'STU001', 'CLASS1759532102', '', '2025-10-04 06:55:12', NULL, NULL, '2025-10-04 06:55:51', 'PROF001'),
+(48, 'STU001', 'CLASS1759530017', 'accepted', '2025-10-04 06:20:39', NULL, NULL, '2025-10-04 06:44:47', 'PROF001'),
+(50, 'STU001', 'CLASS1759532102', 'accepted', '2025-10-04 06:55:12', NULL, NULL, '2025-10-04 06:55:51', 'PROF001'),
 (51, 'STU001', 'CLASS1759549022', 'accepted', '2025-10-04 11:38:27', NULL, NULL, '2025-10-04 11:38:54', 'PROF001'),
 (52, 'STU001', 'CLASS1759963777', 'accepted', '2025-10-09 06:49:47', NULL, NULL, '2025-10-09 06:49:56', 'PROF001'),
-(53, 'STU001', 'CLASS1759965189', '', '2025-10-09 07:25:46', NULL, NULL, '2025-10-09 07:25:50', 'PROF001'),
-(56, 'STU001', 'CLASS1759966442', '', '2025-10-09 07:35:26', NULL, NULL, '2025-10-09 07:35:36', 'PROF001'),
-(57, 'STU001', 'CLASS1759966660', '', '2025-10-09 07:37:45', NULL, NULL, '2025-10-09 07:37:49', 'PROF001'),
-(58, 'STU001', 'CLASS1759966921', '', '2025-10-09 07:42:08', NULL, NULL, '2025-10-09 07:42:17', 'PROF001');
+(53, 'STU001', 'CLASS1759965189', 'accepted', '2025-10-09 07:25:46', NULL, NULL, '2025-10-09 07:25:50', 'PROF001'),
+(56, 'STU001', 'CLASS1759966442', 'accepted', '2025-10-09 07:35:26', NULL, NULL, '2025-10-09 07:35:36', 'PROF001'),
+(57, 'STU001', 'CLASS1759966660', 'accepted', '2025-10-09 07:37:45', NULL, NULL, '2025-10-09 07:37:49', 'PROF001'),
+(58, 'STU001', 'CLASS1759966921', 'accepted', '2025-10-09 07:42:08', NULL, NULL, '2025-10-09 07:42:17', 'PROF001'),
+(59, 'STU001', 'CLASS1759967600', 'accepted', '2025-10-09 08:34:58', NULL, NULL, '2025-10-09 08:35:05', 'PROF001'),
+(60, 'STU001', 'CLASS1759971443', 'accepted', '2025-10-13 10:43:46', NULL, NULL, '2025-10-15 12:54:33', 'PROF001'),
+(61, 'STU001', 'CLASS1760514979', 'accepted', '2025-10-15 16:10:29', NULL, NULL, '2025-10-15 16:10:42', 'PROF001');
 
 -- --------------------------------------------------------
 
@@ -321,7 +326,17 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `user_type`, `title`,
 (27, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 9, 2025.', 'unenrollment_rejected', 0, '2025-10-09 07:30:01', 34, 'CLASS1759965189'),
 (31, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 9, 2025.', 'unenrollment_rejected', 0, '2025-10-09 07:36:17', 36, 'CLASS1759966442'),
 (32, 'STU001', 'student', 'Unenrollment Request Approved', 'Your unenrollment request has been approved by Professor Danhil Baluyot on Oct 9, 2025. You have been unenrolled from the class.', 'unenrollment_approved', 0, '2025-10-09 07:36:35', 37, 'CLASS1759966442'),
-(34, 'STU001', 'student', 'Unenrollment Request Approved', 'Your unenrollment request has been approved by Professor Danhil Baluyot on Oct 9, 2025. You have been unenrolled from the class.', 'unenrollment_approved', 0, '2025-10-09 07:38:03', 38, 'CLASS1759966660');
+(34, 'STU001', 'student', 'Unenrollment Request Approved', 'Your unenrollment request has been approved by Professor Danhil Baluyot on Oct 9, 2025. You have been unenrolled from the class.', 'unenrollment_approved', 0, '2025-10-09 07:38:03', 38, 'CLASS1759966660'),
+(38, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 9, 2025.', 'unenrollment_rejected', 0, '2025-10-09 07:56:34', 40, 'CLASS1759967600'),
+(48, 'STU001', 'student', 'Unenrollment Request Submitted', 'Your unenrollment request has been submitted and is pending professor approval.', '', 0, '2025-10-09 08:46:08', 43, 'CLASS1759967600'),
+(49, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 9, 2025.', 'unenrollment_rejected', 0, '2025-10-09 08:46:23', 43, 'CLASS1759967600'),
+(52, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 9, 2025.', 'unenrollment_rejected', 0, '2025-10-09 08:58:13', 44, 'CLASS1759971443'),
+(53, 'STU001', 'student', 'Unenrollment Request Approved', 'Your unenrollment request has been approved by Professor Danhil Baluyot on Oct 9, 2025. You have been unenrolled from the class.', 'unenrollment_approved', 0, '2025-10-09 08:58:35', 45, 'CLASS1759971443'),
+(58, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 13, 2025.', 'unenrollment_rejected', 0, '2025-10-13 10:43:08', 46, 'CLASS1759971443'),
+(59, 'STU001', 'student', 'Unenrollment Request Approved', 'Your unenrollment request has been approved by Professor Danhil Baluyot on Oct 13, 2025. You have been unenrolled from the class.', 'unenrollment_approved', 0, '2025-10-13 10:43:25', 47, 'CLASS1759971443'),
+(61, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 15, 2025.', 'unenrollment_rejected', 0, '2025-10-15 12:57:22', 48, 'CLASS1759971443'),
+(70, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 15, 2025.', 'unenrollment_rejected', 0, '2025-10-15 16:10:11', 50, 'CLASS1760514979'),
+(71, 'STU001', 'student', 'Unenrollment Request Approved', 'Your unenrollment request has been approved by Professor Danhil Baluyot on Oct 15, 2025. You have been unenrolled from the class.', 'unenrollment_approved', 0, '2025-10-15 16:10:22', 51, 'CLASS1760514979');
 
 -- --------------------------------------------------------
 
@@ -381,6 +396,28 @@ INSERT INTO `professor_subjects` (`assignment_id`, `professor_id`, `subject_id`,
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `school_years`
+--
+
+CREATE TABLE `school_years` (
+  `id` int(11) NOT NULL,
+  `year_label` varchar(20) NOT NULL,
+  `status` enum('Active','Archived') DEFAULT 'Active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `school_years`
+--
+
+INSERT INTO `school_years` (`id`, `year_label`, `status`, `created_at`, `updated_at`) VALUES
+(4, '2024-2025', 'Archived', '2025-09-18 23:24:22', '2025-10-15 06:20:25'),
+(5, '2025-2026', 'Archived', '2025-09-18 23:24:22', '2025-10-15 07:13:59');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `school_year_semester`
 --
 
@@ -398,12 +435,35 @@ CREATE TABLE `school_year_semester` (
 --
 
 INSERT INTO `school_year_semester` (`id`, `school_year`, `semester`, `status`, `created_at`, `updated_at`) VALUES
-(1, '2024-2025', '1st Semester', 'Archived', '2025-09-18 23:24:22', '2025-09-18 23:24:22'),
-(2, '2024-2025', '2nd Semester', 'Archived', '2025-09-18 23:24:22', '2025-09-18 23:24:22'),
-(3, '2025-2026', '1st Semester', 'Active', '2025-09-18 23:24:22', '2025-10-04 03:46:54'),
-(4, '2025-2026', '2nd Semester', 'Active', '2025-09-18 23:24:22', '2025-09-18 23:24:22'),
-(5, '2025-2026', 'Summer', 'Active', '2025-09-18 23:24:22', '2025-09-18 23:24:22'),
-(31, '2024-2025', '', 'Active', '2025-09-19 21:24:23', '2025-09-19 21:24:23');
+(1, '2024-2025', '1st Semester', 'Active', '2025-09-18 23:24:22', '2025-10-15 07:51:21'),
+(2, '2024-2025', '2nd Semester', 'Active', '2025-09-18 23:24:22', '2025-10-15 07:51:23'),
+(3, '2025-2026', '1st Semester', 'Active', '2025-09-18 23:24:22', '2025-10-15 08:28:30'),
+(4, '2025-2026', '2nd Semester', 'Active', '2025-09-18 23:24:22', '2025-10-15 08:28:32');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `semesters`
+--
+
+CREATE TABLE `semesters` (
+  `id` int(11) NOT NULL,
+  `school_year_id` int(11) NOT NULL,
+  `semester_name` enum('1st Semester','2nd Semester','Summer') NOT NULL,
+  `status` enum('Active','Archived') DEFAULT 'Active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `semesters`
+--
+
+INSERT INTO `semesters` (`id`, `school_year_id`, `semester_name`, `status`, `created_at`, `updated_at`) VALUES
+(1, 4, '1st Semester', 'Archived', '2025-09-18 23:24:22', '2025-09-18 23:24:22'),
+(2, 4, '2nd Semester', 'Archived', '2025-09-18 23:24:22', '2025-09-18 23:24:22'),
+(3, 5, '1st Semester', 'Archived', '2025-09-18 23:24:22', '2025-10-15 07:14:30'),
+(4, 5, '2nd Semester', 'Archived', '2025-09-18 23:24:22', '2025-10-15 07:14:45');
 
 -- --------------------------------------------------------
 
@@ -469,7 +529,8 @@ INSERT INTO `student_classes` (`enrollment_id`, `student_id`, `class_id`, `enrol
 (35, 'STU001', 'CLASS1756494311', '2025-08-31 00:40:34'),
 (36, 'STU001', 'CLASS005', '2025-09-02 06:41:39'),
 (37, 'STU001', 'CLASS1756767458', '2025-09-02 06:57:51'),
-(38, 'STU002', 'CLASS1756767458', '2025-09-02 06:58:34');
+(38, 'STU002', 'CLASS1756767458', '2025-09-02 06:58:34'),
+(90, 'STU001', 'CLASS1760514979', '2025-10-15 16:10:42');
 
 -- --------------------------------------------------------
 
@@ -484,32 +545,37 @@ CREATE TABLE `subjects` (
   `description` text DEFAULT NULL,
   `credits` int(11) NOT NULL,
   `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL
+  `updated_at` datetime NOT NULL,
+  `semester_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `subjects`
 --
 
-INSERT INTO `subjects` (`subject_id`, `subject_name`, `subject_code`, `description`, `credits`, `created_at`, `updated_at`) VALUES
-('SUB001', 'Introduction to Programming', 'CS101', 'Fundamentals of programming concepts and logic', 3, '2025-08-28 07:13:53', '2025-08-28 07:13:53'),
-('SUB002', 'Calculus I', 'MATH101', 'Differential and integral calculus', 4, '2025-08-28 07:13:53', '2025-08-28 07:13:53'),
-('SUB003', 'Database Systems', 'CS201', 'Relational database design and SQL', 3, '2025-08-28 07:13:53', '2025-08-28 07:13:53'),
-('SUB004', 'Web Development', 'CS301', 'Front-end and back-end web technologies', 3, '2025-08-28 07:13:53', '2025-08-28 07:13:53'),
-('SUB005', 'Engineering Mathematics', 'ENG101', 'Mathematical methods for engineering', 4, '2025-08-28 07:13:53', '2025-09-01 04:44:04'),
-('SUB1756423371', 'Database Management System.', 'DBMS', NULL, 3, '2025-08-29 07:22:51', '2025-08-29 07:22:51'),
-('SUB1756425193', 'System Architecture', 'SYSARCH', NULL, 3, '2025-08-29 07:53:13', '2025-09-02 06:24:46'),
-('SUB1756441963', 'HOW TO BE HOTDOG', 'HD12324', NULL, 3, '2025-08-29 12:32:43', '2025-08-29 12:32:43'),
-('SUB1756494311', 'HOW TO BE POGI', 'IT 304', NULL, 3, '2025-08-30 03:05:11', '2025-08-30 03:05:11'),
-('SUB1756542883', 'EWAN', '305', NULL, 3, '2025-08-30 16:34:43', '2025-09-02 06:24:30'),
-('SUB1756767458', 'TUMESTING KA', 'IT1011', NULL, 3, '2025-09-02 06:57:38', '2025-10-04 04:42:50'),
-('SUB1756900369', 'POGI', 'IT 301', NULL, 3, '2025-09-03 19:52:49', '2025-09-03 19:52:49'),
-('SUB1757248087', 'Funda', 'IT 101', NULL, 3, '2025-09-07 20:28:07', '2025-09-07 20:29:31'),
-('SUB1758595099', 'new', 'ne', NULL, 3, '2025-09-23 10:38:19', '2025-09-23 10:38:19'),
-('SUB1759966921', '1', '1', NULL, 3, '2025-10-09 07:42:01', '2025-10-09 07:42:01'),
-('SUBARCH1', 'Archived Subject 2024-2025', 'ARCH2024', NULL, 3, '2025-09-20 08:21:50', '2025-09-20 08:21:50'),
-('SUBARCH2', 'Archived Subject 2023-2024', 'ARCH2023', NULL, 3, '2025-09-20 08:21:54', '2025-09-20 08:21:54'),
-('SUBTEST1', 'Test Subject', 'TS101', NULL, 3, '2025-08-30 15:35:29', '2025-09-02 06:24:37');
+INSERT INTO `subjects` (`subject_id`, `subject_name`, `subject_code`, `description`, `credits`, `created_at`, `updated_at`, `semester_id`) VALUES
+('SUB001', 'Introduction to Programming', 'CS101', 'Fundamentals of programming concepts and logic', 3, '2025-08-28 07:13:53', '2025-08-28 07:13:53', 3),
+('SUB002', 'Calculus I', 'MATH101', 'Differential and integral calculus', 4, '2025-08-28 07:13:53', '2025-08-28 07:13:53', NULL),
+('SUB003', 'Database Systems', 'CS201', 'Relational database design and SQL', 3, '2025-08-28 07:13:53', '2025-08-28 07:13:53', NULL),
+('SUB004', 'Web Development', 'CS301', 'Front-end and back-end web technologies', 3, '2025-08-28 07:13:53', '2025-08-28 07:13:53', NULL),
+('SUB005', 'Engineering Mathematics', 'ENG101', 'Mathematical methods for engineering', 4, '2025-08-28 07:13:53', '2025-09-01 04:44:04', NULL),
+('SUB1756423371', 'Database Management System.', 'DBMS', NULL, 3, '2025-08-29 07:22:51', '2025-08-29 07:22:51', NULL),
+('SUB1756425193', 'System Architecture', 'SYSARCH', NULL, 3, '2025-08-29 07:53:13', '2025-09-02 06:24:46', NULL),
+('SUB1756441963', 'HOW TO BE HOTDOG', 'HD12324', NULL, 3, '2025-08-29 12:32:43', '2025-08-29 12:32:43', NULL),
+('SUB1756494311', 'HOW TO BE POGI', 'IT 304', NULL, 3, '2025-08-30 03:05:11', '2025-08-30 03:05:11', NULL),
+('SUB1756542883', 'EWAN', '305', NULL, 3, '2025-08-30 16:34:43', '2025-09-02 06:24:30', NULL),
+('SUB1756767458', 'TUMESTING KA', 'IT1011', NULL, 3, '2025-09-02 06:57:38', '2025-10-04 04:42:50', NULL),
+('SUB1756900369', 'POGI', 'IT 301', NULL, 3, '2025-09-03 19:52:49', '2025-09-03 19:52:49', NULL),
+('SUB1757248087', 'Funda', 'IT 101', NULL, 3, '2025-09-07 20:28:07', '2025-09-07 20:29:31', NULL),
+('SUB1758595099', 'new', 'ne', NULL, 3, '2025-09-23 10:38:19', '2025-09-23 10:38:19', NULL),
+('SUB1759971443', '2', '2', NULL, 3, '2025-10-09 08:57:23', '2025-10-09 08:57:23', NULL),
+('SUB1760509671', 'New', 'New', NULL, 3, '2025-10-15 14:27:51', '2025-10-15 14:27:51', NULL),
+('SUB1760510658', '3', '3', NULL, 3, '2025-10-15 14:44:18', '2025-10-15 14:44:18', NULL),
+('SUB1760512359', 'lknsdf;glnk', 'sd;fknjs;lk', NULL, 3, '2025-10-15 15:12:39', '2025-10-15 15:12:39', NULL),
+('SUB1760514979', '4', '4', NULL, 3, '2025-10-15 15:56:19', '2025-10-15 15:56:19', NULL),
+('SUBARCH1', 'Archived Subject 2024-2025', 'ARCH2024', NULL, 3, '2025-09-20 08:21:50', '2025-09-20 08:21:50', NULL),
+('SUBARCH2', 'Archived Subject 2023-2024', 'ARCH2023', NULL, 3, '2025-09-20 08:21:54', '2025-09-20 08:21:54', NULL),
+('SUBTEST1', 'Test Subject', 'TS101', NULL, 3, '2025-08-30 15:35:29', '2025-09-02 06:24:37', NULL);
 
 -- --------------------------------------------------------
 
@@ -555,14 +621,26 @@ INSERT INTO `unenrollment_requests` (`request_id`, `student_id`, `class_id`, `st
 (29, 'STU001', 'CLASS1759963777', 'rejected', '2025-10-09 06:50:24', NULL, NULL, '2025-10-09 06:50:31', 'PROF001'),
 (30, 'STU001', 'CLASS1759963777', 'rejected', '2025-10-09 07:02:35', NULL, NULL, '2025-10-09 07:02:39', 'PROF001'),
 (31, 'STU001', 'CLASS1759963777', 'rejected', '2025-10-09 07:02:45', NULL, NULL, '2025-10-09 07:02:50', 'PROF001'),
-(32, 'STU001', 'CLASS1759963777', '', '2025-10-09 07:02:57', NULL, NULL, '2025-10-09 07:03:05', 'PROF001'),
+(32, 'STU001', 'CLASS1759963777', 'accepted', '2025-10-09 07:02:57', NULL, NULL, '2025-10-09 07:03:05', 'PROF001'),
 (33, 'STU001', 'CLASS1759965189', 'rejected', '2025-10-09 07:29:25', NULL, NULL, '2025-10-09 07:29:33', 'PROF001'),
 (34, 'STU001', 'CLASS1759965189', 'rejected', '2025-10-09 07:29:52', NULL, NULL, '2025-10-09 07:30:01', 'PROF001'),
-(35, 'STU001', 'CLASS1759965189', '', '2025-10-09 07:30:07', NULL, NULL, '2025-10-09 07:30:12', 'PROF001'),
+(35, 'STU001', 'CLASS1759965189', 'accepted', '2025-10-09 07:30:07', NULL, NULL, '2025-10-09 07:30:12', 'PROF001'),
 (36, 'STU001', 'CLASS1759966442', 'rejected', '2025-10-09 07:36:06', NULL, NULL, '2025-10-09 07:36:17', 'PROF001'),
-(37, 'STU001', 'CLASS1759966442', '', '2025-10-09 07:36:28', NULL, NULL, '2025-10-09 07:36:35', 'PROF001'),
-(38, 'STU001', 'CLASS1759966660', '', '2025-10-09 07:38:00', NULL, NULL, '2025-10-09 07:38:03', 'PROF001'),
-(39, 'STU001', 'CLASS1759966921', '', '2025-10-09 07:42:23', NULL, NULL, '2025-10-09 07:42:28', 'PROF001');
+(37, 'STU001', 'CLASS1759966442', 'accepted', '2025-10-09 07:36:28', NULL, NULL, '2025-10-09 07:36:35', 'PROF001'),
+(38, 'STU001', 'CLASS1759966660', 'accepted', '2025-10-09 07:38:00', NULL, NULL, '2025-10-09 07:38:03', 'PROF001'),
+(39, 'STU001', 'CLASS1759966921', 'accepted', '2025-10-09 07:42:23', NULL, NULL, '2025-10-09 07:42:28', 'PROF001'),
+(40, 'STU001', 'CLASS1759967600', 'rejected', '2025-10-09 07:56:22', NULL, NULL, '2025-10-09 07:56:34', 'PROF001'),
+(41, 'STU001', 'CLASS1759967600', 'accepted', '2025-10-09 07:56:52', NULL, NULL, '2025-10-09 07:57:00', 'PROF001'),
+(42, 'STU001', 'CLASS1759967600', 'accepted', '2025-10-09 07:59:14', NULL, NULL, '2025-10-09 07:59:20', 'PROF001'),
+(43, 'STU001', 'CLASS1759967600', 'rejected', '2025-10-09 08:46:08', NULL, NULL, '2025-10-09 08:46:23', 'PROF001'),
+(44, 'STU001', 'CLASS1759971443', 'rejected', '2025-10-09 08:58:08', NULL, NULL, '2025-10-09 08:58:13', 'PROF001'),
+(45, 'STU001', 'CLASS1759971443', 'accepted', '2025-10-09 08:58:19', NULL, NULL, '2025-10-09 08:58:35', 'PROF001'),
+(46, 'STU001', 'CLASS1759971443', 'rejected', '2025-10-13 10:42:58', NULL, NULL, '2025-10-13 10:43:08', 'PROF001'),
+(47, 'STU001', 'CLASS1759971443', 'accepted', '2025-10-13 10:43:16', NULL, NULL, '2025-10-13 10:43:25', 'PROF001'),
+(48, 'STU001', 'CLASS1759971443', 'rejected', '2025-10-15 12:57:18', NULL, NULL, '2025-10-15 12:57:22', 'PROF001'),
+(49, 'STU001', 'CLASS1759971443', 'accepted', '2025-10-15 12:57:29', NULL, NULL, '2025-10-15 12:57:36', 'PROF001'),
+(50, 'STU001', 'CLASS1760514979', 'rejected', '2025-10-15 16:10:06', NULL, NULL, '2025-10-15 16:10:11', 'PROF001'),
+(51, 'STU001', 'CLASS1760514979', 'accepted', '2025-10-15 16:10:17', NULL, NULL, '2025-10-15 16:10:22', 'PROF001');
 
 --
 -- Indexes for dumped tables
@@ -581,7 +659,9 @@ ALTER TABLE `administrators`
 ALTER TABLE `attendance`
   ADD PRIMARY KEY (`attendance_id`),
   ADD KEY `student_id` (`student_id`),
-  ADD KEY `class_id` (`class_id`);
+  ADD KEY `class_id` (`class_id`),
+  ADD KEY `idx_student_id` (`student_id`),
+  ADD KEY `idx_class_id` (`class_id`);
 
 --
 -- Indexes for table `classes`
@@ -591,7 +671,10 @@ ALTER TABLE `classes`
   ADD UNIQUE KEY `class_code` (`class_code`),
   ADD KEY `subject_id` (`subject_id`),
   ADD KEY `idx_classes_professor_id` (`professor_id`),
-  ADD KEY `fk_classes_school_year_semester` (`school_year_semester_id`);
+  ADD KEY `fk_classes_school_year_semester` (`semester_id`),
+  ADD KEY `idx_class_professor` (`professor_id`),
+  ADD KEY `idx_class_semester` (`semester_id`),
+  ADD KEY `idx_professor_id` (`professor_id`);
 
 --
 -- Indexes for table `class_enrollments`
@@ -599,7 +682,9 @@ ALTER TABLE `classes`
 ALTER TABLE `class_enrollments`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_enrollment` (`class_id`,`student_id`),
-  ADD KEY `student_id` (`student_id`);
+  ADD KEY `student_id` (`student_id`),
+  ADD KEY `idx_enrollment_student` (`student_id`),
+  ADD KEY `idx_enrollment_class` (`class_id`);
 
 --
 -- Indexes for table `class_professors`
@@ -644,11 +729,27 @@ ALTER TABLE `professor_subjects`
   ADD KEY `subject_id` (`subject_id`);
 
 --
+-- Indexes for table `school_years`
+--
+ALTER TABLE `school_years`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `year_label` (`year_label`),
+  ADD KEY `idx_school_year_status` (`status`);
+
+--
 -- Indexes for table `school_year_semester`
 --
 ALTER TABLE `school_year_semester`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_term` (`school_year`,`semester`);
+
+--
+-- Indexes for table `semesters`
+--
+ALTER TABLE `semesters`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `school_year_id` (`school_year_id`),
+  ADD KEY `idx_semester_status` (`status`);
 
 --
 -- Indexes for table `students`
@@ -671,13 +772,15 @@ ALTER TABLE `student_classes`
 --
 ALTER TABLE `subjects`
   ADD PRIMARY KEY (`subject_id`),
-  ADD UNIQUE KEY `subject_code` (`subject_code`);
+  ADD UNIQUE KEY `subject_code` (`subject_code`),
+  ADD KEY `idx_subject_semester` (`semester_id`);
 
 --
 -- Indexes for table `unenrollment_requests`
 --
 ALTER TABLE `unenrollment_requests`
-  ADD PRIMARY KEY (`request_id`);
+  ADD PRIMARY KEY (`request_id`),
+  ADD KEY `fk_unenrollment_requests_student` (`student_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -687,7 +790,7 @@ ALTER TABLE `unenrollment_requests`
 -- AUTO_INCREMENT for table `attendance`
 --
 ALTER TABLE `attendance`
-  MODIFY `attendance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `attendance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `class_enrollments`
@@ -705,13 +808,13 @@ ALTER TABLE `class_professors`
 -- AUTO_INCREMENT for table `enrollment_requests`
 --
 ALTER TABLE `enrollment_requests`
-  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
 -- AUTO_INCREMENT for table `professor_subjects`
@@ -720,22 +823,34 @@ ALTER TABLE `professor_subjects`
   MODIFY `assignment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT for table `school_years`
+--
+ALTER TABLE `school_years`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
 -- AUTO_INCREMENT for table `school_year_semester`
 --
 ALTER TABLE `school_year_semester`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
+-- AUTO_INCREMENT for table `semesters`
+--
+ALTER TABLE `semesters`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
 -- AUTO_INCREMENT for table `student_classes`
 --
 ALTER TABLE `student_classes`
-  MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+  MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 
 --
 -- AUTO_INCREMENT for table `unenrollment_requests`
 --
 ALTER TABLE `unenrollment_requests`
-  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- Constraints for dumped tables
@@ -746,7 +861,9 @@ ALTER TABLE `unenrollment_requests`
 --
 ALTER TABLE `attendance`
   ADD CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`),
-  ADD CONSTRAINT `attendance_ibfk_2` FOREIGN KEY (`class_id`) REFERENCES `classes` (`class_id`);
+  ADD CONSTRAINT `attendance_ibfk_2` FOREIGN KEY (`class_id`) REFERENCES `classes` (`class_id`),
+  ADD CONSTRAINT `fk_attendance_class` FOREIGN KEY (`class_id`) REFERENCES `classes` (`class_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_attendance_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `classes`
@@ -754,27 +871,32 @@ ALTER TABLE `attendance`
 ALTER TABLE `classes`
   ADD CONSTRAINT `classes_ibfk_1` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`subject_id`),
   ADD CONSTRAINT `classes_ibfk_2` FOREIGN KEY (`professor_id`) REFERENCES `professors` (`professor_id`),
-  ADD CONSTRAINT `fk_classes_school_year_semester` FOREIGN KEY (`school_year_semester_id`) REFERENCES `school_year_semester` (`id`);
+  ADD CONSTRAINT `classes_ibfk_3` FOREIGN KEY (`semester_id`) REFERENCES `semesters` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `class_enrollments`
 --
 ALTER TABLE `class_enrollments`
   ADD CONSTRAINT `class_enrollments_ibfk_1` FOREIGN KEY (`class_id`) REFERENCES `classes` (`class_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `class_enrollments_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `class_enrollments_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_class_enrollments_class` FOREIGN KEY (`class_id`) REFERENCES `classes` (`class_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_class_enrollments_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `class_professors`
 --
 ALTER TABLE `class_professors`
   ADD CONSTRAINT `class_professors_ibfk_1` FOREIGN KEY (`class_id`) REFERENCES `classes` (`class_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `class_professors_ibfk_2` FOREIGN KEY (`professor_id`) REFERENCES `professors` (`professor_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `class_professors_ibfk_2` FOREIGN KEY (`professor_id`) REFERENCES `professors` (`professor_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_class_professors_class` FOREIGN KEY (`class_id`) REFERENCES `classes` (`class_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_class_professors_professor` FOREIGN KEY (`professor_id`) REFERENCES `professors` (`professor_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `enrollment_requests`
 --
 ALTER TABLE `enrollment_requests`
-  ADD CONSTRAINT `enrollment_requests_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`);
+  ADD CONSTRAINT `enrollment_requests_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`),
+  ADD CONSTRAINT `fk_enrollment_requests_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `notifications`
@@ -787,15 +909,37 @@ ALTER TABLE `notifications`
 -- Constraints for table `professor_subjects`
 --
 ALTER TABLE `professor_subjects`
+  ADD CONSTRAINT `fk_professor_subjects_professor` FOREIGN KEY (`professor_id`) REFERENCES `professors` (`professor_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_professor_subjects_subject` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`subject_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `professor_subjects_ibfk_1` FOREIGN KEY (`professor_id`) REFERENCES `professors` (`professor_id`),
   ADD CONSTRAINT `professor_subjects_ibfk_2` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`subject_id`);
+
+--
+-- Constraints for table `semesters`
+--
+ALTER TABLE `semesters`
+  ADD CONSTRAINT `semesters_ibfk_1` FOREIGN KEY (`school_year_id`) REFERENCES `school_years` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `student_classes`
 --
 ALTER TABLE `student_classes`
+  ADD CONSTRAINT `fk_student_classes_class` FOREIGN KEY (`class_id`) REFERENCES `classes` (`class_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_student_classes_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `student_classes_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`),
   ADD CONSTRAINT `student_classes_ibfk_2` FOREIGN KEY (`class_id`) REFERENCES `classes` (`class_id`);
+
+--
+-- Constraints for table `subjects`
+--
+ALTER TABLE `subjects`
+  ADD CONSTRAINT `subjects_ibfk_1` FOREIGN KEY (`semester_id`) REFERENCES `semesters` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `unenrollment_requests`
+--
+ALTER TABLE `unenrollment_requests`
+  ADD CONSTRAINT `fk_unenrollment_requests_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

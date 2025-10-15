@@ -49,20 +49,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 
                 try {
                     // First insert the subject
-                    $stmt = $pdo->prepare("INSERT INTO subjects (subject_id, subject_name, subject_code, credits, created_at, updated_at) 
+                    $stmt = $pdo->prepare("INSERT INTO subjects (subject_id, subject_name, subject_code, credits, created_at, updated_at)
                                           VALUES (?, ?, ?, 3, NOW(), NOW())");
                     $subject_id = 'SUB' . time();
                     $stmt->execute([$subject_id, $subject_name, $subject_code]);
-                    
+
+                    // Get active school year and semester
+                    $stmt = $pdo->prepare("SELECT id, school_year, semester FROM school_year_semester WHERE status = 'Active' LIMIT 1");
+                    $stmt->execute();
+                    $active_term = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $school_year_semester_id = $active_term ? $active_term['id'] : NULL;
+                    $school_year = $active_term ? $active_term['school_year'] : '2025-2026';
+                    $semester = $active_term ? $active_term['semester'] : '1st Semester';
+
                     // Generate unique class code
                     $class_code = generateUniqueClassCode($pdo);
-                    
+
                     // Then create a class for this subject
-                    $stmt = $pdo->prepare("INSERT INTO classes (class_id, class_name, class_code, subject_id, professor_id, schedule, room, section, created_at, updated_at) 
-                                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                    $stmt = $pdo->prepare("INSERT INTO classes (class_id, class_name, class_code, subject_id, professor_id, schedule, room, section, created_at, updated_at, school_year_semester_id, semester, school_year)
+                                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), ?, ?, ?)");
                     $class_id = 'CLASS' . time();
-                    $stmt->execute([$class_id, $subject_name . ' Class', $class_code, $subject_id, $professor_id, $schedule, $room, $section]);
-                    
+                    $stmt->execute([$class_id, $subject_name . ' Class', $class_code, $subject_id, $professor_id, $schedule, $room, $section, $school_year_semester_id, $semester, $school_year]);
+
+                    // Check if subject has any active classes (excluding the newly created one)
+                    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM classes WHERE subject_id = ? AND class_id != ? AND status = 'active'");
+                    $stmt->execute([$subject_id, $class_id]);
+                    $active_count = $stmt->fetch()['count'];
+
+                    // If no other active classes exist for this subject, archive the new class
+                    if ($active_count == 0) {
+                        $stmt = $pdo->prepare("UPDATE classes SET status = 'archived' WHERE class_id = ?");
+                        $stmt->execute([$class_id]);
+                    }
+
                     $success = "Subject and class added successfully! Class Code: " . $class_code;
                 } catch (PDOException $e) {
                     $error = "Error adding subject: " . $e->getMessage();

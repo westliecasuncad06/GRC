@@ -10,26 +10,26 @@ require_once '../php/db.php';
 $student_id = $_SESSION['user_id'];
 
 // Get enrolled classes
-$stmt = $pdo->prepare("SELECT c.*, s.subject_name, p.first_name, p.last_name
+$stmt = $pdo->prepare("SELECT c.class_id, c.class_name, c.class_code, c.subject_id, c.professor_id, c.schedule, c.room, c.created_at, c.updated_at, c.section, c.semester_id, c.status, c.school_year_semester_id, s.subject_name, p.first_name, p.last_name
                      FROM student_classes sc
                      JOIN classes c ON sc.class_id = c.class_id
-                     JOIN subjects s ON c.subject_id = s.subject_id
+                     LEFT JOIN subjects s ON c.subject_id = s.subject_id
                      LEFT JOIN professors p ON c.professor_id = p.professor_id
                      LEFT JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
                      WHERE sc.student_id = ? AND c.status != 'archived'");
 $stmt->execute([$student_id]);
 $enrolled_classes = $stmt->fetchAll();
 
-// Get pending unenrollment requests only
+// Get all unenrollment requests (not just pending) to check if any exist for each class
 $stmt = $pdo->prepare("SELECT ur.request_id, ur.requested_at, ur.class_id, ur.status, c.class_name, s.subject_name, p.first_name, p.last_name
                      FROM unenrollment_requests ur
                      JOIN classes c ON ur.class_id = c.class_id
-                     JOIN subjects s ON c.subject_id = s.subject_id
+                     LEFT JOIN subjects s ON c.subject_id = s.subject_id
                      LEFT JOIN professors p ON c.professor_id = p.professor_id
-                     WHERE ur.student_id = ? AND ur.status = 'pending'
+                     WHERE ur.student_id = ?
                      ORDER BY ur.requested_at DESC");
 $stmt->execute([$student_id]);
-$pending_unenrollment_requests = $stmt->fetchAll();
+$unenrollment_requests = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -105,8 +105,8 @@ $pending_unenrollment_requests = $stmt->fetchAll();
 
                                 // Check if there's any unenrollment request for this class (any status)
                                 $has_pending_request = false;
-                                foreach ($pending_unenrollment_requests as $request) {
-                                    if ($request['class_id'] == $class['class_id']) {
+                                foreach ($unenrollment_requests as $request) {
+                                    if (isset($request['class_id']) && $request['class_id'] == $class['class_id']) {
                                         $has_pending_request = true;
                                         break;
                                     }
@@ -123,8 +123,8 @@ $pending_unenrollment_requests = $stmt->fetchAll();
                                             <span class="class-name"><?php echo htmlspecialchars($class['class_name']); ?></span>
                                         </div>
                                     </td>
-                                    <td class="subject-cell mobile-clickable" onclick="openMobileDetailsModal('<?php echo htmlspecialchars($class['subject_name']); ?>', '<?php echo htmlspecialchars($class['schedule']); ?>', '<?php echo htmlspecialchars($class['class_name']); ?>', '<?php echo htmlspecialchars($professor_name); ?>', '<?php echo htmlspecialchars($class['room']); ?>', '<?php echo $class['class_id']; ?>', <?php echo $has_pending_request ? 'true' : 'false'; ?>)">
-                                        <span class="subject-tag"><?php echo htmlspecialchars($class['subject_name']); ?></span>
+                                    <td class="subject-cell mobile-clickable" onclick="openMobileDetailsModal('<?php echo htmlspecialchars($class['subject_name'] ?? 'N/A'); ?>', '<?php echo htmlspecialchars($class['schedule']); ?>', '<?php echo htmlspecialchars($class['class_name']); ?>', '<?php echo htmlspecialchars($professor_name); ?>', '<?php echo htmlspecialchars($class['room']); ?>', '<?php echo $class['class_id']; ?>', <?php echo $has_pending_request ? 'true' : 'false'; ?>)">
+                                        <span class="subject-tag"><?php echo htmlspecialchars($class['subject_name'] ?? 'N/A'); ?></span>
                                     </td>
                                     <td class="professor-cell mobile-hidden">
                                         <div class="professor-info">
@@ -170,10 +170,10 @@ $pending_unenrollment_requests = $stmt->fetchAll();
                                 ? 'Prof. ' . $class['first_name'] . ' ' . $class['last_name']
                                 : 'N/A';
 
-                            // Check if there's a pending unenrollment request for this class
+                            // Check if there's any unenrollment request for this class (any status)
                             $has_pending_request = false;
-                            foreach ($pending_unenrollment_requests as $request) {
-                                if ($request['class_id'] == $class['class_id']) {
+                            foreach ($unenrollment_requests as $request) {
+                                if (isset($request['class_id']) && $request['class_id'] == $class['class_id']) {
                                     $has_pending_request = true;
                                     break;
                                 }
@@ -184,14 +184,14 @@ $pending_unenrollment_requests = $stmt->fetchAll();
                             $button_icon = $has_pending_request ? 'fas fa-clock' : 'fas fa-times';
                             $button_disabled = $has_pending_request ? 'disabled' : '';
                             ?>
-<div class="mobile-table-row" onclick="openMobileDetailsModal('<?php echo htmlspecialchars($class['subject_name']); ?>', '<?php echo htmlspecialchars($class['schedule']); ?>', '<?php echo htmlspecialchars($class['class_name']); ?>', '<?php echo htmlspecialchars($professor_name); ?>', '<?php echo htmlspecialchars($class['room']); ?>', '<?php echo $class['class_id']; ?>', <?php echo $has_pending_request ? 'true' : 'false'; ?>)" style="cursor: pointer;">
+<div class="mobile-table-row" onclick="openMobileDetailsModal('<?php echo htmlspecialchars($class['subject_name'] ?? 'N/A'); ?>', '<?php echo htmlspecialchars($class['schedule']); ?>', '<?php echo htmlspecialchars($class['class_name']); ?>', '<?php echo htmlspecialchars($professor_name); ?>', '<?php echo htmlspecialchars($class['room']); ?>', '<?php echo $class['class_id']; ?>', <?php echo $has_pending_request ? 'true' : 'false'; ?>)" style="cursor: pointer;">
     <div class="mobile-table-cell class-name-cell">
         <strong>Class Name:</strong>
         <span><?php echo htmlspecialchars($class['class_name']); ?></span>
     </div>
     <div class="mobile-table-cell subject-cell">
         <strong>Subject:</strong>
-        <span class="subject-tag"><?php echo htmlspecialchars($class['subject_name']); ?></span>
+        <span class="subject-tag"><?php echo htmlspecialchars($class['subject_name'] ?? 'N/A'); ?></span>
     </div>
 </div>
                         <?php endforeach; ?>

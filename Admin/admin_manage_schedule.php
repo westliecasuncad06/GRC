@@ -118,11 +118,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
 }
 
 // Fetch data for display
-$subjects = $pdo->query("SELECT s.*, p.first_name, p.last_name, c.class_id, c.class_code, c.professor_id, c.schedule, c.room, sys.school_year
+$subjects = $pdo->query("SELECT s.*, p.first_name, p.last_name, c.class_id, c.class_code, c.professor_id, c.schedule, c.room,
+                        CONCAT(y.year_label, ' - ', sem.semester_name) as school_year
                         FROM subjects s
                         JOIN classes c ON s.subject_id = c.subject_id
+                        LEFT JOIN semesters sem ON c.semester_id = sem.id
+                        LEFT JOIN school_years y ON sem.school_year_id = y.id
                         LEFT JOIN professors p ON c.professor_id = p.professor_id
-                        LEFT JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
                         ORDER BY s.created_at DESC")->fetchAll();
 
 $professors = $pdo->query("SELECT * FROM professors ORDER BY first_name, last_name")->fetchAll();
@@ -745,6 +747,14 @@ foreach ($subjects as $subject) {
             <a href="admin_manage_schedule.php" class="nav-item active">
                 <i class="fas fa-calendar-alt"></i>
                 <span>Schedule</span>
+            </a>
+            <a href="http://localhost/grc/Admin/admin_manage_academic_periods.php" class="nav-item">
+                <i class="fas fa-calendar-days"></i>
+                <span>Academic Periods</span>
+            </a>
+            <a href="admin_subjects_archive.php" class="nav-item">
+                <i class="fas fa-archive"></i>
+                <span>Subjects Archive</span>
             </a>
             <a href="settings.php" class="nav-item">
                 <i class="fas fa-cog"></i>

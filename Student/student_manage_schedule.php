@@ -404,8 +404,9 @@ if (empty($enrolled_classes)) {
         /* Toast Notifications */
         .toast-container {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             z-index: 1000;
             display: flex;
             flex-direction: column;
@@ -415,22 +416,24 @@ if (empty($enrolled_classes)) {
         .toast {
             background: #333;
             color: white;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 1rem;
             opacity: 0;
-            transform: translateY(100%);
+            transform: scale(0.8);
             transition: all 0.3s ease;
-            max-width: 300px;
+            max-width: 400px;
             font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            text-align: center;
         }
 
         .toast.show {
             opacity: 1;
-            transform: translateY(0);
+            transform: scale(1);
         }
 
         .toast.success {
@@ -835,7 +838,7 @@ if (empty($enrolled_classes)) {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showToast(data.message, 'success');
+                    showToast('Successfully sent a pending approval for the subject.', 'success');
                     closeEnrollModal();
                     // Refresh the page to show the updated status
                     location.reload();

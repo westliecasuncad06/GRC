@@ -118,6 +118,15 @@
                 font-size: 0.75rem;
                 display: block;
             }
+            .nav-item[href*="my_enrolled_classes.php"] span {
+                display: none;
+            }
+            .nav-item[href*="my_enrolled_classes.php"]::after {
+                content: "Classes";
+                display: block;
+                font-size: 0.75rem;
+                text-align: center;
+            }
             .main-content {
                 margin-left: 0;
                 width: 100%;

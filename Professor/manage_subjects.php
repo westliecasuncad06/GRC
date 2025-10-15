@@ -13,33 +13,57 @@ $professor_id = $_SESSION['user_id'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
         $action = $_POST['action'];
-        
+
         switch ($action) {
             case 'add_subject':
                 $subject_code = $_POST['subject_code'];
                 $subject_name = $_POST['subject_name'];
                 $schedule = $_POST['schedule'];
                 $room = $_POST['room'];
-                
+                $school_year = $_POST['school_year'];
+                $semester = $_POST['semester'];
+
                 try {
+                    // Check if subject_code already exists
+                    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM subjects WHERE subject_code = ?");
+                    $stmt->execute([$subject_code]);
+                    $count = $stmt->fetch()['count'];
+
+                    if ($count > 0) {
+                        throw new Exception("Subject code '$subject_code' already exists. Please choose a different code.");
+                    }
+
+                    // Get school_year_semester_id
+                    $stmt = $pdo->prepare("SELECT id FROM school_year_semester WHERE school_year = ? AND semester = ?");
+                    $stmt->execute([$school_year, $semester]);
+                    $term = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                    if (!$term) {
+                        throw new Exception("Selected school year and semester combination does not exist.");
+                    }
+
+                    $school_year_semester_id = $term['id'];
+
                     // First insert the subject
-                    $stmt = $pdo->prepare("INSERT INTO subjects (subject_id, subject_name, subject_code, credits, created_at, updated_at) 
+                    $stmt = $pdo->prepare("INSERT INTO subjects (subject_id, subject_name, subject_code, credits, created_at, updated_at)
                                           VALUES (?, ?, ?, 3, NOW(), NOW())");
                     $subject_id = 'SUB' . time();
                     $stmt->execute([$subject_id, $subject_name, $subject_code]);
-                    
+
                     // Generate unique class code
                     $class_code = generateUniqueClassCode($pdo);
-                    
+
                     // Then create a class for this subject
-                    $stmt = $pdo->prepare("INSERT INTO classes (class_id, class_name, class_code, subject_id, professor_id, schedule, room, created_at, updated_at) 
-                                          VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                    $stmt = $pdo->prepare("INSERT INTO classes (class_id, class_name, class_code, subject_id, professor_id, schedule, room, school_year_semester_id, created_at, updated_at)
+                                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
                     $class_id = 'CLASS' . time();
-                    $stmt->execute([$class_id, $subject_name . ' Class', $class_code, $subject_id, $professor_id, $schedule, $room]);
-                    
+                    $stmt->execute([$class_id, $subject_name . ' Class', $class_code, $subject_id, $professor_id, $schedule, $room, $school_year_semester_id]);
+
                     $success = "Subject and class added successfully! Class Code: " . $class_code;
                 } catch (PDOException $e) {
                     $error = "Error adding subject: " . $e->getMessage();
+                } catch (Exception $e) {
+                    $error = $e->getMessage();
                 }
                 break;
                 
@@ -140,12 +164,21 @@ $subjects = $stmt->fetchAll();
 // Get enrolled students count for each subject
 $enrollment_counts = [];
 foreach ($subjects as $subject) {
-    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM student_classes sc 
-                          JOIN classes c ON sc.class_id = c.class_id 
+    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM student_classes sc
+                          JOIN classes c ON sc.class_id = c.class_id
                           WHERE c.subject_id = ?");
     $stmt->execute([$subject['subject_id']]);
     $enrollment_counts[$subject['subject_id']] = $stmt->fetch()['count'];
 }
+
+// Get school years and semesters for dropdowns
+$school_years_stmt = $pdo->prepare("SELECT DISTINCT school_year FROM school_year_semester ORDER BY school_year DESC");
+$school_years_stmt->execute();
+$school_years = $school_years_stmt->fetchAll(PDO::FETCH_COLUMN);
+
+$semesters_stmt = $pdo->prepare("SELECT DISTINCT semester FROM school_year_semester ORDER BY semester");
+$semesters_stmt->execute();
+$semesters = $semesters_stmt->fetchAll(PDO::FETCH_COLUMN);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -1591,6 +1624,30 @@ foreach ($subjects as $subject) {
                                 Room
                             </label>
                             <input type="text" name="room" required>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-calendar"></i>
+                                School Year
+                            </label>
+                            <select name="school_year" required>
+                                <option value="">Select School Year</option>
+                                <?php foreach ($school_years as $year): ?>
+                                    <option value="<?php echo $year; ?>"><?php echo $year; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-clock"></i>
+                                Semester
+                            </label>
+                            <select name="semester" required>
+                                <option value="">Select Semester</option>
+                                <?php foreach ($semesters as $sem): ?>
+                                    <option value="<?php echo $sem; ?>"><?php echo $sem; ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn-enhanced btn-secondary-enhanced" onclick="closeModal('addSubjectModal')">

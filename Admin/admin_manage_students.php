@@ -1,7 +1,6 @@
 <?php
 session_start();
-// Temporary bypass for testing
-if (false && (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin')) {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header('Location: index.php');
     exit();
 }
@@ -83,8 +82,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Get all students
-$query = "SELECT * FROM students";
+// Get all students with semester info
+$query = "
+    SELECT s.*, sem.semester_name, y.year_label
+    FROM students s
+    LEFT JOIN student_classes sc ON s.student_id = sc.student_id
+    LEFT JOIN classes c ON sc.class_id = c.class_id
+    LEFT JOIN semesters sem ON c.semester_id = sem.id
+    LEFT JOIN school_years y ON sem.school_year_id = y.id
+    GROUP BY s.student_id
+    ORDER BY s.last_name, s.first_name
+";
 $students = $pdo->query($query)->fetchAll();
 ?>
 <!DOCTYPE html>

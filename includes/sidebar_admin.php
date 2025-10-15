@@ -100,6 +100,24 @@
                 font-size: 0.75rem;
                 display: block;
             }
+            .nav-item[href*="admin_manage_academic_periods.php"] span {
+                display: none;
+            }
+            .nav-item[href*="admin_manage_academic_periods.php"]::after {
+                content: "Academic";
+                display: block;
+                font-size: 0.75rem;
+                text-align: center;
+            }
+            .nav-item[href*="admin_subjects_archive.php"] span {
+                display: none;
+            }
+            .nav-item[href*="admin_subjects_archive.php"]::after {
+                content: "Archive";
+                display: block;
+                font-size: 0.75rem;
+                text-align: center;
+            }
             .main-content {
                 margin-left: 0;
                 width: 100%;
@@ -133,6 +151,14 @@
         <a href="admin_manage_schedule.php" class="nav-item <?php echo ($current_page == 'admin_manage_schedule.php') ? 'active' : ''; ?>">
             <i class="fas fa-calendar-alt"></i>
             <span>Schedule</span>
+        </a>
+        <a href="http://localhost/grc/Admin/admin_manage_academic_periods.php" class="nav-item <?php echo ($current_page == 'admin_manage_academic_periods.php') ? 'active' : ''; ?>">
+            <i class="fas fa-calendar-days"></i>
+            <span>Academic Periods</span>
+        </a>
+        <a href="admin_subjects_archive.php" class="nav-item <?php echo ($current_page == 'admin_subjects_archive.php') ? 'active' : ''; ?>">
+            <i class="fas fa-archive"></i>
+            <span>Subjects Archive</span>
         </a>
         <a href="settings.php" class="nav-item <?php echo ($current_page == 'settings.php') ? 'active' : ''; ?>">
             <i class="fas fa-cog"></i>
