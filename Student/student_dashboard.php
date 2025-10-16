@@ -387,6 +387,7 @@ foreach ($monthly_raw as $row) {
             padding: 0;
             width: 90%;
             max-width: 1000px;
+            height: auto;
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -436,6 +437,7 @@ foreach ($monthly_raw as $row) {
             justify-content: center;
             border-radius: 50%;
             transition: all 0.2s ease;
+            flex-shrink: 0;
         }
 
         .modal-close:hover {
@@ -445,6 +447,46 @@ foreach ($monthly_raw as $row) {
 
         .modal-body {
             padding: 2rem;
+        }
+
+        /* Responsive Modal for screens smaller than 414px */
+        @media (max-width: 414px) {
+            .modal-content {
+                width: 95%;
+                max-height: 90vh;
+                border-radius: 12px;
+            }
+
+            .modal-header {
+                padding: 1rem;
+            }
+
+            .modal-title {
+                font-size: 1.25rem;
+            }
+
+            .modal-close {
+                width: 35px;
+                height: 35px;
+                font-size: 1.25rem;
+                padding: 0.25rem;
+            }
+
+            .modal-body {
+                padding: 1rem;
+            }
+
+            .attendance-table th,
+            .attendance-table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .attendance-status {
+                font-size: 0.8rem;
+                min-width: 70px;
+                padding: 4px 8px;
+            }
         }
 
         .modal-footer {
@@ -753,6 +795,42 @@ foreach ($monthly_raw as $row) {
             color: var(--dark);
         }
 
+        /* Mobile Cards for Recent Attendance */
+        .mobile-cards {
+            display: none;
+        }
+
+        .attendance-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--primary);
+        }
+
+        .card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .card-label {
+            font-weight: 600;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .card-value {
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .dashboard-container {
@@ -794,12 +872,16 @@ foreach ($monthly_raw as $row) {
                 justify-content: center;
             }
 
-            .charts-container {
-                flex-direction: column;
+            .charts-section {
+                display: none;
             }
 
-            .chart-item {
-                min-width: auto;
+            .table-container .table {
+                display: none;
+            }
+
+            .mobile-cards {
+                display: block;
             }
         }
     </style>
@@ -1025,6 +1107,57 @@ foreach ($monthly_raw as $row) {
                     ?>
                 </tbody>
             </table>
+
+            <!-- Mobile Cards for Recent Attendance -->
+            <div class="mobile-cards">
+                <?php
+                if (!empty($attendance_records)) {
+                    foreach ($attendance_records as $record) {
+                        $status_class = '';
+                        switch ($record['status']) {
+                            case 'Present':
+                                $status_class = 'badge-success';
+                                break;
+                            case 'Late':
+                                $status_class = 'badge-warning';
+                                break;
+                            case 'Absent':
+                                $status_class = 'badge-danger';
+                                break;
+                            case 'Excused':
+                                $status_class = 'badge-info';
+                                break;
+                        }
+                        ?>
+                        <div class="attendance-card">
+                            <div class="card-row">
+                                <span class="card-label">Date:</span>
+                                <span class="card-value"><?php echo htmlspecialchars($record['date']); ?></span>
+                            </div>
+                            <div class="card-row">
+                                <span class="card-label">Class:</span>
+                                <span class="card-value"><?php echo htmlspecialchars($record['class_name']); ?></span>
+                            </div>
+                            <div class="card-row">
+                                <span class="card-label">Subject:</span>
+                                <span class="card-value"><?php echo htmlspecialchars($record['subject_name']); ?></span>
+                            </div>
+                            <div class="card-row">
+                                <span class="card-label">Status:</span>
+                                <span class="card-value"><span class="badge <?php echo $status_class; ?>"><?php echo htmlspecialchars($record['status']); ?></span></span>
+                            </div>
+                            <div class="card-row">
+                                <span class="card-label">Remarks:</span>
+                                <span class="card-value"><?php echo htmlspecialchars($record['remarks'] ?: 'N/A'); ?></span>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                } else {
+                    echo '<p style="text-align: center; padding: 2rem;">No attendance records found</p>';
+                }
+                ?>
+            </div>
         </div>
 
 

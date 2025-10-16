@@ -229,6 +229,23 @@ if (empty($enrolled_classes)) {
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            table-layout: fixed;
+        }
+
+        .attendance-table th:nth-child(1),
+        .attendance-table td:nth-child(1) {
+            width: 30%;
+        }
+
+        .attendance-table th:nth-child(2),
+        .attendance-table td:nth-child(2) {
+            width: 30%;
+        }
+
+        .attendance-table th:nth-child(3),
+        .attendance-table td:nth-child(3) {
+            width: 40%;
+            word-wrap: break-word;
         }
 
         .attendance-table th {
@@ -471,6 +488,103 @@ if (empty($enrolled_classes)) {
             opacity: 0.7;
         }
 
+        /* Enhanced Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 16px;
+            padding: 0;
+            width: 90%;
+            max-width: 1000px;
+            height: auto;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem;
+            border-bottom: 1px solid #e9ecef;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: white;
+            padding: 0.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #e9ecef;
+            background: #f8f9fa;
+            border-radius: 0 0 16px 16px;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .dashboard-container {
@@ -497,8 +611,6 @@ if (empty($enrolled_classes)) {
                 justify-content: center;
             }
 
-
-
             .attendance-table th,
             .attendance-table td {
                 padding: 0.75rem 0.5rem;
@@ -515,8 +627,110 @@ if (empty($enrolled_classes)) {
             .class-code {
                 align-self: flex-start;
             }
+        }
 
+        /* Responsive Modal for screens smaller than 722px */
+        @media (max-width: 722px) {
+            .modal-content {
+                width: 95vw;
+                max-width: 95vw;
+                max-height: 90vh;
+                border-radius: 12px;
+                margin: 5vh auto; /* Center the modal vertically and horizontally */
+            }
 
+            .modal-header {
+                padding: 1rem;
+                flex-direction: column; /* Stack header elements vertically */
+                gap: 1rem; /* Add space between title and close button */
+                text-align: center; /* Center align title */
+            }
+
+            .modal-title {
+                font-size: 1.25rem;
+                margin: 0;
+            }
+
+            .modal-close {
+                width: 35px;
+                height: 35px;
+                font-size: 1.25rem;
+                padding: 0.25rem;
+                align-self: flex-end; /* Align close button to the right */
+            }
+
+            .modal-body {
+                padding: 1rem;
+                overflow-x: auto; /* Enable horizontal scrolling for wide content like tables */
+            }
+
+            .attendance-table {
+                min-width: 100%; /* Ensure table takes full width but allows horizontal scroll if needed */
+                table-layout: fixed;
+            }
+
+            .attendance-table th:nth-child(1),
+            .attendance-table td:nth-child(1) {
+                width: 25%; /* Adjust Date column width */
+            }
+
+            .attendance-table th:nth-child(2),
+            .attendance-table td:nth-child(2) {
+                width: 25%; /* Adjust Status column width */
+            }
+
+            .attendance-table th:nth-child(3),
+            .attendance-table td:nth-child(3) {
+                width: 50%; /* Adjust Remarks column width */
+                word-wrap: break-word;
+            }
+
+            .attendance-table th,
+            .attendance-table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.85rem;
+                word-wrap: break-word;
+            }
+
+            .attendance-status {
+                font-size: 0.8rem;
+                min-width: 70px;
+                padding: 4px 8px;
+                display: block; /* Ensure status spans are block for better alignment */
+                text-align: center;
+            }
+        }
+
+        /* Mobile responsive for attendance table */
+        @media (max-width: 768px) {
+            .attendance-table th:nth-child(3),
+            .attendance-table td:nth-child(3) {
+                display: none;
+            }
+
+            .attendance-table th:nth-child(1),
+            .attendance-table td:nth-child(1) {
+                width: 50%;
+            }
+
+            .attendance-table th:nth-child(2),
+            .attendance-table td:nth-child(2) {
+                width: 50%;
+            }
+
+            .attendance-row {
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .attendance-row:hover {
+                background-color: #f8f9fa;
+            }
+        }
+
+        /* Ensure remarks modal is on top */
+        #remarksModal {
+            z-index: 1001;
         }
     </style>
 </head>
@@ -655,6 +869,19 @@ if (empty($enrolled_classes)) {
         </div>
     </div>
 
+    <!-- Remarks Modal -->
+    <div id="remarksModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="remarksModalTitle" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="remarksModalTitle" class="modal-title">Full Remarks</h3>
+                <button class="modal-close" aria-label="Close modal" onclick="closeRemarksModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="remarksModalBody">
+                <p>Loading remarks...</p>
+            </div>
+        </div>
+    </div>
+
     <script>
         const studentId = '<?php echo $student_id; ?>';
 
@@ -730,6 +957,7 @@ if (empty($enrolled_classes)) {
                 const tbody = document.createElement('tbody');
                 for (const record of attendanceRecords) {
                     const row = document.createElement('tr');
+                    row.className = 'attendance-row';
 
                     const tdDate = document.createElement('td');
                     tdDate.textContent = record.date;
@@ -741,7 +969,22 @@ if (empty($enrolled_classes)) {
                     tdStatus.appendChild(statusSpan);
 
                     const tdRemarks = document.createElement('td');
-                    tdRemarks.textContent = record.remarks || '';
+                    const remarksText = record.remarks || 'None';
+                    if (remarksText.length > 20) {
+                        tdRemarks.textContent = remarksText.substring(0, 20) + '...';
+                        tdRemarks.style.cursor = 'pointer';
+                        tdRemarks.style.color = 'var(--primary)';
+                        tdRemarks.style.textDecoration = 'underline';
+                        tdRemarks.title = 'Click to view full remarks';
+
+                        // Add click event to open remarks modal
+                        tdRemarks.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            openRemarksModal(remarksText);
+                        });
+                    } else {
+                        tdRemarks.textContent = remarksText;
+                    }
 
                     row.appendChild(tdDate);
                     row.appendChild(tdStatus);
@@ -868,6 +1111,29 @@ if (empty($enrolled_classes)) {
         document.getElementById('enrollModal').addEventListener('click', function(event) {
             if (event.target === this) {
                 closeEnrollModal();
+            }
+        });
+
+        // Remarks modal functions
+        function openRemarksModal(remarksText) {
+            const modal = document.getElementById('remarksModal');
+            const modalBody = document.getElementById('remarksModalBody');
+            modalBody.innerHTML = `<p>${remarksText}</p>`;
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeRemarksModal() {
+            const modal = document.getElementById('remarksModal');
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+            document.getElementById('remarksModalBody').innerHTML = '<p>Loading remarks...</p>';
+        }
+
+        // Close remarks modal when clicking outside
+        document.getElementById('remarksModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeRemarksModal();
             }
         });
 
