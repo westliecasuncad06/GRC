@@ -494,9 +494,44 @@ $professors = $pdo->query($query)->fetchAll();
             .table th:nth-child(1), .table td:nth-child(1),
             .table th:nth-child(2), .table td:nth-child(2),
             .table th:nth-child(5), .table td:nth-child(5),
-            .table th:nth-child(6), .table td:nth-child(6),
-            .table th:nth-child(7), .table td:nth-child(7) {
+            .table th:nth-child(6), .table td:nth-child(6) {
                 display: none;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .enhanced-header {
+                padding: 1rem;
+            }
+            .header-actions {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .search-container {
+                max-width: 100%;
+            }
+            .modal-content {
+                width: 95%;
+                max-width: none;
+            }
+            .modal-header {
+                padding: 1rem;
+            }
+            .modal-body {
+                padding: 1rem;
+            }
+            .modal-footer {
+                padding: 1rem;
+            }
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .table-container {
+                padding: 1rem;
+            }
+            .form-group input, .form-group select {
+                font-size: 0.9rem;
             }
         }
 

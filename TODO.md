@@ -1,4 +1,3 @@
-- [x] Add confirmation alert before enrolling in subjects on student_manage_schedule.php
-- [x] Modify the form submission handler to show confirm() dialog
-- [x] Test the enrollment functionality with the new alert
-- [x] Add success alert for pending approval submission
+- [x] Modify existing @media (max-width: 768px) to hide fewer table columns: hide Professor ID, Employee ID, Department, Mobile; keep Name, Email, Actions
+- [x] Add new @media (max-width: 450px) query with adjustments for modal, buttons, search, padding
+- [x] Test responsiveness at 300-450px widths
