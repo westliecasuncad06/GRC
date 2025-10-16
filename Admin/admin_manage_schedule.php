@@ -181,7 +181,7 @@ foreach ($subjects as $subject) {
         }
         .header-actions {
             display: flex;
-            gap: 16px;
+            gap: 1rem;
             align-items: center;
             justify-content: flex-end;
             width: 100%;
@@ -198,8 +198,8 @@ foreach ($subjects as $subject) {
         }
         .search-input {
             width: 100%;
-            height: 40px;
-            padding: 10px 16px 10px 40px;
+            height: 2.5rem;
+            padding: 0.625rem 1rem 0.625rem 2.5rem;
             border: 2px solid var(--primary);
             border-radius: 12px;
             font-size: 1rem;
@@ -215,7 +215,7 @@ foreach ($subjects as $subject) {
         }
         .search-icon {
             position: absolute;
-            left: 11px;
+            left: 0.6875rem;
             top: 65%;
             transform: translateY(-50%);
             color: var(--primary);
@@ -224,8 +224,8 @@ foreach ($subjects as $subject) {
         .btn-icon {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 14px 28px;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
             border: none;
             border-radius: 12px;
             font-size: 1rem;
@@ -234,6 +234,7 @@ foreach ($subjects as $subject) {
             transition: all 0.3s ease;
             text-decoration: none;
             box-shadow: 0 6px 16px rgba(247, 82, 112, 0.3);
+            min-height: 2.75rem;
         }
         .btn-primary {
             background: var(--primary);
@@ -248,18 +249,19 @@ foreach ($subjects as $subject) {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 10px 28px;
+            padding: 0.625rem 1.75rem;
             border-radius: 12px;
             font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            height: 40px;
+            gap: 0.625rem;
+            height: 2.5rem;
             box-sizing: border-box;
             transition: background 0.3s, transform 0.3s ease;
             box-shadow: 0 6px 16px rgba(247, 82, 112, 0.3);
+            min-height: 2.75rem;
         }
         .add-professor-btn:hover {
             background: var(--primary-dark);
@@ -529,25 +531,63 @@ foreach ($subjects as $subject) {
                 flex-direction: column;
                 gap: 1rem;
                 text-align: center;
+                padding: 1rem;
+            }
+            .header-title {
+                font-size: 1.5rem;
             }
             .header-actions {
                 width: 100%;
                 justify-content: center;
+                flex-direction: column;
+                gap: 1rem;
             }
             .search-container {
                 width: 100%;
+                max-width: 100%;
+                padding-top: 0;
+            }
+            .search-input {
+                height: 2.75rem;
+                font-size: 1rem;
+            }
+            .add-professor-btn {
+                width: 100%;
                 max-width: 300px;
+                padding: 0.75rem 1.5rem;
+                font-size: 1rem;
             }
             .modal-content {
                 width: 95%;
-                margin: 10px;
+                margin: 1rem;
+                max-height: 90vh;
+            }
+            .modal-header {
+                padding: 1.5rem 1rem;
+            }
+            .modal-title {
+                font-size: 1.5rem;
             }
             .modal-body {
-                padding: 1rem;
+                padding: 1.5rem 1rem;
+            }
+            .modal-footer {
+                padding: 1.5rem 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .modal-footer button {
+                width: 100%;
+                min-height: 2.75rem;
             }
             .action-buttons {
                 justify-content: center;
                 flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            .action-buttons button {
+                min-height: 2.5rem;
+                padding: 0.5rem 1rem;
             }
             .table-container {
                 display: none;
@@ -557,6 +597,167 @@ foreach ($subjects as $subject) {
             }
             .stats-grid {
                 display: none;
+            }
+            .main-content {
+                padding: 0 1rem;
+            }
+            .subject-card {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+            .card-actions button {
+                min-height: 2.5rem;
+                padding: 0.5rem 1rem;
+            }
+            .alert {
+                top: 1rem;
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 414px) {
+            .enhanced-header {
+                padding: 0.75rem;
+                margin-bottom: 1.5rem;
+            }
+            .header-title {
+                font-size: 1.25rem;
+            }
+            .search-input {
+                height: 2.75rem;
+                padding: 0.5rem 1rem 0.5rem 2.75rem;
+                font-size: 0.9rem;
+            }
+            .search-icon {
+                left: 0.75rem;
+                font-size: 1rem;
+            }
+            .add-professor-btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+            .modal-content {
+                width: 98%;
+                margin: 0.5rem;
+            }
+            .modal-header {
+                padding: 1rem;
+            }
+            .modal-title {
+                font-size: 1.25rem;
+            }
+            .modal-body {
+                padding: 1rem;
+            }
+            .form-group input, .form-group select {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+            .modal-footer {
+                padding: 1rem;
+            }
+            .main-content {
+                padding: 0 0.5rem;
+            }
+            .subject-card {
+                padding: 0.75rem;
+                margin-bottom: 0.75rem;
+            }
+            .card-header h4 {
+                font-size: 1rem;
+            }
+            .card-body p {
+                font-size: 0.85rem;
+            }
+            .enrolled-badge {
+                font-size: 0.75rem;
+                padding: 0.25rem 0.5rem;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .enhanced-header {
+                padding: 0.5rem;
+                margin-bottom: 1rem;
+            }
+            .header-title {
+                font-size: 1.1rem;
+            }
+            .header-title i {
+                margin-right: 0.5rem;
+            }
+            .search-input {
+                height: 2.5rem;
+                padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+                font-size: 0.85rem;
+            }
+            .search-icon {
+                left: 0.625rem;
+                font-size: 0.9rem;
+            }
+            .add-professor-btn {
+                padding: 0.625rem 0.875rem;
+                font-size: 0.85rem;
+                max-width: 250px;
+            }
+            .modal-content {
+                width: 99%;
+                margin: 0.25rem;
+            }
+            .modal-header {
+                padding: 0.75rem;
+            }
+            .modal-title {
+                font-size: 1.1rem;
+            }
+            .modal-body {
+                padding: 0.75rem;
+            }
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            .form-group input, .form-group select {
+                padding: 0.625rem 0.875rem;
+                font-size: 0.85rem;
+            }
+            .modal-footer {
+                padding: 0.75rem;
+            }
+            .main-content {
+                padding: 0 0.25rem;
+            }
+            .subject-card {
+                padding: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+            .card-header h4 {
+                font-size: 0.9rem;
+            }
+            .card-body p {
+                font-size: 0.8rem;
+                margin: 0.25rem 0;
+            }
+            .enrolled-badge {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.4rem;
+            }
+            .card-actions {
+                gap: 0.25rem;
+                margin-top: 0.75rem;
+            }
+            .card-actions button {
+                min-height: 2.25rem;
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            .alert {
+                top: 0.5rem;
+                right: 0.5rem;
+                left: 0.5rem;
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
             }
         }
         .stats-grid {

@@ -76,7 +76,7 @@ foreach ($archived_classes as $class) {
 
         .table-title-enhanced {
             color: white;
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
             font-weight: 700;
             margin: 0;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -105,15 +105,15 @@ foreach ($archived_classes as $class) {
         }
 
         .archive-icon {
-            width: 50px;
-            height: 50px;
+            width: clamp(40px, 10vw, 50px);
+            height: clamp(40px, 10vw, 50px);
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 3vw, 1.2rem);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
@@ -122,14 +122,14 @@ foreach ($archived_classes as $class) {
         }
 
         .archive-title {
-            font-size: 1.25rem;
+            font-size: clamp(1.1rem, 4vw, 1.25rem);
             font-weight: 700;
             color: var(--dark);
             margin: 0 0 0.25rem 0;
         }
 
         .archive-subtitle {
-            font-size: 0.9rem;
+            font-size: clamp(0.85rem, 2.5vw, 0.9rem);
             color: var(--gray);
             font-weight: 500;
         }
@@ -146,6 +146,7 @@ foreach ($archived_classes as $class) {
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             cursor: pointer;
             transition: background-color 0.2s ease;
+            min-height: 44px; /* Touch-friendly */
         }
 
         .archive-class-item:hover {
@@ -172,7 +173,7 @@ foreach ($archived_classes as $class) {
             padding: 2rem;
             border-radius: 12px;
             max-width: 800px;
-            width: 100%;
+            width: 90%;
             max-height: 90%;
             overflow-y: auto;
             position: relative;
@@ -196,6 +197,9 @@ foreach ($archived_classes as $class) {
             width: 100%;
             border-collapse: collapse;
             margin-top: 1rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            min-width: 300px;
         }
 
         .attendance-table th {
@@ -203,17 +207,19 @@ foreach ($archived_classes as $class) {
             color: white;
             padding: 1rem;
             text-align: left;
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
         }
 
         .attendance-table td {
             padding: 1rem;
             border-bottom: 1px solid #e9ecef;
+            font-size: clamp(0.8rem, 2.5vw, 0.85rem);
         }
 
         .attendance-status {
             padding: 0.25rem 0.75rem;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: clamp(0.75rem, 2vw, 0.8rem);
             font-weight: 500;
             text-transform: uppercase;
         }
@@ -243,13 +249,13 @@ foreach ($archived_classes as $class) {
         }
 
         .archive-class-icon {
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 3vw, 1.1rem);
             color: var(--primary);
             width: 20px;
         }
 
         .archive-class-text {
-            font-size: 0.9rem;
+            font-size: clamp(0.85rem, 2.5vw, 0.9rem);
             color: var(--dark);
             font-weight: 500;
         }
@@ -268,13 +274,13 @@ foreach ($archived_classes as $class) {
         }
 
         .empty-state-icon {
-            font-size: 4rem;
+            font-size: clamp(3rem, 10vw, 4rem);
             margin-bottom: 1rem;
             opacity: 0.6;
         }
 
         .empty-state-text {
-            font-size: 1.2rem;
+            font-size: clamp(1.1rem, 4vw, 1.2rem);
             margin-bottom: 2rem;
             font-weight: 500;
         }
@@ -286,6 +292,152 @@ foreach ($archived_classes as $class) {
 
             .archive-card {
                 padding: 1.5rem;
+            }
+
+            .table-header-enhanced {
+                padding: 1.5rem;
+            }
+
+            .archive-header {
+                gap: 0.75rem;
+            }
+
+            .archive-class-item {
+                padding: 0.5rem 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-container {
+                padding: 0.75rem;
+            }
+
+            .archive-card {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .table-header-enhanced {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .archive-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .archive-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+
+            .archive-title {
+                font-size: 1rem;
+            }
+
+            .archive-subtitle {
+                font-size: 0.8rem;
+            }
+
+            .archive-class-item {
+                gap: 0.5rem;
+                padding: 0.4rem 0;
+            }
+
+            .archive-class-text {
+                font-size: 0.8rem;
+                line-height: 1.3;
+            }
+
+            .modal-content {
+                padding: 1rem;
+                width: 95%;
+            }
+
+            .attendance-table th,
+            .attendance-table td {
+                padding: 0.5rem;
+            }
+        }
+
+        @media (max-width: 414px) {
+            .dashboard-container {
+                padding: 0.5rem;
+            }
+
+            .archive-card {
+                padding: 0.75rem;
+            }
+
+            .table-header-enhanced {
+                padding: 0.75rem;
+                border-radius: 12px;
+            }
+
+            .archive-class-item {
+                min-height: 40px;
+            }
+
+            .modal-content {
+                padding: 0.75rem;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .dashboard-container {
+                padding: 0.5rem;
+            }
+
+            .archive-card {
+                padding: 0.5rem;
+            }
+
+            .table-header-enhanced {
+                padding: 0.5rem;
+            }
+
+            .archive-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8rem;
+            }
+
+            .archive-title {
+                font-size: 0.95rem;
+            }
+
+            .archive-subtitle {
+                font-size: 0.75rem;
+            }
+
+            .archive-class-text {
+                font-size: 0.75rem;
+            }
+
+            .empty-state {
+                padding: 2rem 1rem;
+            }
+
+            .empty-state-icon {
+                font-size: 2.5rem;
+            }
+
+            .empty-state-text {
+                font-size: 1rem;
+            }
+
+            .modal-content {
+                padding: 0.5rem;
+                width: 98%;
+            }
+
+            .attendance-table th,
+            .attendance-table td {
+                padding: 0.4rem;
+                font-size: 0.75rem;
             }
         }
     </style>

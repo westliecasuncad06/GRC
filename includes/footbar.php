@@ -29,37 +29,112 @@
     <br>
 </footer>
 
+
 <style>
+
 .footbar {
+
     background-color: #F75270;
+
     color: white;
+
     padding: 1rem 2rem;
+
     text-align: center;
+
     font-family: 'Poppins', sans-serif;
+
     font-size: 0.9rem;
+
     position: relative;
+
     bottom: 0;
+
     width: 100%;
+
     box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+
     margin-top: 2rem;
+
 }
 
 .footbar-content {
+
     display: flex;
+
     flex-wrap: wrap;
+
     justify-content: space-between;
+
     gap: 1rem;
+
     align-items: center;
+
 }
 
 .footbar a {
+
     color: white;
+
     text-decoration: underline;
+
     transition: color 0.3s ease;
+
 }
 
 .footbar a:hover {
+
     color: #DC143C;
+
     text-decoration: none;
+
 }
+
+@media (max-width: 768px) {
+
+    .footbar {
+
+        padding: 1rem;
+
+        font-size: 0.8rem;
+
+    }
+
+    .footbar-content {
+
+        flex-direction: column;
+
+        gap: 0.5rem;
+
+        text-align: center;
+
+    }
+
+    .footbar-content span {
+
+        display: block;
+
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .footbar {
+
+        padding: 0.5rem;
+
+        font-size: 0.7rem;
+
+    }
+
+    .footbar-content {
+
+        gap: 0.25rem;
+
+    }
+
+}
+
 </style>
+

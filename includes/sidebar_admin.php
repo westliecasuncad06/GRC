@@ -60,70 +60,183 @@
             box-sizing: border-box;
         }
 
+
         @media (max-width: 768px) {
+
             .admin-sidebar {
+
                 position: fixed;
+
                 bottom: 0;
+
                 left: 0;
+
                 width: 100%;
+
                 height: 60px;
+
                 top: auto;
+
                 padding: 0;
+
                 display: flex;
+
                 justify-content: space-around;
+
                 align-items: center;
+
                 box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+
             }
+
             .sidebar-header {
+
                 display: none;
+
             }
+
             .sidebar-nav {
+
                 display: flex;
+
                 width: 100%;
+
                 padding: 0;
+
                 justify-content: space-around;
+
             }
+
             .nav-item {
+
                 flex: 1;
+
                 text-align: center;
+
                 padding: 0.5rem 0;
+
                 margin: 0;
+
                 flex-direction: column;
+
                 border-radius: 0;
+
             }
+
             .nav-item i {
+
                 margin-right: 0;
+
                 margin-bottom: 0.25rem;
+
                 font-size: 1.2rem;
+
             }
+
             .nav-item span {
+
                 font-size: 0.75rem;
+
                 display: block;
+
             }
+
             .nav-item[href*="admin_manage_academic_periods.php"] span {
+
                 display: none;
+
             }
+
             .nav-item[href*="admin_manage_academic_periods.php"]::after {
+
                 content: "Academic";
+
                 display: block;
+
                 font-size: 0.75rem;
+
                 text-align: center;
+
             }
+
             .nav-item[href*="admin_subjects_archive.php"] span {
+
                 display: none;
+
             }
+
             .nav-item[href*="admin_subjects_archive.php"]::after {
+
                 content: "Archive";
+
                 display: block;
+
                 font-size: 0.75rem;
+
                 text-align: center;
+
             }
+
             .main-content {
+
                 margin-left: 0;
+
                 width: 100%;
+
                 padding-bottom: 60px;
+
             }
+
         }
+
+        @media (max-width: 480px) {
+
+            .admin-sidebar {
+
+                height: 50px;
+
+            }
+
+            .nav-item {
+
+                padding: 0.25rem 0;
+
+            }
+
+            .nav-item i {
+
+                font-size: 1rem;
+
+                margin-bottom: 0.1rem;
+
+            }
+
+            .nav-item span {
+
+                font-size: 0.65rem;
+
+            }
+
+            .nav-item[href*="admin_manage_academic_periods.php"]::after {
+
+                font-size: 0.65rem;
+
+            }
+
+            .nav-item[href*="admin_subjects_archive.php"]::after {
+
+                font-size: 0.65rem;
+
+            }
+
+            .main-content {
+
+                padding-bottom: 50px;
+
+            }
+
+        }
+
 
 
 </style>

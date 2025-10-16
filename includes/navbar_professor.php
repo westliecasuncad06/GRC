@@ -50,23 +50,85 @@ if ($professor_id) {
 }
 ?>
 
+
 <!-- Navbar -->
+
 <style>
+
+.navbar {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 1rem 2rem;
+
+    background-color: #F75270;
+
+    color: white;
+
+    font-family: 'Poppins', sans-serif;
+
+}
+
 .navbar-title {
+
     display: block;
+
 }
+
 .navbar-title-mobile {
+
     display: none;
+
 }
+
 @media (max-width: 768px) {
+
     .navbar-title {
+
         display: none;
+
     }
+
     .navbar-title-mobile {
+
         display: block;
+
     }
+
 }
+
+
+@media (max-width: 480px) {
+
+    .navbar {
+
+        flex-wrap: wrap;
+
+        padding: 0.5rem 1rem;
+
+    }
+
+    .navbar-user {
+
+        font-size: 0.8rem;
+
+    }
+
+    .user-dropdown button {
+
+        padding: 0.5rem;
+
+    }
+
+}
+
+
 </style>
+
 <nav class="navbar">
     <div class="navbar-brand">
         <span class="navbar-title">Global Reciprocal Colleges</span>

@@ -74,70 +74,152 @@
             box-sizing: border-box;
         }
 
+
         @media (max-width: 768px) {
+
             .student-sidebar {
+
                 position: fixed;
+
                 bottom: 0;
+
                 left: 0;
+
                 width: 100%;
+
                 height: 60px;
+
                 top: auto;
+
                 padding: 0;
+
                 display: flex;
+
                 justify-content: space-around;
+
                 align-items: center;
+
                 box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+
                 z-index: 1010;
+
                 background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+
             }
+
             .sidebar-header {
+
                 display: none;
+
             }
+
             .sidebar-nav {
+
                 display: flex;
+
                 width: 100%;
+
                 padding: 0;
+
                 justify-content: space-around;
+
             }
+
             .nav-item {
+
                 flex: 1;
+
                 text-align: center;
+
                 padding: 0.5rem 0;
+
                 margin: 0;
+
                 flex-direction: column;
+
                 border-radius: 0;
+
                 position: relative;
+
                 z-index: 1020;
+
             }
+
             .nav-item i {
+
                 margin-right: 0;
+
                 margin-bottom: 0.25rem;
+
                 font-size: 1.2rem;
+
             }
+
             .nav-item span {
+
                 font-size: 0.75rem;
+
                 display: block;
+
             }
+
             .nav-item[href*="my_enrolled_classes.php"] span {
+
                 display: none;
+
             }
+
             .nav-item[href*="my_enrolled_classes.php"]::after {
+
                 content: "Classes";
+
                 display: block;
+
                 font-size: 0.75rem;
+
                 text-align: center;
+
             }
+
             .main-content {
+
                 margin-left: 0;
+
                 width: 100%;
+
                 padding-bottom: 70px; /* Increased to ensure no overlap */
+
             }
+
             .settings-mobile-hide {
+
                 display: none;
+
             }
+
         }
 
-
+        @media (max-width: 480px) {
+            .student-sidebar {
+                height: 50px;
+            }
+            .nav-item {
+                padding: 0.25rem 0;
+            }
+            .nav-item i {
+                font-size: 1rem;
+                margin-bottom: 0.1rem;
+            }
+            .nav-item span {
+                font-size: 0.65rem;
+            }
+            .nav-item[href*="my_enrolled_classes.php"]::after {
+                font-size: 0.65rem;
+            }
+            .main-content {
+                padding-bottom: 60px;
+            }
+        }
 </style>
 
 <!-- Sidebar -->

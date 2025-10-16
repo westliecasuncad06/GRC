@@ -372,12 +372,50 @@
         }
 
         @media (max-width: 480px) {
+            .register-container {
+                border-radius: 15px;
+                max-width: 100%;
+                padding: 10px;
+            }
+
             .header {
-                padding: 25px;
+                padding: 20px;
             }
 
             .school-name {
-                font-size: 2rem;
+                font-size: 1.8rem;
+            }
+
+            .steps-section, .form-section {
+                padding: 20px;
+            }
+
+            .form-input, .form-select {
+                padding: 12px 15px;
+                font-size: 0.9rem;
+            }
+
+            .btn {
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
+
+            .progress-indicator {
+                margin-bottom: 20px;
+            }
+
+            .progress-step {
+                width: 25px;
+                height: 25px;
+                font-size: 0.8rem;
+            }
+
+            .steps-list {
+                font-size: 0.85rem;
+            }
+
+            .tagline {
+                font-size: 0.9rem;
             }
         }
     </style>

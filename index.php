@@ -299,18 +299,42 @@ session_start(); // Start the session
         @media (max-width: 480px) {
             .login-container {
                 border-radius: 15px;
+                max-width: 100%;
+                padding: 10px;
             }
-            
+
             .left-section, .right-section {
-                padding: 25px;
+                padding: 20px;
             }
-            
+
             .school-name {
                 font-size: 1.8rem;
             }
-            
+
             .login-title {
                 font-size: 1.5rem;
+            }
+
+            .form-group input {
+                padding: 12px 15px;
+                font-size: 0.9rem;
+            }
+
+            .login-btn {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+
+            .tagline {
+                font-size: 0.9rem;
+            }
+
+            .feature {
+                font-size: 0.85rem;
+            }
+
+            .feature-icon {
+                font-size: 1rem;
             }
         }
     </style>

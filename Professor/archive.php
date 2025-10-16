@@ -718,6 +718,213 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+        /* Mobile Responsiveness for 414px and below */
+        @media (max-width: 414px) {
+            .main-content {
+                margin-left: 0;
+                padding: 1rem 0.5rem;
+            }
+
+            .archive-header {
+                padding: 2rem 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .archive-title {
+                font-size: 1.8rem;
+            }
+
+            .archive-subtitle {
+                font-size: 1rem;
+            }
+
+            .tabs {
+                padding: 0.25rem;
+                margin-bottom: 2rem;
+            }
+
+            .tab-btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+                min-width: 120px;
+            }
+
+            .class-card {
+                padding: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .class-info h3 {
+                font-size: 1.3rem;
+            }
+
+            .class-details {
+                gap: 0.75rem;
+            }
+
+            .detail-item {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+            }
+
+            .btn {
+                padding: 0.875rem 1.25rem;
+                font-size: 0.9rem;
+                width: 100%;
+                justify-content: center;
+                min-height: 44px; /* Touch-friendly */
+            }
+
+            .status-badge {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .collapse-btn {
+                padding: 0.875rem 1rem;
+                font-size: 1rem;
+                min-height: 44px;
+            }
+
+            .no-classes {
+                padding: 2rem 1rem;
+            }
+
+            .no-classes-icon {
+                font-size: 3rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                max-width: none;
+                margin: 0.5rem;
+            }
+
+            .modal-header {
+                padding: 1.5rem;
+            }
+
+            .modal-title {
+                font-size: 1.3rem;
+            }
+
+            .modal-body {
+                padding: 1.5rem;
+            }
+
+            .form-control {
+                padding: 0.875rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* Extra Small Mobile (375px and below) */
+        @media (max-width: 375px) {
+            .main-content {
+                padding: 0.75rem 0.25rem;
+            }
+
+            .archive-header {
+                padding: 1.5rem 0.75rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .archive-title {
+                font-size: 1.5rem;
+            }
+
+            .archive-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .tabs {
+                padding: 0.125rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .tab-btn {
+                padding: 0.625rem 0.75rem;
+                font-size: 0.85rem;
+                min-width: 100px;
+            }
+
+            .class-card {
+                padding: 1rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .class-info h3 {
+                font-size: 1.2rem;
+            }
+
+            .class-details {
+                gap: 0.5rem;
+            }
+
+            .detail-item {
+                padding: 0.4rem;
+                font-size: 0.85rem;
+            }
+
+            .btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
+                min-height: 40px;
+            }
+
+            .status-badge {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.6rem;
+            }
+
+            .collapse-btn {
+                padding: 0.75rem 0.875rem;
+                font-size: 0.95rem;
+                min-height: 40px;
+            }
+
+            .no-classes {
+                padding: 1.5rem 0.75rem;
+            }
+
+            .no-classes-icon {
+                font-size: 2.5rem;
+            }
+
+            .modal-content {
+                width: 98%;
+                margin: 0.25rem;
+            }
+
+            .modal-header {
+                padding: 1.25rem;
+            }
+
+            .modal-title {
+                font-size: 1.2rem;
+            }
+
+            .modal-body {
+                padding: 1.25rem;
+            }
+
+            .form-control {
+                padding: 0.75rem;
+                font-size: 0.95rem;
+            }
+
+            .alert {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
         /* Loading Animation */
         .loading {
             display: inline-block;

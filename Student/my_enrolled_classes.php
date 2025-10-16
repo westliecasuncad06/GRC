@@ -305,7 +305,7 @@ $unenrollment_requests = $stmt->fetchAll();
         }
 
         .page-title {
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 5vw, 2rem);
             font-weight: 700;
             margin: 0;
             display: flex;
@@ -314,7 +314,7 @@ $unenrollment_requests = $stmt->fetchAll();
         }
 
         .page-subtitle {
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 3vw, 1rem);
             opacity: 0.9;
             margin: 0;
             font-weight: 400;
@@ -341,7 +341,7 @@ $unenrollment_requests = $stmt->fetchAll();
         }
 
         .section-title {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
             font-weight: 600;
             color: var(--dark);
             margin: 0;
@@ -360,7 +360,7 @@ $unenrollment_requests = $stmt->fetchAll();
             color: white;
             padding: 0.5rem 1rem;
             border-radius: 20px;
-            font-size: 0.875rem;
+            font-size: clamp(0.8rem, 2.5vw, 0.875rem);
             font-weight: 500;
             display: flex;
             align-items: center;
@@ -375,12 +375,14 @@ $unenrollment_requests = $stmt->fetchAll();
         /* Table Styles */
         .table-container {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .data-table {
             width: 100%;
             border-collapse: collapse;
             table-layout: auto;
+            min-width: 600px; /* Prevent table from shrinking too much */
         }
 
         .data-table th {
@@ -389,7 +391,7 @@ $unenrollment_requests = $stmt->fetchAll();
             padding: 1rem 1.5rem;
             text-align: left;
             font-weight: 600;
-            font-size: 0.875rem;
+            font-size: clamp(0.8rem, 2.5vw, 0.875rem);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border: none;
@@ -427,7 +429,7 @@ $unenrollment_requests = $stmt->fetchAll();
         .class-name {
             font-weight: 600;
             color: var(--dark);
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 3vw, 1rem);
         }
 
         .subject-cell {
@@ -439,7 +441,7 @@ $unenrollment_requests = $stmt->fetchAll();
             color: var(--dark);
             padding: 0.25rem 0.75rem;
             border-radius: 12px;
-            font-size: 0.875rem;
+            font-size: clamp(0.8rem, 2.5vw, 0.875rem);
             font-weight: 500;
         }
 
@@ -484,7 +486,7 @@ $unenrollment_requests = $stmt->fetchAll();
             color: var(--dark);
             padding: 0.25rem 0.75rem;
             border-radius: 12px;
-            font-size: 0.875rem;
+            font-size: clamp(0.8rem, 2.5vw, 0.875rem);
             font-weight: 500;
         }
 
@@ -506,20 +508,20 @@ $unenrollment_requests = $stmt->fetchAll();
         }
 
         .empty-state-content i {
-            font-size: 4rem;
+            font-size: clamp(3rem, 10vw, 4rem);
             color: var(--light-gray);
             margin-bottom: 1rem;
         }
 
         .empty-state-content h3 {
             color: var(--gray);
-            font-size: 1.25rem;
+            font-size: clamp(1.1rem, 4vw, 1.25rem);
             margin: 0;
         }
 
         .empty-state-content p {
             color: var(--gray);
-            font-size: 0.95rem;
+            font-size: clamp(0.9rem, 3vw, 0.95rem);
             max-width: 400px;
         }
 
@@ -529,7 +531,7 @@ $unenrollment_requests = $stmt->fetchAll();
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            font-size: 0.875rem;
+            font-size: clamp(0.8rem, 2.5vw, 0.875rem);
             font-weight: 600;
             display: inline-flex;
             align-items: center;
@@ -538,6 +540,7 @@ $unenrollment_requests = $stmt->fetchAll();
             text-decoration: none;
             min-width: 120px;
             justify-content: center;
+            min-height: 44px; /* Touch-friendly */
         }
 
         .btn-primary {
@@ -596,7 +599,7 @@ $unenrollment_requests = $stmt->fetchAll();
         .status-badge {
             padding: 0.5rem 1rem;
             border-radius: 20px;
-            font-size: 0.875rem;
+            font-size: clamp(0.8rem, 2.5vw, 0.875rem);
             font-weight: 600;
             display: inline-flex;
             align-items: center;
@@ -639,11 +642,13 @@ $unenrollment_requests = $stmt->fetchAll();
         .mobile-table-cell strong {
             color: var(--dark);
             font-weight: 600;
+            font-size: clamp(0.85rem, 2.5vw, 0.9rem);
         }
 
         .mobile-table-cell span {
             color: var(--gray);
             font-weight: 500;
+            font-size: clamp(0.8rem, 2.5vw, 0.85rem);
         }
 
 .subject-cell {
@@ -668,7 +673,7 @@ $unenrollment_requests = $stmt->fetchAll();
             color: var(--dark);
             padding: 0.25rem 0.75rem;
             border-radius: 12px;
-            font-size: 0.875rem;
+            font-size: clamp(0.8rem, 2.5vw, 0.875rem);
             font-weight: 500;
         }
 
@@ -722,6 +727,7 @@ $unenrollment_requests = $stmt->fetchAll();
             .btn {
                 padding: 0.6rem 1rem;
                 font-size: 0.8rem;
+                min-width: 100px;
             }
         }
 
@@ -734,6 +740,100 @@ $unenrollment_requests = $stmt->fetchAll();
             .data-table th,
             .data-table td {
                 padding: 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .main-content {
+                padding: 0.75rem;
+            }
+
+            .page-header {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .section-header {
+                padding: 0.75rem 1rem;
+            }
+
+            .empty-state {
+                padding: 2rem 1rem;
+            }
+
+            .btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
+                min-width: 80px;
+            }
+
+            .stat-badge {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 414px) {
+            .page-title {
+                font-size: 1.3rem;
+            }
+
+            .page-subtitle {
+                font-size: 0.85rem;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+            }
+
+            .mobile-table-row {
+                padding: 0.75rem;
+            }
+
+            .btn {
+                min-height: 40px;
+                padding: 0.5rem 0.5rem;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .main-content {
+                padding: 0.5rem;
+            }
+
+            .page-header {
+                padding: 0.75rem;
+                border-radius: 12px;
+            }
+
+            .page-title {
+                font-size: 1.2rem;
+                gap: 0.5rem;
+            }
+
+            .section-header {
+                padding: 0.5rem 0.75rem;
+            }
+
+            .mobile-table-row {
+                padding: 0.5rem;
+            }
+
+            .btn {
+                min-height: 36px;
+                padding: 0.4rem 0.4rem;
+                font-size: 0.7rem;
+            }
+
+            .empty-state-content i {
+                font-size: 2.5rem;
+            }
+
+            .empty-state-content h3 {
+                font-size: 1rem;
+            }
+
+            .empty-state-content p {
+                font-size: 0.8rem;
             }
         }
     </style>

@@ -349,112 +349,178 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
             .dashboard-container {
                 padding: 0;
             }
-            .dashboard-title-enhanced {
-                font-size: 2rem;
-                padding: 1.5rem;
+            .enhanced-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+                padding: 1.5rem 1rem;
             }
-            .dashboard-subtitle {
+            .header-title {
+                font-size: 1.5rem;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            .search-container {
+                width: 100%;
+                max-width: 300px;
+            }
+            .professor-card {
+                margin-bottom: 0.75rem;
+            }
+            .professor-header {
+                padding: 1rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .professor-info {
+                width: 100%;
+            }
+            .professor-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+                align-items: flex-start;
+            }
+            .stat-item {
+                flex-direction: row;
+                justify-content: space-between;
+                width: 100%;
+                text-align: left;
+            }
+            .stat-number {
                 font-size: 1rem;
             }
-            .desktop-stats {
-                display: none;
+            .stat-label {
+                font-size: 0.75rem;
             }
-            .mobile-stats {
-                display: none;
+            .expand-icon {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
             }
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.75rem;
-            }
-            .stats-card {
+            .subjects-container {
                 padding: 1rem;
-                border-radius: 12px;
             }
-            .stats-icon {
-                font-size: 2rem;
-                margin-bottom: 0.5rem;
-            }
-            .stats-number {
-                font-size: 2rem;
+            .subject-item {
+                padding: 0.75rem;
                 margin-bottom: 0.25rem;
             }
-            .stats-label {
-                font-size: 0.9rem;
+            .subject-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
             }
-            .recent-activities-section {
-                padding: 1.5rem;
+            .subject-info h6 {
+                font-size: 1rem;
             }
-            .section-header {
-                margin-bottom: 1rem;
+            .subject-info p {
+                font-size: 0.85rem;
             }
-            .section-title {
-                font-size: 1.3rem;
+            .subject-stats {
+                text-align: left;
+                width: 100%;
             }
-            .activity-item {
-                padding: 1.5rem 1rem;
-                margin-bottom: 1rem;
-                border-radius: 12px;
+            .latest-attendance {
+                font-size: 0.75rem;
             }
-            .activity-icon {
-                font-size: 1.5rem;
-                margin-right: 20px;
-                min-width: 25px;
+            .attendance-container {
+                overflow-x: auto;
+                padding: 0.75rem;
             }
-            .activity-text {
-                font-size: 1.1rem;
+            .attendance-table {
+                min-width: 300px;
+                font-size: 0.85rem;
             }
-            .activity-meta {
-                font-size: 0.9rem;
+            .attendance-table th,
+            .attendance-table td {
+                padding: 0.5rem;
+            }
+            .no-data {
+                padding: 1rem;
             }
         }
         @media (max-width: 480px) {
             .main-content {
                 padding: 0 0.5rem;
             }
-            .dashboard-title-enhanced {
-                font-size: 1.8rem;
-                padding: 1rem;
+            .enhanced-header {
+                padding: 1rem 0.5rem;
             }
-            .dashboard-subtitle {
-                font-size: 0.95rem;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
-            }
-            .stats-card {
-                padding: 0.75rem 0.5rem;
-            }
-            .stats-icon {
-                font-size: 1.5rem;
-                margin-bottom: 0.25rem;
-            }
-            .stats-number {
-                font-size: 1.5rem;
-                margin-bottom: 0.25rem;
-            }
-            .stats-label {
-                font-size: 0.8rem;
-            }
-            .recent-activities-section {
-                padding: 1rem;
-            }
-            .activity-item {
-                padding: 1.25rem 0.75rem;
-            }
-            .activity-icon {
+            .header-title {
                 font-size: 1.3rem;
-                margin-right: 15px;
-                min-width: 20px;
             }
-            .activity-text {
+            .search-container {
+                max-width: 100%;
+            }
+            .search-input {
+                height: 36px;
+                font-size: 0.9rem;
+                padding: 8px 12px 8px 36px;
+            }
+            .search-icon {
+                left: 10px;
                 font-size: 1rem;
             }
-            .activity-meta {
-                font-size: 0.85rem;
+            .professor-card {
+                margin-bottom: 0.5rem;
+            }
+            .professor-header {
+                padding: 0.75rem;
+            }
+            .professor-info h5 {
+                font-size: 1.1rem;
+            }
+            .professor-info p {
+                font-size: 0.9rem;
+            }
+            .professor-stats {
+                gap: 0.25rem;
+            }
+            .stat-number {
+                font-size: 0.9rem;
+            }
+            .stat-label {
+                font-size: 0.7rem;
+            }
+            .expand-icon {
+                font-size: 1.3rem;
+                top: 0.75rem;
+                right: 0.75rem;
+            }
+            .subjects-container {
+                padding: 0.75rem;
+            }
+            .subject-item {
+                padding: 0.5rem;
+                margin-bottom: 0.125rem;
+            }
+            .subject-info h6 {
+                font-size: 0.9rem;
+            }
+            .subject-info p {
+                font-size: 0.8rem;
+            }
+            .latest-attendance {
+                font-size: 0.7rem;
+            }
+            .attendance-container {
+                padding: 0.5rem;
+            }
+            .attendance-table {
+                font-size: 0.8rem;
+            }
+            .attendance-table th,
+            .attendance-table td {
+                padding: 0.4rem 0.2rem;
+            }
+            .no-data {
+                padding: 0.75rem;
+                font-size: 0.9rem;
             }
         }
-
         @media (max-width: 414px) {
             .main-content {
                 padding: 0 0.25rem;
@@ -566,7 +632,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
                 padding: 1rem;
             }
         }
-
         @media (min-width: 417px) and (max-width: 467px) {
             .main-content {
                 padding: 0 0.3rem;
@@ -676,6 +741,82 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
             }
             .no-data {
                 padding: 1rem;
+            }
+        }
+        @media (max-width: 375px) {
+            .main-content {
+                padding: 0 0.125rem;
+            }
+            .enhanced-header {
+                padding: 0.75rem 0.5rem;
+            }
+            .header-title {
+                font-size: 1.2rem;
+            }
+            .search-input {
+                height: 32px;
+                font-size: 0.85rem;
+                padding: 6px 10px 6px 32px;
+            }
+            .search-icon {
+                left: 8px;
+                font-size: 0.9rem;
+            }
+            .professor-card {
+                margin-bottom: 0.5rem;
+            }
+            .professor-header {
+                padding: 0.5rem;
+            }
+            .professor-info h5 {
+                font-size: 1rem;
+            }
+            .professor-info p {
+                font-size: 0.85rem;
+            }
+            .professor-stats {
+                gap: 0.25rem;
+            }
+            .stat-number {
+                font-size: 0.85rem;
+            }
+            .stat-label {
+                font-size: 0.65rem;
+            }
+            .expand-icon {
+                font-size: 1.2rem;
+                top: 0.5rem;
+                right: 0.5rem;
+            }
+            .subjects-container {
+                padding: 0.5rem;
+            }
+            .subject-item {
+                padding: 0.5rem;
+                margin-bottom: 0.125rem;
+            }
+            .subject-info h6 {
+                font-size: 0.85rem;
+            }
+            .subject-info p {
+                font-size: 0.75rem;
+            }
+            .latest-attendance {
+                font-size: 0.65rem;
+            }
+            .attendance-container {
+                padding: 0.5rem;
+            }
+            .attendance-table {
+                font-size: 0.75rem;
+            }
+            .attendance-table th,
+            .attendance-table td {
+                padding: 0.3rem 0.15rem;
+            }
+            .no-data {
+                padding: 0.5rem;
+                font-size: 0.85rem;
             }
         }
 
