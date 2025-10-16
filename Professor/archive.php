@@ -1177,6 +1177,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
+    <!-- Archive Details Modal -->
+    <div id="archiveModal" class="modal">
+        <div class="modal-content">
+            <!-- Content will be loaded dynamically -->
+        </div>
+    </div>
+
     <script>
         function showTab(tabName) {
             // Hide all tabs

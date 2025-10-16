@@ -71,6 +71,18 @@ if ($professor_id) {
 
     font-family: 'Poppins', sans-serif;
 
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    right: 0;
+
+    z-index: 1000;
+
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
 }
 
 .navbar-title {
@@ -126,6 +138,130 @@ if ($professor_id) {
 
 }
 
+@media (max-width: 768px) {
+
+    .navbar-user {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 0.5rem;
+
+    }
+
+    .welcome-text {
+
+        display: block;
+
+    }
+
+    .notification-btn,
+
+    .user-dropdown .dropdown-toggle {
+
+        width: 40px;
+
+        height: 40px;
+
+        border-radius: 50%;
+
+        background: rgba(255, 255, 255, 0.1);
+
+        border: none;
+
+        color: white;
+
+        font-size: 1.2rem;
+
+        cursor: pointer;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        transition: background 0.3s ease;
+
+    }
+
+    .notification-btn:hover,
+
+    .user-dropdown .dropdown-toggle:hover {
+
+        background: rgba(255, 255, 255, 0.2);
+
+    }
+
+}
+
+@media (max-width: 414px) {
+
+    .navbar {
+
+        padding: 0.75rem 1rem;
+
+        height: 56px;
+
+    }
+
+    .navbar-brand {
+
+        font-size: 1.2rem;
+
+    }
+
+    .navbar-user {
+
+        gap: 0.25rem;
+
+    }
+
+    .notification-btn,
+
+    .user-dropdown .dropdown-toggle,
+
+    .hamburger-btn {
+
+        width: 44px;
+
+        height: 44px;
+
+        font-size: 1.1rem;
+
+    }
+
+}
+
+.full-name {
+
+    display: inline;
+
+}
+
+.mobile-name {
+
+    display: none;
+
+}
+
+@media (max-width: 768px) {
+
+    .full-name {
+
+        display: none;
+
+    }
+
+    .mobile-name {
+
+        display: inline;
+
+    }
+
+}
+
 
 </style>
 
@@ -144,7 +280,7 @@ if ($professor_id) {
         $prof_name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? '');
     }
     ?>
-    <span>Welcome, <?php echo htmlspecialchars($prof_name); ?></span>
+    <span class="welcome-text">Welcome, <span class="full-name"><?php echo htmlspecialchars($prof_name); ?></span><span class="mobile-name"><?php echo htmlspecialchars($professor['first_name'] ?? $_SESSION['first_name'] ?? ''); ?></span></span>
         <button type="button" class="notification-btn" onclick="openNotificationModal()" title="Notifications" style="position: relative;">
             <i class="fas fa-bell" aria-hidden="true"></i>
             <?php if ($pending_requests_count > 0): ?>

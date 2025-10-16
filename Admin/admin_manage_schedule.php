@@ -557,10 +557,15 @@ foreach ($subjects as $subject) {
                 padding: 0.75rem 1.5rem;
                 font-size: 1rem;
             }
+            .modal {
+                align-items: flex-start;
+                padding: 1rem 0;
+            }
             .modal-content {
-                width: 95%;
-                margin: 1rem;
-                max-height: 90vh;
+                width: 90%;
+                margin: 0 auto;
+                max-height: 85vh;
+                border-radius: 12px;
             }
             .modal-header {
                 padding: 1.5rem 1rem;
@@ -570,6 +575,8 @@ foreach ($subjects as $subject) {
             }
             .modal-body {
                 padding: 1.5rem 1rem;
+                max-height: 60vh;
+                overflow-y: auto;
             }
             .modal-footer {
                 padding: 1.5rem 1rem;
@@ -579,6 +586,18 @@ foreach ($subjects as $subject) {
             .modal-footer button {
                 width: 100%;
                 min-height: 2.75rem;
+            }
+            .modal-close {
+                width: 50px;
+                height: 50px;
+                font-size: 1.8rem;
+            }
+            .form-group label {
+                line-height: 1.5;
+            }
+            .form-group input, .form-group select {
+                line-height: 1.5;
+                padding: 12px 16px;
             }
             .action-buttons {
                 justify-content: center;

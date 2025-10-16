@@ -611,6 +611,85 @@ foreach ($subjects as $subject) {
             .stats-grid {
                 grid-template-columns: 1fr;
             }
+
+            /* Mobile-friendly attendance table */
+            .attendance-table {
+                display: none;
+            }
+
+            .attendance-table-mobile {
+                display: block;
+            }
+
+            .attendance-mobile-card {
+                background: white;
+                border-radius: 12px;
+                padding: 1rem;
+                margin-bottom: 1rem;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                border: 1px solid #e9ecef;
+            }
+
+            .attendance-mobile-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid #e9ecef;
+            }
+
+            .attendance-mobile-student {
+                font-weight: 600;
+                color: #343a40;
+                font-size: 1rem;
+            }
+
+            .attendance-mobile-id {
+                color: #6c757d;
+                font-size: 0.9rem;
+            }
+
+            .attendance-mobile-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 0.75rem;
+                padding: 0.5rem 0;
+                border-bottom: 1px solid #f8f9fa;
+            }
+
+            .attendance-mobile-row:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+            }
+
+            .attendance-mobile-label {
+                font-weight: 500;
+                color: #495057;
+                font-size: 0.9rem;
+            }
+
+            .attendance-mobile-value {
+                flex: 1;
+                margin-left: 1rem;
+            }
+
+            .attendance-mobile-value select,
+            .attendance-mobile-value input {
+                width: 100%;
+                padding: 0.5rem;
+                border: 1px solid #ced4da;
+                border-radius: 6px;
+                font-size: 0.9rem;
+            }
+
+            .attendance-mobile-value select:focus,
+            .attendance-mobile-value input:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 2px rgba(247, 82, 112, 0.25);
+            }
         }
 
         /* Modal Styles */
@@ -1128,6 +1207,42 @@ foreach ($subjects as $subject) {
             <input type="hidden" name="action" value="regenerate_code">
             <input type="hidden" name="subject_id" id="regenerate_subject_id">
         </form>
+
+        <!-- Student Attendance Modal (for mobile) -->
+        <div id="studentAttendanceModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="studentAttendanceModalTitle">Mark Attendance</h3>
+                    <button class="modal-close" onclick="closeModal('studentAttendanceModal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="student_attendance_student_id">
+                    <input type="hidden" id="student_attendance_date">
+                    <div class="form-group">
+                        <label>Student</label>
+                        <div id="student_info_display" style="padding: 0.75rem; background: #f8f9fa; border-radius: 6px; margin-bottom: 1rem;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="student_status_select" class="status-select">
+                            <option value="">Select Status</option>
+                            <option value="Present">Present</option>
+                            <option value="Absent">Absent</option>
+                            <option value="Late">Late</option>
+                            <option value="Excused">Excused</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Remarks</label>
+                        <input type="text" id="student_remarks_input" placeholder="Optional remarks">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('studentAttendanceModal')">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveStudentAttendance()">Save</button>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script>
@@ -1300,50 +1415,88 @@ foreach ($subjects as $subject) {
         }
 
         function loadStudentsForDate(classId, date, container) {
-            if (container.querySelector('table')) return; // Already loaded
-            
+            if (container.querySelector('table') || container.querySelector('.attendance-mobile-card')) return; // Already loaded
+
             fetch(`../php/get_attendance_for_date.php?class_id=${classId}&date=${date}`, { credentials: 'same-origin' })
                 .then(response => response.json())
                 .then(attendanceRecords => {
-                    container.innerHTML = `
-                        <table class="attendance-table">
-                            <thead>
-                                <tr>
-                                    <th>Student ID</th>
-                                    <th>Name</th>
-                                    <th>Status</th>
-                                    <th>Remarks</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${attendanceRecords.map(record => `
-                                    <tr>
-                                        <td>${record.student_id}</td>
-                                        <td>${record.first_name} ${record.last_name}</td>
-                                        <td>
-                                            <select name="attendance[${record.student_id}][status]" required class="status-select ${record.status ? 'status-' + record.status.toLowerCase() : ''}">
-                                                <option value="">Select</option>
-                                                <option value="Present" ${record.status === 'Present' ? 'selected' : ''}>Present</option>
-                                                <option value="Absent" ${record.status === 'Absent' ? 'selected' : ''}>Absent</option>
-                                                <option value="Late" ${record.status === 'Late' ? 'selected' : ''}>Late</option>
-                                                <option value="Excused" ${record.status === 'Excused' ? 'selected' : ''}>Excused</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="text" name="attendance[${record.student_id}][remarks]" placeholder="Remarks" value="${record.remarks || ''}">
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    `;
+                    if (window.innerWidth <= 768) {
+                        // Mobile view: render editable cards
+                        container.innerHTML = attendanceRecords.map(record => `
+                            <div class="attendance-mobile-card">
+                                <div class="attendance-mobile-header">
+                                    <div class="attendance-mobile-student">${record.first_name} ${record.last_name}</div>
+                                    <div class="attendance-mobile-id">${record.student_id}</div>
+                                </div>
+                                <div class="attendance-mobile-row">
+                                    <div class="attendance-mobile-label">Status:</div>
+                                    <div class="attendance-mobile-value">
+                                        <select name="attendance[${record.student_id}][status]" required class="status-select ${record.status ? 'status-' + record.status.toLowerCase() : ''}">
+                                            <option value="">Select</option>
+                                            <option value="Present" ${record.status === 'Present' ? 'selected' : ''}>Present</option>
+                                            <option value="Absent" ${record.status === 'Absent' ? 'selected' : ''}>Absent</option>
+                                            <option value="Late" ${record.status === 'Late' ? 'selected' : ''}>Late</option>
+                                            <option value="Excused" ${record.status === 'Excused' ? 'selected' : ''}>Excused</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="attendance-mobile-row">
+                                    <div class="attendance-mobile-label">Remarks:</div>
+                                    <div class="attendance-mobile-value">
+                                        <input type="text" name="attendance[${record.student_id}][remarks]" placeholder="Remarks" value="${record.remarks || ''}">
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
 
-                    // Add event listener to update color on status change
-                    container.querySelectorAll('.status-select').forEach(select => {
-                        select.addEventListener('change', function() {
-                            this.className = 'status-select status-' + this.value.toLowerCase();
+                        // Add event listeners to update color on status change for mobile
+                        container.querySelectorAll('.status-select').forEach(select => {
+                            select.addEventListener('change', function() {
+                                this.className = 'status-select status-' + this.value.toLowerCase();
+                            });
                         });
-                    });
+                    } else {
+                        // Desktop view: render table
+                        container.innerHTML = `
+                            <table class="attendance-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Name</th>
+                                        <th>Status</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${attendanceRecords.map(record => `
+                                        <tr>
+                                            <td>${record.student_id}</td>
+                                            <td>${record.first_name} ${record.last_name}</td>
+                                            <td>
+                                                <select name="attendance[${record.student_id}][status]" required class="status-select ${record.status ? 'status-' + record.status.toLowerCase() : ''}">
+                                                    <option value="">Select</option>
+                                                    <option value="Present" ${record.status === 'Present' ? 'selected' : ''}>Present</option>
+                                                    <option value="Absent" ${record.status === 'Absent' ? 'selected' : ''}>Absent</option>
+                                                    <option value="Late" ${record.status === 'Late' ? 'selected' : ''}>Late</option>
+                                                    <option value="Excused" ${record.status === 'Excused' ? 'selected' : ''}>Excused</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="text" name="attendance[${record.student_id}][remarks]" placeholder="Remarks" value="${record.remarks || ''}">
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        `;
+
+                        // Add event listener to update color on status change
+                        container.querySelectorAll('.status-select').forEach(select => {
+                            select.addEventListener('change', function() {
+                                this.className = 'status-select status-' + this.value.toLowerCase();
+                            });
+                        });
+                    }
                 })
                 .catch(error => {
                     console.error('Error loading attendance records:', error);
