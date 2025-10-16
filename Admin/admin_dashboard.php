@@ -96,6 +96,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Global Reciprocal Colleges</title>
     <link rel="stylesheet" href="../css/styles_fixed.css">
+        <link rel="stylesheet" href="../css/styles_fixed.css">
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Bootstrap 5 CSS -->
@@ -263,6 +265,67 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
             color: var(--gray);
             padding: 2rem;
             font-style: italic;
+        }
+
+        /* Custom Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        .modal.show {
+            display: block;
+        }
+        .modal-container {
+            background-color: #fefefe;
+            margin: 5% auto;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .modal-header {
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .modal-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-close:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+        }
+        .modal-body {
+            padding: 1rem;
+            max-height: 70vh;
+            overflow-y: auto;
         }
 
         .enhanced-header {
@@ -948,21 +1011,19 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
     </main>
 
     <!-- Attendance Modal -->
-    <div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="attendanceModalLabel">Attendance Records</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="modalContent">
-                        <div class="loading-spinner text-center py-3">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <p class="mt-2">Loading attendance records...</p>
+    <div class="modal" id="attendanceModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h1 class="modal-title" id="attendanceModalLabel">Attendance Records</h1>
+                <button class="modal-close" onclick="closeAttendanceModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <div class="loading-spinner text-center py-3">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
                         </div>
+                        <p class="mt-2">Loading attendance records...</p>
                     </div>
                 </div>
             </div>
@@ -989,8 +1050,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
             document.getElementById('attendanceModalLabel').textContent = `Attendance Records - ${subjectName}`;
 
             // Show modal
-            const modal = new bootstrap.Modal(document.getElementById('attendanceModal'));
-            modal.show();
+            const modal = document.getElementById('attendanceModal');
+            modal.classList.add('show');
 
             // Load attendance data
             const modalContent = document.getElementById('modalContent');
@@ -1057,6 +1118,11 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
                         </div>
                     `;
                 });
+        }
+
+        function closeAttendanceModal() {
+            const modal = document.getElementById('attendanceModal');
+            modal.classList.remove('show');
         }
 
         function filterProfessors() {
