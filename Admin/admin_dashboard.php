@@ -214,17 +214,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
             font-weight: 500;
         }
 
-        .attendance-container {
-            display: none;
-            margin-top: 1rem;
-            padding: 1rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        .subject-item.expanded .attendance-container {
-            display: block;
-        }
+
 
         .attendance-table {
             width: 100%;
@@ -273,15 +263,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
             color: var(--gray);
             padding: 2rem;
             font-style: italic;
-        }
-
-        .breadcrumb {
-            background: transparent;
-            padding: 0;
-            margin-bottom: 1rem;
-        }
-        .breadcrumb-item + .breadcrumb-item::before {
-            content: "→";
         }
 
         .enhanced-header {
@@ -341,138 +322,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
             color: var(--primary);
             font-size: 1.1rem;
         }
-        .dashboard-title-enhanced {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        .dashboard-subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 0;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .desktop-stats {
-            display: block;
-        }
-        .mobile-stats {
-            display: none;
-        }
-        .stats-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            border-top: 4px solid var(--primary);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .stats-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-        }
-        .stats-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        }
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-        }
-        .stats-icon {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-            opacity: 0.8;
-        }
-        .stats-number {
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .stats-label {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--gray);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .recent-activities-section {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        .section-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--light);
-        }
-        .section-icon {
-            font-size: 1.5rem;
-            color: var(--primary);
-            margin-right: 10px;
-        }
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--dark);
-            margin: 0;
-        }
-        .activity-item {
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            transition: background-color 0.3s ease;
-            border-left: 4px solid transparent;
-        }
-        .activity-item:hover {
-            background-color: #f8f9fa;
-            border-left-color: var(--primary);
-        }
-        .activity-icon {
-            font-size: 1.2rem;
-            color: var(--primary);
-            margin-right: 15px;
-            min-width: 20px;
-        }
-        .activity-content {
-            flex: 1;
-        }
-        .activity-text {
-            font-weight: 500;
-            color: var(--dark);
-            margin-bottom: 0.25rem;
-        }
-        .activity-meta {
-            font-size: 0.85rem;
-            color: var(--gray);
-        }
         .fade-in {
             animation: fadeInUp 0.6s ease-out;
-        }
-        .fade-in-delayed {
-            animation: fadeInUp 0.6s ease-out 0.2s both;
         }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
@@ -604,6 +455,278 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
             }
         }
 
+        @media (max-width: 414px) {
+            .main-content {
+                padding: 0 0.25rem;
+            }
+            .dashboard-container {
+                padding: 0;
+            }
+            .enhanced-header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem;
+                gap: 1rem;
+            }
+            .header-title {
+                font-size: 1.5rem;
+            }
+            .header-actions {
+                width: 100%;
+                max-width: none;
+                justify-content: flex-start;
+            }
+            .search-container {
+                padding-top: 0;
+                min-width: 100%;
+                max-width: none;
+            }
+            .search-input {
+                height: 36px;
+                font-size: 0.9rem;
+                padding: 8px 12px 8px 36px;
+            }
+            .search-icon {
+                left: 10px;
+                font-size: 1rem;
+            }
+            .professor-card {
+                margin-bottom: 0.75rem;
+            }
+            .professor-header {
+                padding: 1rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .professor-info {
+                width: 100%;
+            }
+            .professor-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+                align-items: flex-start;
+            }
+            .stat-item {
+                flex-direction: row;
+                justify-content: space-between;
+                width: 100%;
+                text-align: left;
+            }
+            .stat-number {
+                font-size: 1rem;
+            }
+            .stat-label {
+                font-size: 0.75rem;
+            }
+            .expand-icon {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+            }
+            .subjects-container {
+                padding: 1rem;
+            }
+            .subject-item {
+                padding: 0.75rem;
+                margin-bottom: 0.25rem;
+            }
+            .subject-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            .subject-info h6 {
+                font-size: 1rem;
+            }
+            .subject-info p {
+                font-size: 0.85rem;
+            }
+            .subject-stats {
+                text-align: left;
+                width: 100%;
+            }
+            .latest-attendance {
+                font-size: 0.75rem;
+            }
+            .attendance-container {
+                overflow-x: auto;
+                padding: 0.75rem;
+            }
+            .attendance-table {
+                min-width: 300px;
+                font-size: 0.85rem;
+            }
+            .attendance-table th,
+            .attendance-table td {
+                padding: 0.5rem;
+            }
+            .no-data {
+                padding: 1rem;
+            }
+        }
+
+        @media (min-width: 417px) and (max-width: 467px) {
+            .main-content {
+                padding: 0 0.3rem;
+            }
+            .dashboard-container {
+                padding: 0;
+            }
+            .enhanced-header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem;
+                gap: 1rem;
+            }
+            .header-title {
+                font-size: 1.4rem;
+            }
+            .header-actions {
+                width: 100%;
+                max-width: none;
+                justify-content: flex-start;
+            }
+            .search-container {
+                padding-top: 0;
+                min-width: 100%;
+                max-width: none;
+            }
+            .search-input {
+                height: 35px;
+                font-size: 0.9rem;
+                padding: 8px 12px 8px 35px;
+            }
+            .search-icon {
+                left: 10px;
+                font-size: 1rem;
+            }
+            .professor-card {
+                margin-bottom: 0.75rem;
+            }
+            .professor-header {
+                padding: 1rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .professor-info {
+                width: 100%;
+            }
+            .professor-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+                align-items: flex-start;
+            }
+            .stat-item {
+                flex-direction: row;
+                justify-content: space-between;
+                width: 100%;
+                text-align: left;
+            }
+            .stat-number {
+                font-size: 0.95rem;
+            }
+            .stat-label {
+                font-size: 0.7rem;
+            }
+            .expand-icon {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+            }
+            .subjects-container {
+                padding: 1rem;
+            }
+            .subject-item {
+                padding: 0.75rem;
+                margin-bottom: 0.25rem;
+            }
+            .subject-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            .subject-info h6 {
+                font-size: 0.95rem;
+            }
+            .subject-info p {
+                font-size: 0.8rem;
+            }
+            .subject-stats {
+                text-align: left;
+                width: 100%;
+            }
+            .latest-attendance {
+                font-size: 0.7rem;
+            }
+            .attendance-container {
+                overflow-x: auto;
+                padding: 0.3rem;
+            }
+            .attendance-table {
+                min-width: 180px;
+                font-size: 0.65rem;
+            }
+            .attendance-table th,
+            .attendance-table td {
+                padding: 0.15rem;
+            }
+            .no-data {
+                padding: 1rem;
+            }
+        }
+
+        /* Modal responsiveness */
+        @media (max-width: 768px) {
+            .modal-dialog {
+                margin: 0.5rem auto;
+                max-width: none;
+                width: calc(100% - 1rem);
+            }
+            .modal-content {
+                border-radius: 8px;
+            }
+            .modal-header {
+                padding: 1rem;
+            }
+            .modal-title {
+                font-size: 1.1rem;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+            .modal-body {
+                padding: 1rem;
+                max-height: 60vh;
+                overflow-y: auto;
+            }
+            .attendance-table {
+                font-size: 0.85rem;
+            }
+            .attendance-table th,
+            .attendance-table td {
+                padding: 0.5rem 0.25rem;
+                white-space: nowrap;
+            }
+        }
+        @media (max-width: 480px) {
+            .modal-title {
+                font-size: 1rem;
+            }
+            .modal-body {
+                padding: 0.75rem;
+            }
+            .attendance-table {
+                font-size: 0.8rem;
+            }
+            .attendance-table th,
+            .attendance-table td {
+                padding: 0.4rem 0.2rem;
+            }
+        }
+
 
 
     </style>
@@ -659,7 +782,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
                                 </div>
                             <?php else: ?>
                                 <?php foreach ($professor['subjects'] as $subject): ?>
-                                    <div class="subject-item" data-class-id="<?php echo $subject['class_id']; ?>" onclick="toggleSubject(this)">
+                                    <div class="subject-item" data-class-id="<?php echo $subject['class_id']; ?>" data-subject-name="<?php echo htmlspecialchars($subject['subject_name']); ?>" onclick="openAttendanceModal(this)">
                                         <div class="subject-header">
                                             <div class="subject-info">
                                                 <h6><?php echo htmlspecialchars($subject['subject_name']); ?></h6>
@@ -670,14 +793,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
                                                     <?php echo $subject['latest_attendance_date'] ? 'Latest: ' . date('M d, Y', strtotime($subject['latest_attendance_date'])) : 'No attendance yet'; ?>
                                                 </div>
                                                 <div class="stat-label"><?php echo $subject['total_sessions']; ?> sessions</div>
-                                            </div>
-                                        </div>
-                                        <div class="attendance-container">
-                                            <div class="loading-spinner text-center py-3">
-                                                <div class="spinner-border text-primary" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
-                                                </div>
-                                                <p class="mt-2">Loading attendance records...</p>
                                             </div>
                                         </div>
                                     </div>
@@ -691,6 +806,28 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
 
     </main>
 
+    <!-- Attendance Modal -->
+    <div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="attendanceModalLabel">Attendance Records</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modalContent">
+                        <div class="loading-spinner text-center py-3">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Loading attendance records...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
             <?php include '../includes/footbar.php'; ?>
 
     <!-- Bootstrap 5 JS -->
@@ -701,83 +838,84 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
             card.classList.toggle('expanded');
         }
 
-        function toggleSubject(subjectItem) {
-            const isExpanded = subjectItem.classList.contains('expanded');
-            const attendanceContainer = subjectItem.querySelector('.attendance-container');
 
-            if (!isExpanded) {
-                // Expand the subject
-                subjectItem.classList.add('expanded');
-                const classId = subjectItem.getAttribute('data-class-id');
 
-                // Show loading spinner
-                attendanceContainer.innerHTML = `
-                    <div class="loading-spinner text-center py-3">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <p class="mt-2">Loading attendance records...</p>
+        function openAttendanceModal(subjectItem) {
+            const classId = subjectItem.getAttribute('data-class-id');
+            const subjectName = subjectItem.getAttribute('data-subject-name');
+
+            // Set modal title
+            document.getElementById('attendanceModalLabel').textContent = `Attendance Records - ${subjectName}`;
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('attendanceModal'));
+            modal.show();
+
+            // Load attendance data
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <div class="loading-spinner text-center py-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
-                `;
+                    <p class="mt-2">Loading attendance records...</p>
+                </div>
+            `;
 
-                // Fetch attendance data
-                fetch(`admin_dashboard.php?action=get_attendance_details&class_id=${classId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.length === 0) {
-                            attendanceContainer.innerHTML = `
-                                <div class="no-data">
-                                    <p>No attendance records found for this subject.</p>
-                                </div>
-                            `;
-                        } else {
-                            let tableHtml = `
-                                <table class="attendance-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Time</th>
-                                            <th>Status</th>
-                                            <th>Students</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                            `;
-
-                            data.forEach(record => {
-                                const statusClass = `status-${record.status.toLowerCase()}`;
-                                const statusText = record.status.charAt(0).toUpperCase() + record.status.slice(1);
-
-                                tableHtml += `
-                                    <tr>
-                                        <td>${new Date(record.date).toLocaleDateString()}</td>
-                                        <td>${record.time}</td>
-                                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                                        <td>${record.student_count}</td>
-                                    </tr>
-                                `;
-                            });
-
-                            tableHtml += `
-                                    </tbody>
-                                </table>
-                            `;
-
-                            attendanceContainer.innerHTML = tableHtml;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching attendance data:', error);
-                        attendanceContainer.innerHTML = `
+            // Fetch attendance data
+            fetch(`admin_dashboard.php?action=get_attendance_details&class_id=${classId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        modalContent.innerHTML = `
                             <div class="no-data">
-                                <p>Error loading attendance records. Please try again.</p>
+                                <p>No attendance records found for this subject.</p>
                             </div>
                         `;
-                    });
-            } else {
-                // Collapse the subject
-                subjectItem.classList.remove('expanded');
-            }
+                    } else {
+                        let tableHtml = `
+                            <table class="attendance-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Status</th>
+                                        <th>Students</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+
+                        data.forEach(record => {
+                            const statusClass = `status-${record.status.toLowerCase()}`;
+                            const statusText = record.status.charAt(0).toUpperCase() + record.status.slice(1);
+
+                            tableHtml += `
+                                <tr>
+                                    <td>${new Date(record.date).toLocaleDateString()}</td>
+                                    <td>${record.time}</td>
+                                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                                    <td>${record.student_count}</td>
+                                </tr>
+                            `;
+                        });
+
+                        tableHtml += `
+                                </tbody>
+                            </table>
+                        `;
+
+                        modalContent.innerHTML = tableHtml;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching attendance data:', error);
+                    modalContent.innerHTML = `
+                        <div class="no-data">
+                            <p>Error loading attendance records. Please try again.</p>
+                        </div>
+                    `;
+                });
         }
 
         function filterProfessors() {
