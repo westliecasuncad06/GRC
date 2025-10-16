@@ -399,6 +399,113 @@ if ($role == 'professor') {
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Mobile Design for 330px - 370px width */
+        @media (min-width: 330px) and (max-width: 370px) {
+            .dashboard-container {
+                padding: 0.75rem;
+                max-width: 100%;
+            }
+
+            .settings-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stat-card-enhanced {
+                padding: 1rem;
+                border-radius: 12px;
+                margin-bottom: 1rem;
+            }
+
+            .stat-header-enhanced {
+                gap: 0.75rem;
+                margin-bottom: 1rem;
+            }
+
+            .stat-icon-enhanced {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .stat-title-enhanced {
+                font-size: 1.1rem;
+            }
+
+            .stat-subtitle-enhanced {
+                font-size: 0.8rem;
+            }
+
+            .current-info-enhanced {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .info-value-enhanced {
+                font-size: 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .form-group-enhanced {
+                gap: 0.5rem;
+            }
+
+            .form-label-enhanced {
+                font-size: 0.8rem;
+            }
+
+            .form-input-enhanced {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+
+            .stat-actions-enhanced {
+                padding-top: 1.5rem;
+                margin-top: 1.5rem;
+            }
+
+            .stat-primary-btn {
+                padding: 0.875rem 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            .table-header-enhanced {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .table-title-enhanced {
+                font-size: 1.25rem;
+            }
+
+            .alert-enhanced {
+                padding: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .password-form-grid {
+                gap: 1rem;
+            }
+
+            .password-form-grid .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .main-content {
+                padding: 0;
+            }
+        }
     </style>
 </head>
 <body class="<?php echo $role; ?>">

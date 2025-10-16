@@ -134,47 +134,30 @@
             }
 
             .nav-item span {
-
-                font-size: 0.75rem;
-
+                font-size: 0.4rem;
                 display: block;
-
             }
 
             .nav-item[href*="admin_manage_academic_periods.php"] span {
-
                 display: none;
-
             }
 
             .nav-item[href*="admin_manage_academic_periods.php"]::after {
-
                 content: "Academic";
-
                 display: block;
-
-                font-size: 0.75rem;
-
+                font-size: 0.4rem;
                 text-align: center;
-
             }
 
             .nav-item[href*="admin_subjects_archive.php"] span {
-
                 display: none;
-
             }
 
             .nav-item[href*="admin_subjects_archive.php"]::after {
-
                 content: "Archive";
-
                 display: block;
-
-                font-size: 0.75rem;
-
+                font-size: 0.4rem;
                 text-align: center;
-
             }
 
             .main-content {
@@ -265,7 +248,7 @@
             <i class="fas fa-calendar-alt"></i>
             <span>Schedule</span>
         </a>
-        <a href="http://localhost/grc/Admin/admin_manage_academic_periods.php" class="nav-item <?php echo ($current_page == 'admin_manage_academic_periods.php') ? 'active' : ''; ?>">
+        <a href="admin_manage_academic_periods.php" class="nav-item <?php echo ($current_page == 'admin_manage_academic_periods.php') ? 'active' : ''; ?>">
             <i class="fas fa-calendar-days"></i>
             <span>Academic Periods</span>
         </a>

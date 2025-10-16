@@ -844,21 +844,160 @@ foreach ($monthly_raw as $row) {
 
             .stat-card-enhanced {
                 padding: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .stat-header-enhanced {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .stat-icon-enhanced {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .stat-title-enhanced {
+                font-size: 1.1rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .stat-subtitle-enhanced {
+                font-size: 0.85rem;
+            }
+
+            .stat-metrics-enhanced {
+                margin-bottom: 1rem;
+            }
+
+            .stat-main-metric {
+                margin-bottom: 1rem;
+            }
+
+            .stat-value-enhanced {
+                font-size: 2rem;
+            }
+
+            .stat-label-enhanced {
+                font-size: 0.9rem;
             }
 
             .stat-breakdown-enhanced {
                 grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .stat-breakdown-item {
+                padding: 0.75rem;
+                border-radius: 8px;
+                background: rgba(255, 255, 255, 0.9);
+                border: 1px solid rgba(0, 0, 0, 0.05);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            }
+
+            .stat-breakdown-icon {
+                font-size: 1.1rem;
+                width: 25px;
+            }
+
+            .stat-breakdown-value {
+                font-size: 1rem;
+            }
+
+            .stat-breakdown-label {
+                font-size: 0.8rem;
+            }
+
+            .stat-actions-enhanced {
+                padding-top: 1rem;
+                border-top: 1px solid rgba(247, 82, 112, 0.2);
+            }
+
+            .stat-section-title {
+                font-size: 0.95rem;
+                margin-bottom: 0.75rem;
+                text-align: center;
+            }
+
+            .stat-recent-list {
+                gap: 0.5rem;
             }
 
             .stat-recent-item {
                 flex-direction: column;
                 gap: 0.75rem;
-                align-items: flex-start;
+                align-items: stretch;
+                padding: 0.75rem;
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 8px;
+                border: 1px solid rgba(0, 0, 0, 0.05);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            }
+
+            .stat-recent-date {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: var(--primary);
             }
 
             .stat-action-btn {
                 width: 100%;
                 justify-content: center;
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+                font-weight: 600;
+                border-radius: 6px;
+                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+                color: white;
+                border: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                box-shadow: 0 2px 6px rgba(247, 82, 112, 0.3);
+            }
+
+            .stat-action-btn:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(247, 82, 112, 0.4);
+            }
+
+            .stat-empty-enhanced {
+                padding: 2rem 1rem;
+                text-align: center;
+            }
+
+            .stat-empty-icon {
+                font-size: 2.5rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .stat-empty-text {
+                font-size: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .stat-primary-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 0.75rem 1.5rem;
+                font-size: 0.95rem;
+                border-radius: 8px;
+                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+                color: white;
+                border: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                box-shadow: 0 2px 6px rgba(247, 82, 112, 0.3);
+            }
+
+            .stat-primary-btn:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(247, 82, 112, 0.4);
             }
 
             .table-header-enhanced {
