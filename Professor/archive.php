@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 
@@ -1050,6 +1049,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                     <i class="fas fa-undo"></i> Unarchive
                                                 </button>
                                             </form>
+                                            <!-- Add Download Attendance button for this archived class -->
+                                            <a href="/GRC/php/download_attendance.php?subject_id=<?php echo htmlspecialchars($class['subject_id']); ?>" class="btn btn-sm btn-primary" title="Download Attendance">
+                                                <i class="fas fa-file-download"></i> Download Attendance
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
