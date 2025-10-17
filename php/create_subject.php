@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = trim($_POST['description']);
     $credits = (int)$_POST['credits'];
     $semester_id = $_POST['semester_id'];
+    $duration_id = isset($_POST['duration_id']) && $_POST['duration_id'] !== '' ? (int)$_POST['duration_id'] : null;
 
     if (empty($subject_name) || empty($subject_code) || empty($semester_id)) {
         $_SESSION['error'] = 'Subject name, code, and semester are required.';
@@ -21,8 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        $stmt = $pdo->prepare("INSERT INTO subjects (subject_name, subject_code, description, credits, semester_id) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([$subject_name, $subject_code, $description, $credits, $semester_id]);
+    $stmt = $pdo->prepare("INSERT INTO subjects (subject_name, subject_code, description, credits, duration_id, semester_id) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$subject_name, $subject_code, $description, $credits, $duration_id, $semester_id]);
 
         $_SESSION['success'] = 'Subject created successfully.';
     } catch (PDOException $e) {
