@@ -1,4 +1,4 @@
- <?php
+<?php
 session_start();
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header('Location: index.php');
@@ -11,7 +11,7 @@ require_once '../php/db.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
         $action = $_POST['action'];
-        
+
         switch ($action) {
             case 'add_professor':
                 $professor_id = $_POST['professor_id'];
@@ -22,9 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $password = md5($_POST['password']);
                 $department = $_POST['department'];
                 $mobile = $_POST['mobile'];
-                
+
                 try {
-                    $stmt = $pdo->prepare("INSERT INTO professors (professor_id, employee_id, first_name, last_name, email, password, department, mobile, created_at, updated_at) 
+                    $stmt = $pdo->prepare("INSERT INTO professors (professor_id, employee_id, first_name, last_name, email, password, department, mobile, created_at, updated_at)
                                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
                     $stmt->execute([$professor_id, $employee_id, $first_name, $last_name, $email, $password, $department, $mobile]);
                     $success = "Professor added successfully!";
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $error = "Error adding professor: " . $e->getMessage();
                 }
                 break;
-                
+
             case 'edit_professor':
                 $professor_id = $_POST['professor_id'];
                 $employee_id = $_POST['employee_id'];
@@ -41,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $email = $_POST['email'];
                 $department = $_POST['department'];
                 $mobile = $_POST['mobile'];
-                
+
                 try {
-                    $stmt = $pdo->prepare("UPDATE professors SET employee_id = ?, first_name = ?, last_name = ?, email = ?, department = ?, mobile = ?, updated_at = NOW() 
+                    $stmt = $pdo->prepare("UPDATE professors SET employee_id = ?, first_name = ?, last_name = ?, email = ?, department = ?, mobile = ?, updated_at = NOW()
                                           WHERE professor_id = ?");
                     $stmt->execute([$employee_id, $first_name, $last_name, $email, $department, $mobile, $professor_id]);
                     $success = "Professor updated successfully!";
@@ -51,16 +51,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $error = "Error updating professor: " . $e->getMessage();
                 }
                 break;
-                
+
             case 'delete_professor':
                 $professor_id = $_POST['professor_id'];
-                
+
                 try {
                     // Check if professor has classes assigned
                     $check_stmt = $pdo->prepare("SELECT COUNT(*) as class_count FROM classes WHERE professor_id = ?");
                     $check_stmt->execute([$professor_id]);
                     $class_count = $check_stmt->fetch()['class_count'];
-                    
+
                     if ($class_count > 0) {
                         $error = "Cannot delete professor: There are $class_count classes assigned to this professor. Please reassign or delete these classes first.";
                         // Optionally, provide a way to reassign or delete classes here
@@ -80,6 +80,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // Get all professors
 $query = "SELECT * FROM professors";
 $professors = $pdo->query($query)->fetchAll();
+
+// Get all departments for filter dropdown
+$departments = $pdo->query("SELECT department_name FROM departments ORDER BY department_name")->fetchAll(PDO::FETCH_COLUMN);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -124,11 +127,28 @@ $professors = $pdo->query($query)->fetchAll();
         }
         .header-actions {
             display: flex;
-            gap: 16px;
-            align-items: center;
-            justify-content: flex-end;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-end;
             width: 100%;
-            max-width: 600px;
+            max-width: 1000px;
+        }
+        .department-filter-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            max-width: 300px;
+        }
+        .department-filter-wrapper label {
+            font-weight: 500;
+            color: white;
+            white-space: nowrap;
+        }
+        .department-filter-wrapper .search-input {
+            flex: 1;
+            min-width: 0; /* allow shrinking */
+            box-sizing: border-box;
         }
         .search-container {
             padding-top: 1rem;
@@ -159,7 +179,7 @@ $professors = $pdo->query($query)->fetchAll();
         .search-icon {
             position: absolute;
             left: 11px;
-            top: 65%;
+            top: 50%; /* center correctly */
             transform: translateY(-50%);
             color: var(--primary);
             font-size: 1.1rem;
@@ -220,6 +240,7 @@ $professors = $pdo->query($query)->fetchAll();
             width: 100%;
             border-collapse: collapse;
             margin-top: 1rem;
+            table-layout: auto;
         }
         .table th {
             background: var(--light);
@@ -232,6 +253,11 @@ $professors = $pdo->query($query)->fetchAll();
         .table td {
             padding: 1rem;
             border-bottom: 1px solid var(--light-gray);
+            white-space: normal;         /* allow wrapping */
+            word-break: break-word;
+            vertical-align: middle;
+            min-width: 0;
+            box-sizing: border-box;
         }
         .table tbody tr:nth-child(even) {
             background-color: #f8f9fa;
@@ -244,6 +270,8 @@ $professors = $pdo->query($query)->fetchAll();
             display: flex;
             gap: 5px;
             flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
         }
         .btn-sm {
             padding: 6px 12px;
@@ -452,8 +480,6 @@ $professors = $pdo->query($query)->fetchAll();
         .main-content {
             display: flex;
             flex-direction: column;
-            /* Remove align-items center to avoid centering all content */
-            /* align-items: center; */
             width: 100%;
             padding: 0 2rem;
             box-sizing: border-box;
@@ -535,6 +561,162 @@ $professors = $pdo->query($query)->fetchAll();
             }
         }
 
+        /* Responsive overrides for admin_manage_professors.php */
+        .enhanced-header {
+            /* allow children to wrap and avoid overflow on small screens */
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .header-actions {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 1rem;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        /* Make search/filter controls fluid */
+        .department-filter-wrapper,
+        .search-container {
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+        }
+        .department-filter-wrapper .search-input,
+        .search-container .search-input,
+        .search-input {
+            flex: 1;
+            min-width: 0; /* allow shrinking */
+            box-sizing: border-box;
+        }
+
+        /* Fix search icon vertical alignment */
+        .search-icon {
+            top: 50%; /* center correctly */
+            transform: translateY(-50%);
+        }
+
+        /* Table responsiveness: allow wrapping inside cells and prevent overflow */
+        .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .table { width: 100%; table-layout: auto; }
+        .table th, .table td {
+            white-space: normal;         /* allow wrapping */
+            word-break: break-word;
+            vertical-align: middle;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+        /* Action buttons: allow wrapping and stack on narrow screens */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+                justify-content: center;
+                align-items: stretch;
+            }
+            .action-buttons .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Modal responsiveness tweaks */
+        .modal-content {
+            width: 90%;
+            max-width: 650px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                max-width: none;
+                margin: 10px;
+                padding: 0;
+            }
+            .modal-body { padding: 1rem; }
+            .modal-footer { padding: 1rem; }
+        }
+
+        /* Header actions reflow at medium widths */
+        @media (max-width: 1024px) {
+            .header-actions {
+                justify-content: center;
+                align-items: center;
+            }
+            .department-filter-wrapper { max-width: 320px; }
+            .search-container { max-width: 520px; }
+        }
+
+        /* Mobile-first adjustments */
+        @media (max-width: 768px) {
+            .enhanced-header {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: left;
+            }
+            .header-title { text-align: left; }
+            .header-actions {
+                flex-direction: column-reverse;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+            .add-professor-btn {
+                width: 100%;
+                padding: 12px;
+                box-sizing: border-box;
+            }
+            .search-container {
+                order: 2;
+                width: 100%;
+            }
+            .department-filter-wrapper {
+                order: 3;
+                width: 100%;
+            }
+            .table th:nth-child(1), .table td:nth-child(1),
+            .table th:nth-child(2), .table td:nth-child(2),
+            .table th:nth-child(6), .table td:nth-child(6) {
+                /* hide less important columns on narrow screens to improve readability */
+                display: none;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 450px) {
+            .header-title { font-size: 1.25rem; }
+            .search-input { font-size: 0.95rem; padding: 10px 12px; }
+            .add-professor-btn { padding: 10px; font-size: 0.95rem; }
+            .table td, .table th { padding: 0.6rem; font-size: 0.95rem; }
+            .modal-header { padding: 0.75rem 1rem; }
+        }
+
+        /* Ensure form controls use consistent box-sizing */
+        .form-group input, .form-group select, .form-group textarea {
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        /* Ensure interactive targets are touch-friendly */
+        .btn, .btn-primary, .add-professor-btn, .btn-sm {
+            min-height: 40px;
+        }
+
+        /* Prevent long text from breaking layout in header action area */
+        .header-actions * {
+            min-width: 0;
+        }
 
     </style>
 
@@ -571,6 +753,15 @@ $professors = $pdo->query($query)->fetchAll();
                 <?php echo $error; ?>
             </div>
         <?php endif; ?>
+
+        <div class="department-filter-wrapper">
+            <select id="departmentFilter" class="search-input" onchange="filterByDepartment()">
+                <option value="">All Departments</option>
+                <?php foreach ($departments as $dept): ?>
+                    <option value="<?php echo htmlspecialchars($dept); ?>"><?php echo htmlspecialchars($dept); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
 
         <div class="table-container">
             <table class="table">
@@ -654,7 +845,12 @@ $professors = $pdo->query($query)->fetchAll();
                         </div>
                         <div class="form-group">
                             <label>Department</label>
-                            <input type="text" name="department" required>
+                            <select name="department" required>
+                                <option value="">Select Department</option>
+                                <?php foreach ($departments as $dept): ?>
+                                    <option value="<?php echo htmlspecialchars($dept); ?>"><?php echo htmlspecialchars($dept); ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label>Mobile Number</label>
@@ -702,7 +898,12 @@ $professors = $pdo->query($query)->fetchAll();
                         </div>
                         <div class="form-group">
                             <label>Department</label>
-                            <input type="text" name="department" id="edit_department" required>
+                            <select name="department" id="edit_department" required>
+                                <option value="">Select Department</option>
+                                <?php foreach ($departments as $dept): ?>
+                                    <option value="<?php echo htmlspecialchars($dept); ?>"><?php echo htmlspecialchars($dept); ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label>Mobile Number</label>
@@ -774,20 +975,37 @@ $professors = $pdo->query($query)->fetchAll();
     <script>
         function filterProfessors() {
             const query = document.getElementById('searchInput').value.toLowerCase();
+            const departmentFilter = document.getElementById('departmentFilter').value.toLowerCase();
             const tbody = document.querySelector('.table tbody');
             const rows = tbody.getElementsByTagName('tr');
 
             for (let i = 0; i < rows.length; i++) {
                 const cells = rows[i].getElementsByTagName('td');
-                let match = false;
+                let searchMatch = false;
+                let departmentMatch = true;
+
+                // Check search query
                 for (let j = 0; j < cells.length; j++) {
                     if (cells[j].textContent.toLowerCase().includes(query)) {
-                        match = true;
+                        searchMatch = true;
                         break;
                     }
                 }
-                rows[i].style.display = match ? '' : 'none';
+
+                // Check department filter (department is in column 4, index 4)
+                if (departmentFilter) {
+                    const departmentCell = cells[4]; // Department column
+                    if (departmentCell && departmentCell.textContent.toLowerCase() !== departmentFilter) {
+                        departmentMatch = false;
+                    }
+                }
+
+                rows[i].style.display = (searchMatch && departmentMatch) ? '' : 'none';
             }
+        }
+
+        function filterByDepartment() {
+            filterProfessors(); // Reuse the same filtering logic
         }
 
         function openModal(modalId) {

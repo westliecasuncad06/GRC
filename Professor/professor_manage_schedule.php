@@ -988,9 +988,6 @@ foreach ($subjects as $subject) {
                 <button class="stat-primary-btn view-btn" id="sectionsBtn" onclick="switchView('sections')">
                     <i class="fas fa-users"></i> Sections
                 </button>
-                <button class="stat-primary-btn" onclick="openModal('addSubjectModal')">
-                    <i class="fas fa-plus"></i> Add New Class
-                </button>
             </div>
         </div>
 
