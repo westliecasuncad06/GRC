@@ -99,18 +99,14 @@ if ($professor_id) {
         .nav-item span {
             font-weight: 500;
         }
-        .notification-badge {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background: #dc3545;
-            color: white;
-            border-radius: 50%;
-            padding: 0.2rem 0.5rem;
-            font-size: 0.75rem;
-            font-weight: bold;
-            min-width: 1.2rem;
-            text-align: center;
+        /* Removed notification UI — hide any notification badge elements */
+        .professor-sidebar .notification-badge,
+        .professor-sidebar .nav-item .badge,
+        .professor-sidebar .nav-item .notification,
+        .professor-sidebar .notification-count,
+        .professor-sidebar .notif,
+        .professor-sidebar [data-notification] {
+            display: none !important;
         }
 
         /* Adjust main content for sidebar */
