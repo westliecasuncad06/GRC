@@ -1,0 +1,113 @@
+/* Mobile-specific styles for notifications modal (250px - 400px) */
+@media screen and (min-width: 250px) and (max-width: 400px) {
+    .modal-content {
+        width: 95% !important;
+        margin: 10px auto !important;
+        max-height: 90vh !important;
+    }
+
+    .modal-header {
+        padding: 10px !important;
+    }
+
+    .modal-title {
+        font-size: 1.1rem !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+
+    .modal-close {
+        padding: 5px 10px !important;
+        font-size: 1.2rem !important;
+    }
+
+    .notification-card {
+        margin: 8px 5px !important;
+        padding: 10px !important;
+    }
+
+    .notification-header {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    .notification-subject {
+        font-size: 0.9rem !important;
+        width: 100% !important;
+    }
+
+    .notification-meta {
+        width: 100% !important;
+        justify-content: space-between !important;
+    }
+
+    .status-badge {
+        font-size: 0.8rem !important;
+        padding: 4px 8px !important;
+    }
+
+    .notification-details {
+        padding: 10px 5px !important;
+    }
+
+    .detail-item {
+        margin-bottom: 8px !important;
+        flex-direction: column !important;
+        gap: 4px !important;
+    }
+
+    .detail-item strong {
+        min-width: unset !important;
+        margin-right: 0 !important;
+    }
+
+    .date-time-info {
+        flex-direction: column !important;
+        gap: 4px !important;
+        font-size: 0.85rem !important;
+    }
+
+    .class-tag {
+        font-size: 0.85rem !important;
+        padding: 3px 6px !important;
+    }
+
+    .request-type-badge {
+        font-size: 0.85rem !important;
+        padding: 3px 6px !important;
+    }
+
+    .modal-footer {
+        padding: 10px !important;
+    }
+
+    .btn-enhanced {
+        padding: 8px 15px !important;
+        font-size: 0.9rem !important;
+    }
+
+    /* Improve touch targets */
+    .notification-card,
+    .modal-close,
+    .btn-enhanced {
+        min-height: 44px !important;
+    }
+
+    /* Ensure proper scrolling */
+    .modal-body {
+        max-height: calc(80vh - 120px) !important;
+        overflow-y: auto !important;
+    }
+
+    /* Better spacing for notification list */
+    .notifications-container {
+        padding: 5px !important;
+    }
+
+    /* Improve expand/collapse icon visibility */
+    .expand-icon {
+        font-size: 1rem !important;
+        padding: 5px !important;
+    }
+}

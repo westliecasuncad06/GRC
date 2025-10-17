@@ -1,0 +1,168 @@
+/* Enhanced Responsive Styles for Mobile */
+
+/* Reports Container Responsive Styles */
+@media screen and (max-width: 420px) {
+    .reports-container {
+        padding: 10px;
+    }
+
+    .stats-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding: 5px;
+    }
+
+    .stat-card-enhanced {
+        width: 100%;
+        margin: 0;
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    /* Header Section */
+    .stat-header-enhanced {
+        padding: 8px;
+    }
+
+    .stat-icon-enhanced {
+        font-size: 1rem;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+    }
+
+    .stat-info-enhanced {
+        padding-left: 8px;
+    }
+
+    .stat-title-enhanced {
+        font-size: 1rem;
+        margin-bottom: 2px;
+    }
+
+    .stat-subtitle-enhanced {
+        font-size: 0.8rem;
+    }
+
+    /* Metrics Section */
+    .stat-metrics-enhanced {
+        padding: 10px 8px;
+    }
+
+    .stat-main-metric {
+        margin-bottom: 12px;
+    }
+
+    .stat-value-enhanced {
+        font-size: 1.5rem;
+    }
+
+    .stat-label-enhanced {
+        font-size: 0.8rem;
+    }
+
+    /* Breakdown Section */
+    .stat-breakdown-enhanced {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 8px;
+    }
+
+    .stat-breakdown-item {
+        padding: 8px 4px;
+    }
+
+    .stat-breakdown-icon {
+        font-size: 1rem;
+        margin-bottom: 4px;
+    }
+
+    .stat-breakdown-value {
+        font-size: 1rem;
+    }
+
+    .stat-breakdown-label {
+        font-size: 0.75rem;
+    }
+
+    /* Actions Section */
+    .stat-actions-enhanced {
+        padding: 10px 8px;
+    }
+
+    .stat-section-title {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+
+    .stat-recent-list {
+        gap: 8px;
+    }
+
+    .stat-recent-item {
+        padding: 8px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .stat-recent-date {
+        font-size: 0.8rem;
+        margin-bottom: 6px;
+    }
+
+    .stat-action-btn {
+        width: 100%;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+
+    /* Empty State */
+    .stat-empty-enhanced {
+        padding: 15px 10px;
+    }
+
+    .stat-empty-icon {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+    }
+
+    .stat-empty-text {
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+
+    .stat-primary-btn {
+        width: 100%;
+        padding: 8px 16px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Smaller screens adjustments */
+@media screen and (max-width: 359px) {
+    .stats-grid {
+        padding: 2px;
+    }
+
+    .stat-card-enhanced {
+        padding: 10px;
+    }
+
+    .stat-breakdown-enhanced {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-title-enhanced {
+        font-size: 0.9rem;
+    }
+
+    .stat-subtitle-enhanced {
+        font-size: 0.75rem;
+    }
+
+    .stat-value-enhanced {
+        font-size: 1.25rem;
+    }
+}

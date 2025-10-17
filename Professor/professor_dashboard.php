@@ -210,6 +210,7 @@ foreach ($subjects as $subject) {
     <link rel="stylesheet" href="../css/styles_fixed.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/mobile-responsive.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -553,6 +554,328 @@ foreach ($subjects as $subject) {
 
             .stats-grid {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        /* Responsive design for small mobile devices (300px - 420px) */
+        @media (max-width: 420px) {
+            .dashboard-container {
+                padding: 0.5rem;
+                max-width: 100%;
+                margin: 0 auto;
+            }
+
+            .table-header-enhanced {
+                padding: 0.75rem;
+                margin-bottom: 1rem;
+                border-radius: 8px;
+            }
+
+            .table-title-enhanced {
+                font-size: 1rem;
+                text-align: center;
+                margin: 0;
+            }
+
+            .stat-card-enhanced {
+                padding: 0.75rem;
+                margin-bottom: 0.75rem;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .stat-header-enhanced {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .stat-icon-enhanced {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+
+            .stat-info-enhanced {
+                text-align: center;
+            }
+
+            .stat-title-enhanced {
+                font-size: 0.9rem;
+                margin: 0;
+            }
+
+            .stat-subtitle-enhanced {
+                font-size: 0.75rem;
+            }
+
+            .stat-metrics-enhanced {
+                margin-bottom: 0.75rem;
+            }
+
+            .stat-main-metric {
+                text-align: center;
+                margin-bottom: 0.75rem;
+            }
+
+            .stat-value-enhanced {
+                font-size: 1.5rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .stat-label-enhanced {
+                font-size: 0.8rem;
+            }
+
+            .stat-breakdown-enhanced {
+                grid-template-columns: 1fr;
+                gap: 0.25rem;
+            }
+
+            .stat-breakdown-item {
+                padding: 0.375rem;
+                border-radius: 6px;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .stat-breakdown-value {
+                font-size: 0.9rem;
+            }
+
+            .stat-breakdown-label {
+                font-size: 0.75rem;
+            }
+
+            .stat-section-title {
+                font-size: 0.8rem;
+                text-align: center;
+                margin-bottom: 0.5rem;
+            }
+
+            .stat-recent-list {
+                gap: 0.375rem;
+            }
+
+            .stat-recent-item {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding: 0.5rem;
+                border-radius: 6px;
+                gap: 0.375rem;
+            }
+
+            .stat-recent-date {
+                font-size: 0.75rem;
+                justify-content: center;
+            }
+
+            .stat-action-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+                border-radius: 6px;
+            }
+
+            .stat-primary-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 0.625rem 0.75rem;
+                font-size: 0.85rem;
+                border-radius: 6px;
+            }
+
+            .chart-title {
+                font-size: 0.9rem;
+                text-align: center;
+            }
+
+            .students-list {
+                grid-template-columns: 1fr !important;
+                gap: 0.375rem;
+            }
+
+            .student-card {
+                padding: 0.5rem;
+                font-size: 0.8rem;
+                border-radius: 6px;
+                text-align: center;
+            }
+
+            .section-group h4 {
+                font-size: 0.9rem;
+                text-align: center;
+                margin-bottom: 0.75rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                max-width: none;
+                max-height: 85vh;
+                border-radius: 8px;
+            }
+
+            .modal-header {
+                padding: 0.75rem;
+                border-radius: 8px 8px 0 0;
+            }
+
+            .modal-title {
+                font-size: 1.1rem;
+                text-align: center;
+            }
+
+            .modal-body {
+                padding: 0.75rem;
+            }
+
+            .record-header,
+            .record-item {
+                grid-template-columns: 1fr;
+                gap: 0.25rem;
+                font-size: 0.8rem;
+                text-align: center;
+            }
+
+            .record-header {
+                font-size: 0.75rem;
+                padding: 0.5rem;
+            }
+
+            .record-item {
+                padding: 0.5rem;
+            }
+
+            .attendance-status {
+                font-size: 0.7rem;
+                padding: 2px 4px;
+                display: inline-block;
+                margin: 0.125rem 0;
+            }
+
+            .notification-item {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 0.5rem;
+                padding: 0.75rem;
+                border-radius: 8px;
+            }
+
+            .notification-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .notification-content {
+                width: 100%;
+                text-align: center;
+            }
+
+            .notification-title {
+                font-size: 0.9rem;
+            }
+
+            .notification-message {
+                font-size: 0.8rem;
+            }
+
+            .notification-meta {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.375rem;
+                width: 100%;
+                text-align: center;
+            }
+
+            .notification-actions {
+                width: 100%;
+                display: flex;
+                gap: 0.375rem;
+                justify-content: center;
+            }
+
+            .btn-enhanced {
+                flex: 1;
+                padding: 0.625rem 0.75rem;
+                font-size: 0.85rem;
+                border-radius: 6px;
+            }
+
+            .modal-footer {
+                padding: 0.75rem;
+                flex-direction: column;
+                gap: 0.375rem;
+            }
+
+            .modal-footer .btn-enhanced {
+                width: 100%;
+            }
+
+            .students-table {
+                font-size: 0.75rem;
+            }
+
+            .students-table th,
+            .students-table td {
+                padding: 0.375rem;
+                text-align: center;
+            }
+
+            .subject-selector {
+                margin-bottom: 0.75rem;
+                text-align: center;
+            }
+
+            .subject-select {
+                width: 100%;
+                padding: 0.625rem;
+                font-size: 0.85rem;
+                border-radius: 6px;
+            }
+
+            .no-data {
+                padding: 0.75rem;
+                font-size: 0.85rem;
+                text-align: center;
+            }
+
+            .stat-empty-enhanced {
+                padding: 1.5rem 0.75rem;
+                text-align: center;
+            }
+
+            .stat-empty-text {
+                font-size: 0.9rem;
+            }
+
+            .stat-empty-icon {
+                font-size: 1.75rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .chart-container {
+                padding: 0.75rem;
+            }
+
+            .stat-card {
+                padding: 0.75rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
             }
         }
 
