@@ -1277,7 +1277,7 @@ foreach ($subjects as $subject) {
 
         function openAttendanceModal(classId, className) {
             document.getElementById('attendance_class_id').value = classId;
-            document.getElementById('attendanceModalTitle').textContent = 'Attendance Management - ' + className;
+            document.getElementById('attendanceModalTitle').innerHTML = '<strong>' + className + '</strong>';
             
             // Clear previous content
             document.getElementById('enrolledStudentsSection').innerHTML = '<div style="text-align: center; padding: 1rem;"><span class="loading-spinner">Loading students...</span></div>';
@@ -1567,28 +1567,57 @@ foreach ($subjects as $subject) {
 function saveAttendance(date) {
             const classId = document.getElementById('attendance_class_id').value;
             const studentsList = document.querySelector(`.students-list[data-date="${date}"]`);
-            
+
             if (!studentsList) {
                 alert('Please expand the date first to load students');
                 return;
             }
-            
+
             const attendanceData = [];
-            // Only iterate over tbody > tr to avoid header rows
-            const rows = studentsList.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                const studentIdCell = row.querySelector('td:first-child');
-                if (!studentIdCell) return; // skip if no td found
-                
-                const studentId = studentIdCell.textContent;
-                const statusSelect = row.querySelector('select');
-                const remarksInput = row.querySelector('input[type="text"]');
-                const status = statusSelect ? statusSelect.value : '';
-                const remarks = remarksInput ? remarksInput.value : '';
-                
-                attendanceData.push({ student_id: studentId, status, remarks });
-            });
-            
+
+            // Check if mobile view (attendance-mobile-card exists)
+            const mobileCards = studentsList.querySelectorAll('.attendance-mobile-card');
+            if (mobileCards.length > 0) {
+                // Mobile view: collect data from mobile cards
+                mobileCards.forEach(card => {
+                    const studentIdElement = card.querySelector('.attendance-mobile-id');
+                    if (!studentIdElement) return;
+
+                    const studentId = studentIdElement.textContent.trim();
+                    const statusSelect = card.querySelector('select[name="attendance[' + studentId + '][status]"]');
+                    const remarksInput = card.querySelector('input[name="attendance[' + studentId + '][remarks]"]');
+
+                    const status = statusSelect ? statusSelect.value : '';
+                    const remarks = remarksInput ? remarksInput.value : '';
+
+                    if (status) {
+                        attendanceData.push({ student_id: studentId, status, remarks });
+                    }
+                });
+            } else {
+                // Desktop view: collect data from table rows
+                const rows = studentsList.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const studentIdCell = row.querySelector('td:first-child');
+                    if (!studentIdCell) return; // skip if no td found
+
+                    const studentId = studentIdCell.textContent.trim();
+                    const statusSelect = row.querySelector('select');
+                    const remarksInput = row.querySelector('input[type="text"]');
+                    const status = statusSelect ? statusSelect.value : '';
+                    const remarks = remarksInput ? remarksInput.value : '';
+
+                    if (status) {
+                        attendanceData.push({ student_id: studentId, status, remarks });
+                    }
+                });
+            }
+
+            if (attendanceData.length === 0) {
+                alert('No attendance data to save. Please select statuses for students.');
+                return;
+            }
+
             fetch('../php/save_attendance.php', {
                 method: 'POST',
                 headers: {

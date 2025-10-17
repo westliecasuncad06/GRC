@@ -901,6 +901,110 @@ if ($professor_id) {
         padding: 1rem;
     }
 }
+
+@media (max-width: 450px) {
+    .modal-content {
+        width: 98%;
+        max-width: none;
+        margin: 0.5rem;
+    }
+
+    .modal-header {
+        padding: 1rem;
+    }
+
+    .modal-title {
+        font-size: 1.2rem;
+        gap: 0.5rem;
+    }
+
+    .modal-title-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .modal-close {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .modal-footer {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .notification-list {
+        gap: 0.75rem;
+    }
+
+    .notification-item {
+        padding: 0.75rem;
+        gap: 0.75rem;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .notification-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .notification-content {
+        text-align: left;
+    }
+
+    .notification-title {
+        font-size: 1rem;
+    }
+
+    .notification-message {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+
+    .notification-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+
+    .notification-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+
+    .btn-enhanced {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .no-notifications {
+        padding: 2rem 0.5rem;
+    }
+
+    .no-notifications-icon {
+        font-size: 3rem;
+    }
+
+    .no-notifications-text {
+        font-size: 1rem;
+    }
+
+    .no-notifications-subtext {
+        font-size: 0.8rem;
+    }
+}
 </style>
 
 <script>

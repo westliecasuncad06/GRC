@@ -710,6 +710,157 @@
 .text-center {
     text-align: center;
 }
+
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
+
+    .modal-header {
+        padding: 1.5rem;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        padding: 1.5rem;
+    }
+
+    .notification-card {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 450px) {
+    .modal-content {
+        width: 98%;
+        max-width: none;
+        margin: 0.5rem;
+    }
+
+    .modal-header {
+        padding: 1rem;
+    }
+
+    .modal-title {
+        font-size: 1.2rem;
+        gap: 0.5rem;
+    }
+
+    .modal-title-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .modal-close {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .modal-footer {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .notifications-container {
+        gap: 0.75rem;
+    }
+
+    .notification-card {
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+
+    .notification-header {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .notification-subject {
+        gap: 0.5rem;
+    }
+
+    .subject-name {
+        font-size: 0.9rem;
+    }
+
+    .notification-meta {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .status-badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    .notification-details {
+        padding: 1rem;
+    }
+
+    .detail-item {
+        font-size: 0.85rem;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .detail-item strong {
+        min-width: 70px;
+    }
+
+    .request-type-badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    .class-tag {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.6rem;
+    }
+
+    .date-time-info {
+        gap: 0.5rem;
+    }
+
+    .date-info, .time-info {
+        font-size: 0.75rem;
+        gap: 0.25rem;
+    }
+
+    .btn-enhanced {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .no-notifications {
+        padding: 2rem 0.5rem;
+    }
+
+    .no-notifications-icon {
+        font-size: 3rem;
+    }
+
+    .no-notifications-text {
+        font-size: 1rem;
+    }
+
+    .no-notifications-subtext {
+        font-size: 0.8rem;
+    }
+}
 </style>
 
 <script>
