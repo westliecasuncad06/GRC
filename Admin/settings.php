@@ -506,6 +506,39 @@ if ($role == 'professor') {
                 padding: 0;
             }
         }
+
+        /* Ensure grid children can shrink to avoid pushing layout off-screen */
+        .settings-grid > * { min-width: 0; }
+        .stat-card-enhanced { min-width: 0; box-sizing: border-box; }
+
+        /* Ensure inputs don't overflow and use predictable sizing */
+        .form-group-enhanced { position: relative; min-width: 0; }
+        .form-input-enhanced { width: 100%; box-sizing: border-box; }
+
+        /* PASSWORD TOGGLE / WRAPPER (positions visibility icon correctly) */
+        .password-wrapper { position: relative; width: 100%; display: block; }
+        .password-wrapper .form-input-enhanced { padding-right: 44px; box-sizing: border-box; width: 100%; }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--gray);
+            font-size: 1.05rem;
+            padding: 6px;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .toggle-password:focus { outline: none; }
+
+        @media (max-width: 768px) {
+            .password-wrapper .form-input-enhanced { padding-right: 48px; }
+        }
     </style>
 </head>
 <body class="<?php echo $role; ?>">
@@ -651,55 +684,50 @@ if ($role == 'professor') {
     </main>
 
     <script>
-        // Add toggle password visibility for Change Password inputs
+        // Wrap password inputs and attach a stable toggle button (same logic used in Professor/settings.php)
         document.addEventListener('DOMContentLoaded', function () {
-            const newPasswordInput = document.querySelector('input[name="new_password"]');
-            const confirmPasswordInput = document.querySelector('input[name="confirm_password"]');
-            const currentPasswordInput = document.querySelector('input[name="current_password"]');
+            const inputs = document.querySelectorAll('input[type="password"]');
+            if (!inputs || inputs.length === 0) return;
 
-            // Create toggle buttons
-            function createToggleButton(input) {
-                const wrapper = input.parentElement;
-                wrapper.style.position = 'relative';
+            const eyeVisible = '<i class="fas fa-eye"></i>';
+            const eyeHidden = '<i class="fas fa-eye-slash"></i>';
+
+            inputs.forEach(function (input) {
+                if (input.closest('.password-wrapper')) {
+                    attachToggleToWrapper(input);
+                    return;
+                }
+                const wrapper = document.createElement('div');
+                wrapper.className = 'password-wrapper';
+                const parent = input.parentElement;
+                parent.replaceChild(wrapper, input);
+                wrapper.appendChild(input);
+                input.classList.add('form-input-enhanced');
+                attachToggleToWrapper(input);
+            });
+
+            function attachToggleToWrapper(input) {
+                const wrapper = input.closest('.password-wrapper');
+                if (!wrapper) return;
+                if (wrapper.querySelector('.toggle-password')) return;
 
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = 'toggle-password';
                 btn.setAttribute('aria-label', 'Toggle password visibility');
-                btn.style.position = 'absolute';
-                btn.style.right = '12px';
-                btn.style.top = '68%';
-                btn.style.transform = 'translateY(-50%)';
-                btn.style.background = 'none';
-                btn.style.border = 'none';
-                btn.style.cursor = 'pointer';
-                btn.style.color = 'var(--gray)';
-                btn.style.fontSize = '1.2rem';
-                btn.style.padding = '5px';
-                btn.style.zIndex = '1';
-
-                const eyeVisible = `<i class="fas fa-eye"></i>`;
-                const eyeHidden = `<i class="fas fa-eye-slash"></i>`;
-
                 btn.innerHTML = eyeHidden;
 
-                btn.addEventListener('click', function () {
-                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-                    input.setAttribute('type', type);
-                    this.innerHTML = type === 'password' ? eyeHidden : eyeVisible;
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const currentType = input.getAttribute('type');
+                    const newType = currentType === 'password' ? 'text' : 'password';
+                    input.setAttribute('type', newType);
+                    btn.innerHTML = newType === 'password' ? eyeHidden : eyeVisible;
+                    input.focus({ preventScroll: true });
                 });
 
                 wrapper.appendChild(btn);
-            }
-
-            if (currentPasswordInput) {
-                createToggleButton(currentPasswordInput);
-            }
-            if (newPasswordInput) {
-                createToggleButton(newPasswordInput);
-            }
-            if (confirmPasswordInput) {
-                createToggleButton(confirmPasswordInput);
             }
         });
     </script>

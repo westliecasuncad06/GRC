@@ -404,17 +404,9 @@ if ($role == 'professor') {
             }
         }
 
-        /* PASSWORD TOGGLE / WRAPPER FIX */
-        .password-wrapper {
-            position: relative;
-            width: 100%;
-            display: block;
-        }
-        .password-wrapper .form-input-enhanced {
-            padding-right: 44px; /* leave room for the toggle button */
-            box-sizing: border-box;
-            width: 100%;
-        }
+        /* PASSWORD TOGGLE / WRAPPER (positions visibility icon correctly) */
+        .password-wrapper { position: relative; width: 100%; display: block; }
+        .password-wrapper .form-input-enhanced { padding-right: 44px; box-sizing: border-box; width: 100%; }
         .toggle-password {
             position: absolute;
             right: 12px;
@@ -431,34 +423,19 @@ if ($role == 'professor') {
             align-items: center;
             justify-content: center;
         }
-        .toggle-password:focus {
-            outline: none;
-        }
+        .toggle-password:focus { outline: none; }
 
         @media (max-width: 768px) {
-            .password-wrapper .form-input-enhanced {
-                padding-right: 48px; /* slightly larger on small screens */
-            }
+            .password-wrapper .form-input-enhanced { padding-right: 48px; }
         }
 
         /* Ensure grid children can shrink to avoid pushing layout off-screen */
-        .settings-grid > * {
-            min-width: 0;
-        }
-        .stat-card-enhanced {
-            min-width: 0;
-            box-sizing: border-box;
-        }
+        .settings-grid > * { min-width: 0; }
+        .stat-card-enhanced { min-width: 0; box-sizing: border-box; }
 
         /* Ensure inputs don't overflow and use predictable sizing */
-        .form-group-enhanced {
-            position: relative; /* anchor for absolute elements like icons/buttons */
-            min-width: 0;
-        }
-        .form-input-enhanced {
-            width: 100%;
-            box-sizing: border-box;
-        }
+        .form-group-enhanced { position: relative; min-width: 0; }
+        .form-input-enhanced { width: 100%; box-sizing: border-box; }
     </style>
 </head>
 <body class="<?php echo $role; ?>">
@@ -606,49 +583,38 @@ if ($role == 'professor') {
     </main>
 
     <script>
-        // Replace previous toggle-password logic with improved wrapper approach
+        // Wrap password inputs and attach a stable toggle button (same logic used in Professor/settings.php)
         document.addEventListener('DOMContentLoaded', function () {
             const inputs = document.querySelectorAll('input[type="password"]');
             if (!inputs || inputs.length === 0) return;
 
+            const eyeVisible = '<i class="fas fa-eye"></i>';
+            const eyeHidden = '<i class="fas fa-eye-slash"></i>';
+
             inputs.forEach(function (input) {
-                // Skip if already wrapped
                 if (input.closest('.password-wrapper')) {
                     attachToggleToWrapper(input);
                     return;
                 }
-
-                // Create wrapper and move input inside it
                 const wrapper = document.createElement('div');
                 wrapper.className = 'password-wrapper';
-
-                // Preserve layout: replace input with wrapper, then append input into wrapper
                 const parent = input.parentElement;
                 parent.replaceChild(wrapper, input);
                 wrapper.appendChild(input);
-
-                // Ensure input has expected class
                 input.classList.add('form-input-enhanced');
-
                 attachToggleToWrapper(input);
             });
 
             function attachToggleToWrapper(input) {
                 const wrapper = input.closest('.password-wrapper');
                 if (!wrapper) return;
-
-                // Avoid duplicate buttons
                 if (wrapper.querySelector('.toggle-password')) return;
 
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = 'toggle-password';
                 btn.setAttribute('aria-label', 'Toggle password visibility');
-
-                // Create single icon element (avoid innerHTML to prevent duplicates)
-                const icon = document.createElement('i');
-                icon.className = 'fas fa-eye-slash';
-                btn.appendChild(icon);
+                btn.innerHTML = eyeHidden;
 
                 btn.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -656,12 +622,7 @@ if ($role == 'professor') {
                     const currentType = input.getAttribute('type');
                     const newType = currentType === 'password' ? 'text' : 'password';
                     input.setAttribute('type', newType);
-
-                    // Toggle icon classes instead of rewriting innerHTML
-                    icon.classList.toggle('fa-eye');
-                    icon.classList.toggle('fa-eye-slash');
-
-                    // keep focus on input after toggle
+                    btn.innerHTML = newType === 'password' ? eyeHidden : eyeVisible;
                     input.focus({ preventScroll: true });
                 });
 
@@ -669,7 +630,8 @@ if ($role == 'professor') {
             }
         });
     </script>
-    <?php include '../includes/footbar.php'; ?>
+
+<?php include '../includes/footbar.php'; ?>
 
 </body>
 </html>

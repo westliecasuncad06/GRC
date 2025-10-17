@@ -1,50 +1,3 @@
-<?php
-require_once '../php/db.php';
-
-$professor_id = $_SESSION['user_id'] ?? null;
-$pending_requests_count = 0;
-
-if ($professor_id) {
-    // Fetch enrollment requests for professor's classes including handled ones
-    $stmt = $pdo->prepare("
-        SELECT er.request_id, er.requested_at, er.status, s.subject_name, c.class_code, st.first_name, st.last_name
-        FROM enrollment_requests er
-        JOIN classes c ON er.class_id = c.class_id
-        JOIN subjects s ON c.subject_id = s.subject_id
-        JOIN students st ON er.student_id = st.student_id
-        WHERE c.professor_id = ?
-        ORDER BY er.requested_at DESC
-    ");
-    $stmt->execute([$professor_id]);
-    $all_requests = $stmt->fetchAll();
-
-    // Separate pending requests
-    $pending_requests = array_filter($all_requests, function($req) {
-        return $req['status'] === 'pending';
-    });
-
-    // Fetch unenrollment requests for professor's classes
-    $stmt = $pdo->prepare("
-        SELECT ur.request_id, ur.requested_at, ur.status, s.subject_name, c.class_code, st.first_name, st.last_name
-        FROM unenrollment_requests ur
-        JOIN classes c ON ur.class_id = c.class_id
-        JOIN subjects s ON c.subject_id = s.subject_id
-        JOIN students st ON ur.student_id = st.student_id
-        WHERE c.professor_id = ?
-        ORDER BY ur.requested_at DESC
-    ");
-    $stmt->execute([$professor_id]);
-    $all_unenrollment_requests = $stmt->fetchAll();
-
-    // Separate pending unenrollment requests
-    $pending_unenrollment_requests = array_filter($all_unenrollment_requests, function($req) {
-        return $req['status'] === 'pending';
-    });
-
-    $pending_requests_count = count($pending_requests) + count($pending_unenrollment_requests);
-}
-?>
-
 <style>
         /* Sidebar Styles */
         .professor-sidebar {
@@ -283,13 +236,6 @@ if ($professor_id) {
         <a href="professor_manage_schedule.php" class="nav-item <?php echo ($current_page == 'professor_manage_schedule.php') ? 'active' : ''; ?>">
             <i class="fas fa-chalkboard-teacher"></i>
             <span>Class</span>
-        </a>
-        <a href="#" class="nav-item notification-link" onclick="openNotificationModal()" title="Notifications">
-            <i class="fas fa-bell"></i>
-            <span>Notification</span>
-            <?php if ($pending_requests_count > 0): ?>
-                <span class="notification-badge"><?php echo $pending_requests_count; ?></span>
-            <?php endif; ?>
         </a>
         <a href="archive.php" class="nav-item <?php echo ($current_page == 'archive.php') ? 'active' : ''; ?>">
             <i class="fas fa-archive"></i>
