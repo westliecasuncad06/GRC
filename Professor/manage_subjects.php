@@ -74,22 +74,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $subject_name = $_POST['subject_name'];
                 $schedule = $_POST['schedule'];
                 $room = $_POST['room'];
+                $school_year = $_POST['school_year'];
+                $semester = $_POST['semester'];
                 $duration_id = isset($_POST['duration_id']) && $_POST['duration_id'] !== '' ? (int)$_POST['duration_id'] : null;
-                
+
                 try {
+                    // Get new school_year_semester_id
+                    $stmt = $pdo->prepare("SELECT id FROM school_year_semester WHERE school_year = ? AND semester = ? AND status = 'Active'");
+                    $stmt->execute([$school_year, $semester]);
+                    $term = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                    if (!$term) {
+                        throw new Exception("Selected school year and semester combination is not active or does not exist.");
+                    }
+
+                    $new_school_year_semester_id = $term['id'];
+
                     // Update subject information
-                    $stmt = $pdo->prepare("UPDATE subjects SET subject_code = ?, subject_name = ?, duration_id = ?, updated_at = NOW() 
+                    $stmt = $pdo->prepare("UPDATE subjects SET subject_code = ?, subject_name = ?, duration_id = ?, updated_at = NOW()
                                           WHERE subject_id = ?");
                     $stmt->execute([$subject_code, $subject_name, $duration_id, $subject_id]);
-                    
+
                     // Update class information
-                    $stmt = $pdo->prepare("UPDATE classes SET schedule = ?, room = ?, updated_at = NOW() 
+                    $stmt = $pdo->prepare("UPDATE classes SET schedule = ?, room = ?, school_year_semester_id = ?, updated_at = NOW()
                                           WHERE subject_id = ? AND professor_id = ?");
-                    $stmt->execute([$schedule, $room, $subject_id, $professor_id]);
-                    
+                    $stmt->execute([$schedule, $room, $new_school_year_semester_id, $subject_id, $professor_id]);
+
                     $success = "Subject updated successfully!";
                 } catch (PDOException $e) {
                     $error = "Error updating subject: " . $e->getMessage();
+                } catch (Exception $e) {
+                    $error = $e->getMessage();
                 }
                 break;
                 
@@ -154,9 +169,10 @@ function generateUniqueClassCode($pdo) {
 }
 
 // Get professor's subjects
-$query = "SELECT s.*, s.duration_id, c.class_code, c.schedule, c.room
+$query = "SELECT s.*, s.duration_id, c.class_code, c.schedule, c.room, sys.school_year, sys.semester
           FROM subjects s
           JOIN classes c ON s.subject_id = c.subject_id
+          JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
           WHERE c.professor_id = ? AND c.status = 'active'
           ORDER BY s.created_at DESC";
 $stmt = $pdo->prepare($query);
@@ -1720,6 +1736,30 @@ $durations = $durations_stmt->fetchAll(PDO::FETCH_ASSOC);
                     <form class="modal-form" action="" method="POST">
                         <input type="hidden" name="action" value="edit_subject">
                         <input type="hidden" name="subject_id" id="edit_subject_id">
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-calendar"></i>
+                                School Year
+                            </label>
+                            <select name="school_year" id="edit_school_year" required>
+                                <option value="">Select School Year</option>
+                                <?php foreach ($school_years as $year): ?>
+                                    <option value="<?php echo $year; ?>"><?php echo $year; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-clock"></i>
+                                Semester
+                            </label>
+                            <select name="semester" id="edit_semester" required>
+                                <option value="">Select Semester</option>
+                                <?php foreach ($semesters as $sem): ?>
+                                    <option value="<?php echo $sem; ?>"><?php echo $sem; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                         <div class="form-group">
                             <label>
                                 <i class="fas fa-hashtag"></i>
