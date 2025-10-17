@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 15, 2025 at 12:04 PM
+-- Generation Time: Oct 17, 2025 at 04:08 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -221,6 +221,30 @@ INSERT INTO `class_professors` (`id`, `class_id`, `professor_id`, `role`, `creat
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `departments`
+--
+
+CREATE TABLE `departments` (
+  `department_id` int(11) NOT NULL,
+  `department_name` varchar(100) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `departments`
+--
+
+INSERT INTO `departments` (`department_id`, `department_name`, `created_at`, `updated_at`) VALUES
+(1, 'College of Business Administrator', '2025-10-17 20:26:59', '2025-10-17 20:26:59'),
+(2, 'College of Entrepreneurship', '2025-10-17 20:26:59', '2025-10-17 20:26:59'),
+(3, 'College of Accountancy', '2025-10-17 20:26:59', '2025-10-17 20:26:59'),
+(4, 'College of Education', '2025-10-17 20:26:59', '2025-10-17 20:26:59'),
+(5, 'College of Computer Studies', '2025-10-17 20:26:59', '2025-10-17 20:26:59');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `enrollment_requests`
 --
 
@@ -362,12 +386,12 @@ CREATE TABLE `professors` (
 --
 
 INSERT INTO `professors` (`professor_id`, `employee_id`, `first_name`, `last_name`, `email`, `password`, `department`, `mobile`, `created_at`, `updated_at`) VALUES
-('', '', 'John', 'Doe', 'john@example.com', 'password', 'CS', '', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-('111111', '51525251', 'DERICK1', 'Boado', 'derickboado1@gmail.com', '$2y$10$qqQ2t9z56nD4X16pOKA8/e0zU.2dmK5nvEPvsyxFFZeTvzme9wFMi', 'Sawi Departtmen', '09155004507', '2025-09-03 13:50:59', '2025-09-07 20:24:48'),
-('PF0F004', '32165498', 'HATDOG', 'JUMBO', 'g@Gmail.com', '25f9e794323b453885f5181f1b624d0b', 'Unknown', '0999554214', '2025-08-28 13:57:57', '2025-09-02 06:22:59'),
-('PROF001', 'EMP001', 'Danhil', 'Baluyot', 'dbaluyot@gmail.com', '25f9e794323b453885f5181f1b624d0b', 'Computer Science', '+639123456789', '2025-08-28 07:13:53', '2025-08-28 08:29:54'),
-('PROF002', 'EMP002', 'Maria', 'Santos', 'maria.santos@grc.edu', '5f4dcc3b5aa765d61d8327deb882cf99', 'Mathematics', '+639234567890', '2025-08-28 07:13:53', '2025-08-28 07:13:53'),
-('PROF003', 'EMP003', 'Robert', 'Garcia', 'robert.garcia@grc.edu', '5f4dcc3b5aa765d61d8327deb882cf99', 'Engineering', '+639345678901', '2025-08-28 07:13:53', '2025-08-28 07:13:53');
+('', '', 'John', 'Doe', 'john@example.com', 'password', 'College of Business Administrator', '', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+('111111', '51525251', 'DERICK1', 'Boado', 'derickboado1@gmail.com', '$2y$10$qqQ2t9z56nD4X16pOKA8/e0zU.2dmK5nvEPvsyxFFZeTvzme9wFMi', 'College of Computer Studies', '09155004507', '2025-09-03 13:50:59', '2025-09-07 20:24:48'),
+('PF0F004', '32165498', 'HATDOG', 'JUMBO', 'g@Gmail.com', '25f9e794323b453885f5181f1b624d0b', 'College of Education', '0999554214', '2025-08-28 13:57:57', '2025-09-02 06:22:59'),
+('PROF001', 'EMP001', 'Danhil', 'Baluyot', 'dbaluyot@gmail.com', '25f9e794323b453885f5181f1b624d0b', 'College of Business Administrator', '+639123456789', '2025-08-28 07:13:53', '2025-08-28 08:29:54'),
+('PROF002', 'EMP002', 'Maria', 'Santos', 'maria.santos@grc.edu', '5f4dcc3b5aa765d61d8327deb882cf99', 'College of Entrepreneurship', '+639234567890', '2025-08-28 07:13:53', '2025-08-28 07:13:53'),
+('PROF003', 'EMP003', 'Robert', 'Garcia', 'robert.garcia@grc.edu', '5f4dcc3b5aa765d61d8327deb882cf99', 'College of Accountancy', '+639345678901', '2025-08-28 07:13:53', '2025-08-28 07:13:53');
 
 -- --------------------------------------------------------
 
@@ -544,6 +568,7 @@ CREATE TABLE `subjects` (
   `subject_code` varchar(20) NOT NULL,
   `description` text DEFAULT NULL,
   `credits` int(11) NOT NULL,
+  `duration_id` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   `semester_id` int(11) DEFAULT NULL
@@ -553,29 +578,29 @@ CREATE TABLE `subjects` (
 -- Dumping data for table `subjects`
 --
 
-INSERT INTO `subjects` (`subject_id`, `subject_name`, `subject_code`, `description`, `credits`, `created_at`, `updated_at`, `semester_id`) VALUES
-('SUB001', 'Introduction to Programming', 'CS101', 'Fundamentals of programming concepts and logic', 3, '2025-08-28 07:13:53', '2025-08-28 07:13:53', 3),
-('SUB002', 'Calculus I', 'MATH101', 'Differential and integral calculus', 4, '2025-08-28 07:13:53', '2025-08-28 07:13:53', NULL),
-('SUB003', 'Database Systems', 'CS201', 'Relational database design and SQL', 3, '2025-08-28 07:13:53', '2025-08-28 07:13:53', NULL),
-('SUB004', 'Web Development', 'CS301', 'Front-end and back-end web technologies', 3, '2025-08-28 07:13:53', '2025-08-28 07:13:53', NULL),
-('SUB005', 'Engineering Mathematics', 'ENG101', 'Mathematical methods for engineering', 4, '2025-08-28 07:13:53', '2025-09-01 04:44:04', NULL),
-('SUB1756423371', 'Database Management System.', 'DBMS', NULL, 3, '2025-08-29 07:22:51', '2025-08-29 07:22:51', NULL),
-('SUB1756425193', 'System Architecture', 'SYSARCH', NULL, 3, '2025-08-29 07:53:13', '2025-09-02 06:24:46', NULL),
-('SUB1756441963', 'HOW TO BE HOTDOG', 'HD12324', NULL, 3, '2025-08-29 12:32:43', '2025-08-29 12:32:43', NULL),
-('SUB1756494311', 'HOW TO BE POGI', 'IT 304', NULL, 3, '2025-08-30 03:05:11', '2025-08-30 03:05:11', NULL),
-('SUB1756542883', 'EWAN', '305', NULL, 3, '2025-08-30 16:34:43', '2025-09-02 06:24:30', NULL),
-('SUB1756767458', 'TUMESTING KA', 'IT1011', NULL, 3, '2025-09-02 06:57:38', '2025-10-04 04:42:50', NULL),
-('SUB1756900369', 'POGI', 'IT 301', NULL, 3, '2025-09-03 19:52:49', '2025-09-03 19:52:49', NULL),
-('SUB1757248087', 'Funda', 'IT 101', NULL, 3, '2025-09-07 20:28:07', '2025-09-07 20:29:31', NULL),
-('SUB1758595099', 'new', 'ne', NULL, 3, '2025-09-23 10:38:19', '2025-09-23 10:38:19', NULL),
-('SUB1759971443', '2', '2', NULL, 3, '2025-10-09 08:57:23', '2025-10-09 08:57:23', NULL),
-('SUB1760509671', 'New', 'New', NULL, 3, '2025-10-15 14:27:51', '2025-10-15 14:27:51', NULL),
-('SUB1760510658', '3', '3', NULL, 3, '2025-10-15 14:44:18', '2025-10-15 14:44:18', NULL),
-('SUB1760512359', 'lknsdf;glnk', 'sd;fknjs;lk', NULL, 3, '2025-10-15 15:12:39', '2025-10-15 15:12:39', NULL),
-('SUB1760514979', '4', '4', NULL, 3, '2025-10-15 15:56:19', '2025-10-15 15:56:19', NULL),
-('SUBARCH1', 'Archived Subject 2024-2025', 'ARCH2024', NULL, 3, '2025-09-20 08:21:50', '2025-09-20 08:21:50', NULL),
-('SUBARCH2', 'Archived Subject 2023-2024', 'ARCH2023', NULL, 3, '2025-09-20 08:21:54', '2025-09-20 08:21:54', NULL),
-('SUBTEST1', 'Test Subject', 'TS101', NULL, 3, '2025-08-30 15:35:29', '2025-09-02 06:24:37', NULL);
+INSERT INTO `subjects` (`subject_id`, `subject_name`, `subject_code`, `description`, `credits`, `duration_id`, `created_at`, `updated_at`, `semester_id`) VALUES
+('SUB001', 'Introduction to Programming', 'CS101', 'Fundamentals of programming concepts and logic', 3, 1, '2025-08-28 07:13:53', '2025-08-28 07:13:53', 3),
+('SUB002', 'Calculus I', 'MATH101', 'Differential and integral calculus', 4, 3, '2025-08-28 07:13:53', '2025-08-28 07:13:53', NULL),
+('SUB003', 'Database Systems', 'CS201', 'Relational database design and SQL', 3, 1, '2025-08-28 07:13:53', '2025-08-28 07:13:53', NULL),
+('SUB004', 'Web Development', 'CS301', 'Front-end and back-end web technologies', 3, 1, '2025-08-28 07:13:53', '2025-08-28 07:13:53', NULL),
+('SUB005', 'Engineering Mathematics', 'ENG101', 'Mathematical methods for engineering', 4, 1, '2025-08-28 07:13:53', '2025-09-01 04:44:04', NULL),
+('SUB1756423371', 'Database Management System.', 'DBMS', NULL, 3, 1, '2025-08-29 07:22:51', '2025-08-29 07:22:51', NULL),
+('SUB1756425193', 'System Architecture', 'SYSARCH', NULL, 3, 3, '2025-08-29 07:53:13', '2025-09-02 06:24:46', NULL),
+('SUB1756441963', 'HOW TO BE HOTDOG', 'HD12324', NULL, 3, 2, '2025-08-29 12:32:43', '2025-08-29 12:32:43', NULL),
+('SUB1756494311', 'HOW TO BE POGI', 'IT 304', NULL, 3, 2, '2025-08-30 03:05:11', '2025-08-30 03:05:11', NULL),
+('SUB1756542883', 'EWAN', '305', NULL, 3, 2, '2025-08-30 16:34:43', '2025-09-02 06:24:30', NULL),
+('SUB1756767458', 'TUMESTING KA', 'IT1011', NULL, 3, 3, '2025-09-02 06:57:38', '2025-10-04 04:42:50', NULL),
+('SUB1756900369', 'POGI', 'IT 301', NULL, 3, 3, '2025-09-03 19:52:49', '2025-09-03 19:52:49', NULL),
+('SUB1757248087', 'Funda', 'IT 101', NULL, 3, 2, '2025-09-07 20:28:07', '2025-09-07 20:29:31', NULL),
+('SUB1758595099', 'new', 'ne', NULL, 3, 3, '2025-09-23 10:38:19', '2025-09-23 10:38:19', NULL),
+('SUB1759971443', '2', '2', NULL, 3, 1, '2025-10-09 08:57:23', '2025-10-09 08:57:23', NULL),
+('SUB1760509671', 'New', 'New', NULL, 3, 3, '2025-10-15 14:27:51', '2025-10-15 14:27:51', NULL),
+('SUB1760510658', '3', '3', NULL, 3, 3, '2025-10-15 14:44:18', '2025-10-15 14:44:18', NULL),
+('SUB1760512359', 'lknsdf;glnk', 'sd;fknjs;lk', NULL, 3, 1, '2025-10-15 15:12:39', '2025-10-15 15:12:39', NULL),
+('SUB1760514979', '4', '4', NULL, 3, 3, '2025-10-15 15:56:19', '2025-10-15 15:56:19', NULL),
+('SUBARCH1', 'Archived Subject 2024-2025', 'ARCH2024', NULL, 3, 1, '2025-09-20 08:21:50', '2025-09-20 08:21:50', NULL),
+('SUBARCH2', 'Archived Subject 2023-2024', 'ARCH2023', NULL, 3, 3, '2025-09-20 08:21:54', '2025-09-20 08:21:54', NULL),
+('SUBTEST1', 'Test Subject', 'TS101', NULL, 3, 3, '2025-08-30 15:35:29', '2025-09-02 06:24:37', NULL);
 
 -- --------------------------------------------------------
 
@@ -584,21 +609,18 @@ INSERT INTO `subjects` (`subject_id`, `subject_name`, `subject_code`, `descripti
 --
 
 CREATE TABLE `subject_durations` (
-  `id` int(11) NOT NULL,
-  `duration_name` varchar(50) NOT NULL,
-  `duration_minutes` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `duration_id` int(11) NOT NULL,
+  `subject_duration` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `subject_durations`
 --
 
-INSERT INTO `subject_durations` (`id`, `duration_name`, `duration_minutes`, `created_at`, `updated_at`) VALUES
-(1, '1 hr 30 minutes', 90, '2025-10-15 12:00:00', '2025-10-15 12:00:00'),
-(2, '2 hours', 120, '2025-10-15 12:00:00', '2025-10-15 12:00:00'),
-(3, '3 hours', 180, '2025-10-15 12:00:00', '2025-10-15 12:00:00');
+INSERT INTO `subject_durations` (`duration_id`, `subject_duration`) VALUES
+(1, '1 hour 30 minutes'),
+(2, '2 hours'),
+(3, '3 hours');
 
 -- --------------------------------------------------------
 
@@ -718,6 +740,13 @@ ALTER TABLE `class_professors`
   ADD KEY `professor_id` (`professor_id`);
 
 --
+-- Indexes for table `departments`
+--
+ALTER TABLE `departments`
+  ADD PRIMARY KEY (`department_id`),
+  ADD UNIQUE KEY `department_name` (`department_name`);
+
+--
 -- Indexes for table `enrollment_requests`
 --
 ALTER TABLE `enrollment_requests`
@@ -796,7 +825,14 @@ ALTER TABLE `student_classes`
 ALTER TABLE `subjects`
   ADD PRIMARY KEY (`subject_id`),
   ADD UNIQUE KEY `subject_code` (`subject_code`),
-  ADD KEY `idx_subject_semester` (`semester_id`);
+  ADD KEY `idx_subject_semester` (`semester_id`),
+  ADD KEY `fk_subjects_duration_id` (`duration_id`);
+
+--
+-- Indexes for table `subject_durations`
+--
+ALTER TABLE `subject_durations`
+  ADD PRIMARY KEY (`duration_id`);
 
 --
 -- Indexes for table `unenrollment_requests`
@@ -826,6 +862,12 @@ ALTER TABLE `class_enrollments`
 --
 ALTER TABLE `class_professors`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+
+--
+-- AUTO_INCREMENT for table `departments`
+--
+ALTER TABLE `departments`
+  MODIFY `department_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `enrollment_requests`
@@ -868,6 +910,12 @@ ALTER TABLE `semesters`
 --
 ALTER TABLE `student_classes`
   MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
+
+--
+-- AUTO_INCREMENT for table `subject_durations`
+--
+ALTER TABLE `subject_durations`
+  MODIFY `duration_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `unenrollment_requests`
@@ -956,6 +1004,7 @@ ALTER TABLE `student_classes`
 -- Constraints for table `subjects`
 --
 ALTER TABLE `subjects`
+  ADD CONSTRAINT `fk_subjects_duration_id` FOREIGN KEY (`duration_id`) REFERENCES `subject_durations` (`duration_id`) ON DELETE SET NULL,
   ADD CONSTRAINT `subjects_ibfk_1` FOREIGN KEY (`semester_id`) REFERENCES `semesters` (`id`) ON DELETE SET NULL;
 
 --

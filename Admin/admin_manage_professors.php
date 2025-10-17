@@ -755,6 +755,7 @@ $departments = $pdo->query("SELECT department_name FROM departments ORDER BY dep
         <?php endif; ?>
 
         <div class="department-filter-wrapper">
+            <label for="departmentFilter">Filter by Department</label>
             <select id="departmentFilter" class="search-input" onchange="filterByDepartment()">
                 <option value="">All Departments</option>
                 <?php foreach ($departments as $dept): ?>

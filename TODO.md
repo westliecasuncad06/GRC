@@ -1,3 +1,3 @@
-- [ ] Remove department filter select from header-actions div
-- [ ] Add department filter select in new wrapper before table-container
-- [ ] Update CSS for new department filter wrapper
+- [x] Remove department filter select from header-actions div
+- [x] Add department filter select in new wrapper before table-container
+- [x] Update CSS for new department filter wrapper
