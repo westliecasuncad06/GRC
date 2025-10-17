@@ -435,6 +435,7 @@ $unenrollment_requests = $stmt->fetchAll();
 
         .subject-cell {
             min-width: 150px;
+            text-align: left;
         }
 
         .subject-tag {
@@ -837,6 +838,68 @@ $unenrollment_requests = $stmt->fetchAll();
                 font-size: 0.8rem;
             }
         }
+
+        /* --- Add: modal base layout and stacking rules --- */
+        /* Ensure modals use fixed positioning and can be stacked via z-index */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.45);
+        }
+
+        .modal-container {
+            position: relative;
+            z-index: 2; /* relative stacking inside modal */
+            background: white;
+            border-radius: 12px;
+            max-width: 520px;
+            width: calc(100% - 40px);
+            margin: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* Explicit stacking so confirmation modal overlays the mobile details modal */
+        #mobileDetailsModal.show {
+            z-index: 10000;
+        }
+        #mobileDetailsModal .modal-backdrop {
+            z-index: 9990;
+        }
+        #mobileDetailsModal .modal-container {
+            z-index: 10000;
+            position: relative;
+        }
+
+        #confirmationModal.show {
+            z-index: 10020;
+        }
+        #confirmationModal .modal-backdrop {
+            z-index: 10010;
+        }
+        #confirmationModal .modal-container {
+            z-index: 10020;
+            position: relative;
+        }
+
     </style>
 
     <script>
@@ -851,14 +914,26 @@ $unenrollment_requests = $stmt->fetchAll();
         }
 
         function showModal() {
-            document.getElementById('confirmationModal').classList.add('show');
+            const confirmation = document.getElementById('confirmationModal');
+            const mobile = document.getElementById('mobileDetailsModal');
+            // Add show class and ensure confirmation modal stacks above mobile modal
+            confirmation.classList.add('show');
+            // explicit z-index guard in case inline styles are preferred
+            confirmation.style.zIndex = '10020';
+            if (mobile) {
+                mobile.style.zIndex = '10000';
+            }
         }
 
         function closeModal() {
-            document.getElementById('confirmationModal').classList.remove('show');
+            const confirmation = document.getElementById('confirmationModal');
+            confirmation.classList.remove('show');
+            // reset z-index
+            confirmation.style.zIndex = '';
             currentClassId = null;
             // Disable the confirm button when modal is closed
-            document.getElementById('confirmUnenrollBtn').disabled = true;
+            const btn = document.getElementById('confirmUnenrollBtn');
+            if (btn) btn.disabled = true;
         }
 
         function showToast(message, type = 'success') {
@@ -930,17 +1005,26 @@ $unenrollment_requests = $stmt->fetchAll();
                 btn.textContent = 'Pending Approval';
                 btn.className = 'btn btn-warning';
                 btn.disabled = true;
+                btn.onclick = null;
             } else {
                 btn.textContent = 'Unenroll';
                 btn.className = 'btn btn-danger';
                 btn.disabled = false;
                 btn.onclick = () => unenrollFromClass(classId);
             }
-            document.getElementById('mobileDetailsModal').classList.add('show');
+            const mobile = document.getElementById('mobileDetailsModal');
+            if (mobile) {
+                mobile.classList.add('show');
+                mobile.style.zIndex = '10000';
+            }
         }
 
         function closeMobileModal() {
-            document.getElementById('mobileDetailsModal').classList.remove('show');
+            const mobile = document.getElementById('mobileDetailsModal');
+            if (mobile) {
+                mobile.classList.remove('show');
+                mobile.style.zIndex = '';
+            }
         }
 
         window.toggleDetails = function(row) {
