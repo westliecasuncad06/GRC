@@ -52,19 +52,6 @@
         .nav-item span {
             font-weight: 500;
         }
-        .notification-badge {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background: #dc3545;
-            color: white;
-            border-radius: 50%;
-            padding: 0.2rem 0.5rem;
-            font-size: 0.75rem;
-            font-weight: bold;
-            min-width: 1.2rem;
-            text-align: center;
-        }
 
         /* Adjust main content for sidebar */
         .main-content {
@@ -74,6 +61,14 @@
             box-sizing: border-box;
         }
 
+        /* Hide notification badges in sidebar */
+        .nav-item .badge,
+        .nav-item .notification,
+        .notification-count,
+        .notif,
+        [data-notification] {
+            display: none !important;
+        }
 
         @media (max-width: 768px) {
 
@@ -242,10 +237,13 @@
             <i class="fas fa-book"></i>
             <span>My Enrolled Classes</span>
         </a>
-
         <a href="../Student/student_archive.php" class="nav-item <?php echo ($current_page == 'student_archive.php') ? 'active' : ''; ?>">
             <i class="fas fa-archive"></i>
             <span>Archive</span>
+        </a>
+        <a href="../Admin/settings.php" class="nav-item settings-mobile-hide <?php echo ($current_page == 'settings.php') ? 'active' : ''; ?>">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
         </a>
     </nav>
 </div>

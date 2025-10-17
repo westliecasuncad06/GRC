@@ -60,6 +60,14 @@
             box-sizing: border-box;
         }
 
+        /* Hide notification badges in sidebar */
+        .nav-item .badge,
+        .nav-item .notification,
+        .notification-count,
+        .notif,
+        [data-notification] {
+            display: none !important;
+        }
 
         @media (max-width: 768px) {
 

@@ -35,7 +35,7 @@ function generateUniqueClassCode($pdo) {
 // Handle schedule actions
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
-    
+
     try {
         switch ($action) {
             case 'add_subject':
@@ -45,22 +45,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
                 $schedule = trim($_POST['schedule']);
                 $room = trim($_POST['room']);
                 $school_year = trim($_POST['school_year']);
+                $semester = trim($_POST['semester']);
+                $duration_id = isset($_POST['duration_id']) && $_POST['duration_id'] !== '' ? (int)$_POST['duration_id'] : null;
 
                 $pdo->beginTransaction();
 
+                // Get school_year_semester_id and check if active
+                $stmt = $pdo->prepare("SELECT id FROM school_year_semester WHERE school_year = ? AND semester = ? AND status = 'Active'");
+                $stmt->execute([$school_year, $semester]);
+                $term = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!$term) {
+                    throw new Exception("Selected school year and semester combination is not active or does not exist.");
+                }
+
+                $school_year_semester_id = $term['id'];
+
                 $subject_id = 'SUB' . time();
-                $stmt = $pdo->prepare("INSERT INTO subjects (subject_id, subject_name, subject_code, credits, created_at, updated_at)
-                                      VALUES (?, ?, ?, 3, NOW(), NOW())");
-                $stmt->execute([$subject_id, $subject_name, $subject_code]);
+                $stmt = $pdo->prepare("INSERT INTO subjects (subject_id, subject_name, subject_code, credits, duration_id, created_at, updated_at)
+                                      VALUES (?, ?, ?, 3, ?, NOW(), NOW())");
+                $stmt->execute([$subject_id, $subject_name, $subject_code, $duration_id]);
 
                 $class_code = generateUniqueClassCode($pdo);
                 $class_id = 'CLASS' . time();
-                $stmt = $pdo->prepare("INSERT INTO classes (class_id, class_name, class_code, subject_id, professor_id, schedule, room, school_year, created_at, updated_at)
+                $stmt = $pdo->prepare("INSERT INTO classes (class_id, class_name, class_code, subject_id, professor_id, schedule, room, school_year_semester_id, created_at, updated_at)
                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-                $stmt->execute([$class_id, $subject_name . ' Class', $class_code, $subject_id, $professor_id, $schedule, $room, $school_year]);
+                $stmt->execute([$class_id, $subject_name . ' Class', $class_code, $subject_id, $professor_id, $schedule, $room, $school_year_semester_id]);
 
                 $pdo->commit();
-                $success = "Subject and class added successfully!";
+                $success = "Subject and class added successfully! Class Code: " . $class_code;
                 break;
                 
             case 'edit_subject':
@@ -72,14 +85,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
                 $schedule = trim($_POST['schedule']);
                 $room = trim($_POST['room']);
                 $school_year = trim($_POST['school_year']);
+                $semester = isset($_POST['semester']) ? trim($_POST['semester']) : '';
+                $duration_id = isset($_POST['duration_id']) && $_POST['duration_id'] !== '' ? (int)$_POST['duration_id'] : null;
 
                 $pdo->beginTransaction();
 
-                $stmt = $pdo->prepare("UPDATE subjects SET subject_code = ?, subject_name = ?, updated_at = NOW() WHERE subject_id = ?");
-                $stmt->execute([$subject_code, $subject_name, $subject_id]);
+                // resolve school_year_semester_id based on selected school_year and semester (must be active)
+                $stmt = $pdo->prepare("SELECT id FROM school_year_semester WHERE school_year = ? AND semester = ? AND status = 'Active'");
+                $stmt->execute([$school_year, $semester]);
+                $term = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                $stmt = $pdo->prepare("UPDATE classes SET class_code = ?, professor_id = ?, schedule = ?, room = ?, school_year = ?, updated_at = NOW() WHERE subject_id = ?");
-                $stmt->execute([$class_code, $professor_id, $schedule, $room, $school_year, $subject_id]);
+                if (!$term) {
+                    throw new Exception("Selected school year and semester combination is not active or does not exist.");
+                }
+
+                $new_school_year_semester_id = $term['id'];
+
+                $stmt = $pdo->prepare("UPDATE subjects SET subject_code = ?, subject_name = ?, duration_id = ?, updated_at = NOW() WHERE subject_id = ?");
+                $stmt->execute([$subject_code, $subject_name, $duration_id, $subject_id]);
+
+                $stmt = $pdo->prepare("UPDATE classes SET class_code = ?, professor_id = ?, schedule = ?, room = ?, school_year_semester_id = ?, updated_at = NOW() WHERE subject_id = ?");
+                $stmt->execute([$class_code, $professor_id, $schedule, $room, $new_school_year_semester_id, $subject_id]);
 
                 $pdo->commit();
                 $success = "Subject updated successfully!";
@@ -118,16 +144,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
 }
 
 // Fetch data for display
-$subjects = $pdo->query("SELECT s.*, p.first_name, p.last_name, c.class_id, c.class_code, c.professor_id, c.schedule, c.room,
-                        CONCAT(y.year_label, ' - ', sem.semester_name) as school_year
+$subjects = $pdo->query("SELECT s.*, p.first_name, p.last_name, c.class_id, c.class_code, c.professor_id, c.schedule, c.room, c.school_year_semester_id,
+                        sys.school_year, sys.semester
                         FROM subjects s
                         JOIN classes c ON s.subject_id = c.subject_id
-                        LEFT JOIN semesters sem ON c.semester_id = sem.id
-                        LEFT JOIN school_years y ON sem.school_year_id = y.id
+                        LEFT JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
                         LEFT JOIN professors p ON c.professor_id = p.professor_id
                         ORDER BY s.created_at DESC")->fetchAll();
 
 $professors = $pdo->query("SELECT * FROM professors ORDER BY first_name, last_name")->fetchAll();
+
+// Get active school_year_semester combinations for dropdowns
+$academic_periods_stmt = $pdo->prepare("
+    SELECT id, school_year, semester
+    FROM school_year_semester
+    WHERE status = 'Active'
+    ORDER BY school_year DESC, semester
+");
+$academic_periods_stmt->execute();
+$academic_periods = $academic_periods_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Group by school year for easier JS handling
+$school_years = [];
+$semesters_by_year = [];
+foreach ($academic_periods as $period) {
+    if (!in_array($period['school_year'], $school_years)) {
+        $school_years[] = $period['school_year'];
+    }
+    if (!isset($semesters_by_year[$period['school_year']])) {
+        $semesters_by_year[$period['school_year']] = [];
+    }
+    $semesters_by_year[$period['school_year']][] = $period['semester'];
+}
+
+// Get unique semesters for dropdowns
+$semesters = array_unique(array_column($academic_periods, 'semester'));
+
+// Get subject durations for dropdown
+$durations_stmt = $pdo->prepare("SELECT duration_id, subject_duration FROM subject_durations ORDER BY duration_id");
+$durations_stmt->execute();
+$durations = $durations_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $enrollment_counts = [];
 foreach ($subjects as $subject) {
@@ -926,7 +982,7 @@ foreach ($subjects as $subject) {
                         </td>
                         <td><?php echo $subject['schedule']; ?></td>
                         <td><?php echo $subject['room']; ?></td>
-                        <td><?php echo $subject['school_year']; ?></td>
+                        <td><?php echo $subject['school_year'] . ' - ' . $subject['semester']; ?></td>
                         <td><?php echo $enrollment_counts[$subject['subject_id']] ?? 0; ?> students</td>
                         <td>
                             <div class="action-buttons">
@@ -1020,8 +1076,40 @@ foreach ($subjects as $subject) {
                             <input type="text" name="room" required>
                         </div>
                         <div class="form-group">
-                            <label>School Year</label>
-                            <input type="text" name="school_year" placeholder="e.g., 2023-2024" required>
+                            <label>
+                                <i class="fas fa-calendar"></i>
+                                School Year
+                            </label>
+                            <select name="school_year" required>
+                                <option value="">Select School Year</option>
+                                <?php foreach ($school_years as $sy): ?>
+                                    <option value="<?php echo htmlspecialchars($sy); ?>"><?php echo htmlspecialchars($sy); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-clock"></i>
+                                Semester
+                            </label>
+                            <select name="semester" required>
+                                <option value="">Select Semester</option>
+                                <?php foreach ($semesters as $sem): ?>
+                                    <option value="<?php echo htmlspecialchars($sem); ?>"><?php echo htmlspecialchars($sem); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-hourglass-half"></i>
+                                Duration
+                            </label>
+                            <select name="duration_id">
+                                <option value="">Default</option>
+                                <?php foreach ($durations as $d): ?>
+                                    <option value="<?php echo $d['duration_id']; ?>"><?php echo htmlspecialchars($d['subject_duration']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" onclick="closeModal('addSubjectModal')">
@@ -1079,8 +1167,40 @@ foreach ($subjects as $subject) {
                             <input type="text" name="room" id="edit_room" required>
                         </div>
                         <div class="form-group">
-                            <label>School Year</label>
-                            <input type="text" name="school_year" id="edit_school_year" required>
+                            <label>
+                                <i class="fas fa-calendar"></i>
+                                School Year
+                            </label>
+                            <select name="school_year" id="edit_school_year" required>
+                                <option value="">Select School Year</option>
+                                <?php foreach ($school_years as $sy): ?>
+                                    <option value="<?php echo htmlspecialchars($sy); ?>"><?php echo htmlspecialchars($sy); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-clock"></i>
+                                Semester
+                            </label>
+                            <select name="semester" id="edit_semester" required>
+                                <option value="">Select Semester</option>
+                                <?php foreach ($semesters as $sem): ?>
+                                    <option value="<?php echo htmlspecialchars($sem); ?>"><?php echo htmlspecialchars($sem); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-hourglass-half"></i>
+                                Duration
+                            </label>
+                            <select name="duration_id" id="edit_duration_id">
+                                <option value="">Default</option>
+                                <?php foreach ($durations as $d): ?>
+                                    <option value="<?php echo $d['duration_id']; ?>"><?php echo htmlspecialchars($d['subject_duration']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" onclick="closeModal('editSubjectModal')">
@@ -1282,6 +1402,13 @@ foreach ($subjects as $subject) {
             document.getElementById('edit_schedule').value = subject.schedule;
             document.getElementById('edit_room').value = subject.room;
             document.getElementById('edit_school_year').value = subject.school_year;
+            // populate semester and duration if available
+            if (document.getElementById('edit_semester')) {
+                document.getElementById('edit_semester').value = subject.semester || '';
+            }
+            if (document.getElementById('edit_duration_id')) {
+                document.getElementById('edit_duration_id').value = subject.duration_id || '';
+            }
             openModal('editSubjectModal');
         }
 
