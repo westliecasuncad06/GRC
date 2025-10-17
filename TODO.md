@@ -1,13 +1,8 @@
-# TODO: Make Attendance Modal Responsive for Mobile View
+# TODO: Modify Archive View Button for Attendance Status
 
 ## Tasks
-- [x] Update modal width to 95vw for screens < 722px
-- [x] Add overflow-x: auto to modal-body to enable horizontal scrolling if needed
-- [x] Ensure table columns are responsive and do not cause overflow
-- [x] Test responsiveness on screen widths 360px–414px
-- [x] Verify no content overlaps, proper padding, and readability without zooming
-
-## Completed
-- [x] Analyze existing code and styles
-- [x] Plan changes based on requirements
-- [x] Update CSS for responsive modal
+- [x] Create Professor/archive_attendance.php to handle attendance data fetching and display in read-only accordion format
+- [x] Modify Professor/archive.php to add "View" button for archived classes
+- [x] Add attendance modal HTML in archive.php
+- [x] Test modal functionality and data accuracy
+- [x] Verify read-only behavior (no editing capabilities)

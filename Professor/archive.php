@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 
@@ -516,101 +517,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             to { opacity: 1; max-height: 1000px; }
         }
 
-        /* Enhanced Modal Design */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(52, 58, 64, 0.8);
-            backdrop-filter: blur(5px);
-            justify-content: center;
-            align-items: center;
-            animation: modalFadeIn 0.3s ease;
-        }
 
-        @keyframes modalFadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 24px;
-            padding: 0;
-            width: 90%;
-            max-width: 700px;
-            max-height: 85vh;
-            overflow: hidden;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-            animation: modalSlideIn 0.3s ease;
-            position: relative;
-        }
-
-        @keyframes modalSlideIn {
-            from { transform: scale(0.9) translateY(20px); opacity: 0; }
-            to { transform: scale(1) translateY(0); opacity: 1; }
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-        }
-
-        .modal-header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        }
-
-        .modal-title {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .modal-close {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: white;
-            padding: 0.5rem;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .modal-close:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
-        }
-
-        .modal-body {
-            padding: 2rem;
-            max-height: 60vh;
-            overflow-y: auto;
-        }
 
         /* Enhanced Form Styling */
         .form-group {
@@ -957,6 +864,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ::-webkit-scrollbar-thumb:hover {
             background: var(--primary);
         }
+        /* Modal overlay and content - ensure modals behave as overlays and only close on overlay click */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0; /* top:0; right:0; bottom:0; left:0; */
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 9999;
+            padding: 1rem;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 1100px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
     </style>
 </head>
 <body>
@@ -972,8 +905,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="archive-container">
         <div class="tabs">
             <div style="display: flex; gap: 0.5rem;">
-                <button class="tab-btn active" onclick="showTab('active')">Active Classes</button>
-                <button class="tab-btn" onclick="showTab('archived')">Archived Classes</button>
+                <button class="tab-btn active" onclick="showTab('active', event)">Active Classes</button>
+                <button class="tab-btn" onclick="showTab('archived', event)">Archived Classes</button>
             </div>
         </div>
 
@@ -1019,9 +952,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <i class="fas fa-archive"></i> Archive
                                     </button>
                                 </form>
-                                <a href="professor_dashboard.php" class="btn btn-view">
+                                <button type="button" class="btn btn-view" onclick="toggleAttendanceModal('<?php echo $class['class_id']; ?>')">
                                     <i class="fas fa-eye"></i> View
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1107,7 +1040,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             -->
                                         </div>
                                         <div class="action-buttons">
-                                            <span class="status-badge status-archived">Archived</span>
+                                            <button type="button" class="btn btn-view" onclick="toggleAttendanceModal('<?php echo $class['class_id']; ?>')">
+                                                <i class="fas fa-eye"></i> View
+                                            </button>
                                             <form method="POST" style="display: inline;">
                                                 <input type="hidden" name="class_id" value="<?php echo $class['class_id']; ?>">
                                                 <input type="hidden" name="action" value="unarchive">
@@ -1185,7 +1120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script>
-        function showTab(tabName) {
+        function showTab(tabName, evt) {
             // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -1198,24 +1133,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            event.target.classList.add('active');
+            if (evt && evt.currentTarget) evt.currentTarget.classList.add('active');
         }
 
         // Hamburger menu toggle
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('show');
-            if (window.innerWidth <= 900) {
-                document.body.classList.toggle('sidebar-open');
-            }
-        });
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                const sidebar = document.querySelector('.sidebar');
+                if (sidebar) {
+                    sidebar.classList.toggle('show');
+                    if (window.innerWidth <= 900) {
+                        document.body.classList.toggle('sidebar-open');
+                    }
+                }
+            });
+        }
 
         // Close sidebar when clicking outside on mobile
         document.addEventListener('click', function(event) {
             const sidebar = document.querySelector('.sidebar');
             const toggle = document.getElementById('sidebarToggle');
-            if (window.innerWidth <= 900 && sidebar.classList.contains('show')) {
-                if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+            if (window.innerWidth <= 900 && sidebar && sidebar.classList.contains('show')) {
+                if (!sidebar.contains(event.target) && (!toggle || !toggle.contains(event.target))) {
                     sidebar.classList.remove('show');
                     document.body.classList.remove('sidebar-open');
                 }
@@ -1227,30 +1167,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             fetch('archive_details.php?class_id=' + classId + '&modal=1')
                 .then(response => response.text())
                 .then(data => {
-                    document.getElementById('archiveModal').querySelector('.modal-content').innerHTML = data;
-                    document.getElementById('archiveModal').style.display = 'flex';
+                    const modal = document.getElementById('archiveModal');
+                    modal.querySelector('.modal-content').innerHTML = data;
+                    modal.classList.add('show');
                 })
                 .catch(error => console.error('Error loading modal content:', error));
         }
 
         function closeModal() {
-            document.getElementById('archiveModal').style.display = 'none';
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
             const modal = document.getElementById('archiveModal');
-            if (event.target === modal) {
-                closeModal();
-            }
+            modal.classList.remove('show');
         }
 
         // Collapse toggle function
         function toggleCollapse(button) {
             const content = button.nextElementSibling;
-            const icon = button.querySelector('i');
-
-            if (content.style.display === 'none') {
+            if (!content) return;
+            const isHidden = content.style.display === 'none' || getComputedStyle(content).display === 'none';
+            if (isHidden) {
                 content.style.display = 'block';
                 button.classList.add('collapsed');
             } else {
@@ -1269,8 +1203,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         function confirmArchiveAll() {
-            // Submit the archive form
-            document.querySelector('form input[name="action"][value="archive_all_2025_1st"]').closest('form').submit();
+            // Create and submit a small form to archive all
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.style.display = 'none';
+            const input = document.createElement('input');
+            input.name = 'action';
+            input.value = 'archive_all_2025_1st';
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
         }
 
         // Unarchive confirmation modal functions
@@ -1283,31 +1225,113 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         function confirmUnarchiveAll() {
-            // Submit the unarchive form
-            document.querySelector('form input[name="action"][value="unarchive_all_1st"]').closest('form').submit();
+            // Create and submit a small form to unarchive all
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.style.display = 'none';
+            const input = document.createElement('input');
+            input.name = 'action';
+            input.value = 'unarchive_all_1st';
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
         }
 
         // Attendance modal functions
+        function openAttendanceModal(classId) {
+            fetch('archive_attendance.php?class_id=' + classId)
+                .then(response => response.text())
+                .then(data => {
+                    const modal = document.getElementById('attendanceModal');
+                    modal.querySelector('.modal-content').innerHTML = data;
+                    // Ensure all date sections are collapsed by default
+                    modal.querySelectorAll('.date-content').forEach(dc => {
+                        dc.style.display = 'none';
+                    });
+                    modal.querySelectorAll('.collapse-icon').forEach(ci => {
+                        ci.textContent = '▼';
+                    });
+
+                    // Attach a single delegated click handler for date-header to support dynamic content
+                    const contentContainer = modal.querySelector('.modal-content');
+                    // Remove previous handler if present to avoid duplicates
+                    if (modal._dateHeaderHandler && contentContainer) {
+                        contentContainer.removeEventListener('click', modal._dateHeaderHandler);
+                        modal._dateHeaderHandler = null;
+                    }
+                    if (contentContainer) {
+                        const handler = function(e) {
+                            const header = e.target.closest('.date-header');
+                            if (header && contentContainer.contains(header)) {
+                                // prevent accidental other handlers
+                                e.preventDefault();
+                                toggleDateCollapse(header);
+                            }
+                        };
+                        contentContainer.addEventListener('click', handler);
+                        modal._dateHeaderHandler = handler;
+                    }
+
+                    modal.classList.add('show');
+                })
+                .catch(error => console.error('Error loading attendance modal content:', error));
+        }
+
         function closeAttendanceModal() {
-            document.getElementById('attendanceModal').style.display = 'none';
+            const modal = document.getElementById('attendanceModal');
+            modal.classList.remove('show');
         }
 
-        // Close modals when clicking outside
-        window.onclick = function(event) {
-            const archiveModal = document.getElementById('archiveConfirmModal');
-            const unarchiveModal = document.getElementById('unarchiveConfirmModal');
-            const attendanceModal = document.getElementById('attendanceModal');
-
-            if (event.target === archiveModal) {
-                closeArchiveConfirmModal();
-            }
-            if (event.target === unarchiveModal) {
-                closeUnarchiveConfirmModal();
-            }
-            if (event.target === attendanceModal) {
+        function toggleAttendanceModal(classId) {
+            const modal = document.getElementById('attendanceModal');
+            if (modal.classList.contains('show')) {
                 closeAttendanceModal();
+            } else {
+                openAttendanceModal(classId);
             }
         }
+
+        // Provide a global toggleDateCollapse so HTML loaded via fetch (innerHTML)
+        // can call it. Script tags inside fetched HTML won't execute automatically.
+        function toggleDateCollapse(header) {
+            if (!header) return;
+            // Prevent the click from bubbling to other handlers
+            if (event && typeof event.stopPropagation === 'function') event.stopPropagation();
+
+            // Prefer finding the .date-content within the same .date-card
+            const card = header.closest('.date-card');
+            let content = null;
+            if (card) {
+                content = card.querySelector('.date-content');
+            }
+            // Fallback to nextElementSibling
+            if (!content) content = header.nextElementSibling;
+
+            const icon = header.querySelector('.collapse-icon');
+            if (!content) return;
+            const isHidden = getComputedStyle(content).display === 'none';
+            if (isHidden) {
+                content.style.display = 'block';
+                if (icon) icon.textContent = '▲';
+                header.setAttribute('aria-expanded', 'true');
+            } else {
+                content.style.display = 'none';
+                if (icon) icon.textContent = '▼';
+                header.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        // Close modals when clicking outside their content (single consolidated listener)
+        document.addEventListener('click', function(e) {
+            ['archiveModal', 'attendanceModal', 'archiveConfirmModal', 'unarchiveConfirmModal'].forEach(id => {
+                const modal = document.getElementById(id);
+                if (!modal) return;
+                if (modal.classList.contains('show') && e.target === modal) {
+                    // Close the modal when clicking the overlay
+                    modal.classList.remove('show');
+                }
+            });
+        });
     </script>
 </body>
 </html>
