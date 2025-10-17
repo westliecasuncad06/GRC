@@ -92,9 +92,36 @@ if ($professor_id) {
 }
 
 .navbar-title-mobile {
-
     display: none;
+}
 
+.notification-btn {
+    position: relative;
+    background: rgba(247, 82, 112, 0.1);
+    border: 2px solid #F75270;
+    color: #F75270;
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-btn:hover {
+    background: #F75270;
+    color: white;
+    transform: scale(1.05);
+}
+
+.notification-btn.has-notifications {
+    background: #F75270;
+    color: white;
+    border-color: #F75270;
 }
 
 @media (max-width: 768px) {
@@ -339,8 +366,8 @@ if ($professor_id) {
                                     <div class="notification-status status-unread">PENDING</div>
                                 </div>
                                 <div class="notification-actions" style="margin-top: 10px;">
-                                    <button class="btn-enhanced btn-primary" onclick="handleEnrollmentRequest('<?php echo $request['request_id']; ?>', 'accept')">Accept</button>
-                                    <button class="btn-enhanced btn-secondary" onclick="handleEnrollmentRequest('<?php echo $request['request_id']; ?>', 'reject')">Reject</button>
+                                    <button class="btn-enhanced btn-primary" onclick="showConfirmationModal('<?php echo $request['request_id']; ?>', 'accept', 'enrollment')">Accept</button>
+                                    <button class="btn-enhanced btn-secondary" onclick="showConfirmationModal('<?php echo $request['request_id']; ?>', 'reject', 'enrollment')">Reject</button>
                                 </div>
                             </div>
                         </div>
@@ -369,8 +396,8 @@ if ($professor_id) {
                                     <div class="notification-status status-unread">PENDING</div>
                                 </div>
                                 <div class="notification-actions" style="margin-top: 10px;">
-                                    <button class="btn-enhanced btn-primary" onclick="handleUnenrollmentRequest('<?php echo $request['request_id']; ?>', 'accept')">Accept</button>
-                                    <button class="btn-enhanced btn-secondary" onclick="handleUnenrollmentRequest('<?php echo $request['request_id']; ?>', 'reject')">Reject</button>
+                                    <button class="btn-enhanced btn-primary" onclick="showConfirmationModal('<?php echo $request['request_id']; ?>', 'accept', 'unenrollment')">Accept</button>
+                                    <button class="btn-enhanced btn-secondary" onclick="showConfirmationModal('<?php echo $request['request_id']; ?>', 'reject', 'unenrollment')">Reject</button>
                                 </div>
                             </div>
                         </div>
@@ -394,11 +421,52 @@ if ($professor_id) {
     </div>
 </div>
 
+<!-- Confirmation Modal -->
+<div id="confirmationModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-header-content">
+                <h3 class="modal-title">
+                    <div class="modal-title-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    Confirm Action
+                </h3>
+            </div>
+            <button class="modal-close" onclick="hideConfirmationModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="confirmation-content">
+                <div class="confirmation-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="confirmation-text">
+                    <h4 id="confirmation-title">Are you sure you want to perform this action?</h4>
+                    <p>This action cannot be undone.</p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-enhanced btn-secondary-enhanced" onclick="hideConfirmationModal()">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+            <button type="button" class="btn-enhanced btn-primary" onclick="confirmRequest()">
+                <i class="fas fa-check"></i> OK
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
     // Global function for notification modal close button
     function closeNotificationModal() {
         const modal = document.getElementById('notificationModal');
         modal.classList.remove('show');
+        // Reset the notification button to original state
+        const notificationBtn = document.querySelector('.notification-btn');
+        if (notificationBtn) {
+            notificationBtn.classList.remove('has-notifications');
+        }
     }
 
     // Function to open notification modal
@@ -434,7 +502,6 @@ if ($professor_id) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert(data.message);
                 // Remove the handled request from the notification list immediately
                 const requestElem = document.getElementById('request-' + requestId);
                 if (requestElem) {
@@ -461,6 +528,54 @@ if ($professor_id) {
         });
     }
 
+    // Global variables for confirmation modal
+    let currentRequestId = null;
+    let currentAction = null;
+    let currentType = null;
+
+    // Function to show confirmation modal
+    function showConfirmationModal(requestId, action, type) {
+        currentRequestId = requestId;
+        currentAction = action;
+        currentType = type;
+        const titleElement = document.getElementById('confirmation-title');
+        if (type === 'enrollment') {
+            if (action === 'accept') {
+                titleElement.textContent = 'Are you sure you want to accept this enrollment request?';
+            } else if (action === 'reject') {
+                titleElement.textContent = 'Are you sure you want to reject this enrollment request?';
+            }
+        } else if (type === 'unenrollment') {
+            if (action === 'accept') {
+                titleElement.textContent = 'Are you sure you want to accept this unenrollment request?';
+            } else if (action === 'reject') {
+                titleElement.textContent = 'Are you sure you want to reject this unenrollment request?';
+            }
+        }
+        const modal = document.getElementById('confirmationModal');
+        modal.classList.add('show');
+    }
+
+    // Function to hide confirmation modal
+    function hideConfirmationModal() {
+        const modal = document.getElementById('confirmationModal');
+        modal.classList.remove('show');
+        currentRequestId = null;
+        currentAction = null;
+        currentType = null;
+    }
+
+    // Function to confirm and handle request
+    function confirmRequest() {
+        if (!currentRequestId || !currentAction || !currentType) return;
+        if (currentType === 'enrollment') {
+            handleEnrollmentRequest(currentRequestId, currentAction);
+        } else if (currentType === 'unenrollment') {
+            handleUnenrollmentRequest(currentRequestId, currentAction);
+        }
+        hideConfirmationModal();
+    }
+
     // Handle unenrollment request accept/reject
     function handleUnenrollmentRequest(requestId, action) {
         if (!['accept', 'reject'].includes(action)) {
@@ -480,7 +595,6 @@ if ($professor_id) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert(data.message);
                 // Remove the handled request from the notification list immediately
                 const requestElem = document.getElementById('unenrollment-request-' + requestId);
                 if (requestElem) {
@@ -510,18 +624,21 @@ if ($professor_id) {
 <style>
 .notification-badge {
     position: absolute;
-    top: 4px;
-    right: 4px;
-    background-color: #dc3545;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #dc3545;
     color: white;
     border-radius: 50%;
-    padding: 2px 7px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    line-height: 1;
-    pointer-events: none;
-    user-select: none;
-    box-shadow: 0 0 2px rgba(0,0,0,0.3);
+    width: 0.8rem;
+    height: 0.8rem;
+    font-size: 0.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 1px solid white;
 }
 .notification-actions {
     margin-top: 10px;

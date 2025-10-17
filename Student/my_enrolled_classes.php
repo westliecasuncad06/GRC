@@ -680,6 +680,130 @@ $unenrollment_requests = $stmt->fetchAll();
         }
 
         /* Responsive Design */
+        @media (max-width: 1440px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+
+            .page-header {
+                padding: 1.75rem;
+            }
+
+            .page-title {
+                font-size: 1.75rem;
+            }
+
+            .page-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .section-header {
+                padding: 1.25rem 1.75rem;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 1rem 1.25rem;
+                font-size: 0.9rem;
+            }
+
+            .data-table th {
+                font-size: 0.85rem;
+            }
+
+            .mobile-table-row {
+                padding: 0.9rem;
+            }
+
+            .btn {
+                padding: 0.7rem 1.25rem;
+                font-size: 0.9rem;
+            }
+
+            .empty-state {
+                padding: 3.5rem 1.75rem;
+            }
+
+            .empty-state-content h3 {
+                font-size: 1.15rem;
+            }
+
+            .empty-state-content p {
+                font-size: 0.9rem;
+            }
+
+            .stat-badge {
+                padding: 0.4rem 0.9rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                padding: 1.25rem;
+            }
+
+            .page-header {
+                padding: 1.5rem;
+            }
+
+            .page-title {
+                font-size: 1.6rem;
+            }
+
+            .page-subtitle {
+                font-size: 0.85rem;
+            }
+
+            .section-header {
+                padding: 1rem 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 0.9rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .data-table th {
+                font-size: 0.8rem;
+            }
+
+            .mobile-table-row {
+                padding: 0.8rem;
+            }
+
+            .btn {
+                padding: 0.65rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .empty-state {
+                padding: 3rem 1.5rem;
+            }
+
+            .empty-state-content h3 {
+                font-size: 1.1rem;
+            }
+
+            .empty-state-content p {
+                font-size: 0.85rem;
+            }
+
+            .stat-badge {
+                padding: 0.35rem 0.8rem;
+                font-size: 0.75rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .mobile-hidden {
                 display: none;

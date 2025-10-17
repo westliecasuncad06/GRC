@@ -586,6 +586,106 @@ if (empty($enrolled_classes)) {
         }
 
         /* Responsive Design */
+        @media (max-width: 1440px) {
+            .dashboard-container {
+                padding: 1.5rem;
+            }
+
+            .tiles-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                gap: 1.75rem;
+            }
+
+            .class-tile {
+                padding: 1.75rem;
+            }
+
+            .class-subject {
+                font-size: 1.15rem;
+            }
+
+            .class-subject-code {
+                font-size: 0.9rem;
+            }
+
+            .class-detail {
+                font-size: 0.9rem;
+            }
+
+            .view-attendance-btn {
+                padding: 0.7rem 1.25rem;
+                font-size: 0.9rem;
+            }
+
+            .table-header-enhanced {
+                padding: 1.75rem;
+            }
+
+            .table-title-enhanced {
+                font-size: 1.4rem;
+            }
+
+            .attendance-table th,
+            .attendance-table td {
+                padding: 0.9rem;
+                font-size: 0.9rem;
+            }
+
+            .modal-content {
+                max-width: 900px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-container {
+                padding: 1.25rem;
+            }
+
+            .tiles-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .class-tile {
+                padding: 1.5rem;
+            }
+
+            .class-subject {
+                font-size: 1.1rem;
+            }
+
+            .class-subject-code {
+                font-size: 0.85rem;
+            }
+
+            .class-detail {
+                font-size: 0.85rem;
+            }
+
+            .view-attendance-btn {
+                padding: 0.65rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .table-header-enhanced {
+                padding: 1.5rem;
+            }
+
+            .table-title-enhanced {
+                font-size: 1.3rem;
+            }
+
+            .attendance-table th,
+            .attendance-table td {
+                padding: 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            .modal-content {
+                max-width: 850px;
+            }
+        }
+
         @media (max-width: 768px) {
             .dashboard-container {
                 padding: 1rem;

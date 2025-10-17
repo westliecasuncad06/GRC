@@ -288,9 +288,5 @@ if ($professor_id) {
             <i class="fas fa-archive"></i>
             <span>Archive</span>
         </a>
-        <a href="settings.php" class="nav-item settings-mobile-hide <?php echo ($current_page == 'settings.php') ? 'active' : ''; ?>">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
-        </a>
     </nav>
 </div>

@@ -967,6 +967,77 @@ foreach ($subjects as $subject) {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Responsive adjustments for table header and stat card at 1024px and below */
+        @media (max-width: 1024px) {
+            .table-header-enhanced {
+                padding: 1.5rem;
+            }
+
+            .table-title-enhanced {
+                font-size: 1.25rem;
+                margin-bottom: 1rem;
+            }
+
+            .table-actions-enhanced {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+
+            .search-input-enhanced {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .stat-card-enhanced {
+                padding: 1.5rem;
+            }
+
+            .stat-header-enhanced {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .stat-info-enhanced {
+                width: 100%;
+            }
+
+            .stat-title-enhanced {
+                font-size: 1.25rem;
+            }
+
+            .stat-subtitle-enhanced {
+                font-size: 0.9rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .password-form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stat-primary-btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .view-btn {
+                margin-right: 0;
+            }
+        }
     </style>
 </head>
 <body>

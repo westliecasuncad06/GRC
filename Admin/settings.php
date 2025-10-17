@@ -354,17 +354,75 @@ if ($role == 'professor') {
             font-size: 1.2rem;
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 1440px) {
             .settings-grid {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
             }
 
             .form-grid {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
 
             .info-grid {
                 grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .stat-card-enhanced {
+                padding: 1.75rem;
+            }
+
+            .dashboard-container {
+                padding: 1.5rem;
+            }
+
+            .stat-header-enhanced {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .stat-info-enhanced {
+                width: 100%;
+            }
+
+            .stat-title-enhanced {
+                font-size: 1.2rem;
+            }
+
+            .stat-subtitle-enhanced {
+                font-size: 0.85rem;
+            }
+
+            .password-form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stat-primary-btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.95rem;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
             }
 
             .stat-card-enhanced {
@@ -373,6 +431,201 @@ if ($role == 'professor') {
 
             .dashboard-container {
                 padding: 1rem;
+            }
+
+            .stat-header-enhanced {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .stat-info-enhanced {
+                width: 100%;
+            }
+
+            .stat-title-enhanced {
+                font-size: 1.1rem;
+            }
+
+            .stat-subtitle-enhanced {
+                font-size: 0.8rem;
+            }
+
+            .password-form-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .stat-primary-btn {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 425px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .stat-card-enhanced {
+                padding: 1.25rem;
+            }
+
+            .dashboard-container {
+                padding: 0.75rem;
+            }
+
+            .stat-header-enhanced {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .stat-info-enhanced {
+                width: 100%;
+            }
+
+            .stat-title-enhanced {
+                font-size: 1rem;
+            }
+
+            .stat-subtitle-enhanced {
+                font-size: 0.75rem;
+            }
+
+            .password-form-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .stat-primary-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 0.25rem;
+            }
+
+            .stat-card-enhanced {
+                padding: 1rem;
+            }
+
+            .dashboard-container {
+                padding: 0.5rem;
+            }
+
+            .stat-header-enhanced {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .stat-info-enhanced {
+                width: 100%;
+            }
+
+            .stat-title-enhanced {
+                font-size: 0.95rem;
+            }
+
+            .stat-subtitle-enhanced {
+                font-size: 0.7rem;
+            }
+
+            .password-form-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .stat-primary-btn {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.8rem;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 0.25rem;
+            }
+
+            .stat-card-enhanced {
+                padding: 0.75rem;
+            }
+
+            .dashboard-container {
+                padding: 0.5rem;
+            }
+
+            .stat-header-enhanced {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .stat-info-enhanced {
+                width: 100%;
+            }
+
+            .stat-title-enhanced {
+                font-size: 0.9rem;
+            }
+
+            .stat-subtitle-enhanced {
+                font-size: 0.65rem;
+            }
+
+            .password-form-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .stat-primary-btn {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.75rem;
+                width: 100%;
+                justify-content: center;
             }
         }
 

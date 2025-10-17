@@ -83,9 +83,7 @@
     <div class="navbar-user">
         <span>Welcome, <?php echo $_SESSION['first_name']; ?></span>
         <div class="navbar-actions">
-            <button type="button" class="notification-btn" onclick="openNotificationModal()" title="Notifications">
-                <i class="fas fa-bell"></i>
-                <?php
+            <button type="button" class="notification-btn <?php
                 require_once '../php/db.php';
 
                 // Get enrollment request history
@@ -140,8 +138,10 @@
 
                 $pending_count = count(array_filter($all_requests, fn($r) => $r['status'] === 'pending'));
 
-                if ($pending_count > 0):
-                ?>
+                if ($pending_count > 0) echo 'has-notifications';
+            ?>" onclick="openNotificationModal()" title="Notifications">
+                <i class="fas fa-bell"></i>
+                <?php if ($pending_count > 0): ?>
                 <span class="notification-badge"><?php echo $pending_count; ?></span>
                 <?php endif; ?>
             </button>
@@ -313,19 +313,29 @@
     transform: scale(1.05);
 }
 
+.notification-btn.has-notifications {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
 .notification-badge {
     position: absolute;
-    top: -5px;
-    right: -5px;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
     background: #dc3545;
     color: white;
     border-radius: 50%;
-    padding: 0.2rem 0.5rem;
-    font-size: 0.75rem;
+    width: 0.8rem;
+    height: 0.8rem;
+    font-size: 0.5rem;
     font-weight: bold;
-    min-width: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    border: 2px solid white;
+    border: 1px solid white;
 }
 
 /* Enhanced Notification Modal Styles */
@@ -912,6 +922,11 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.notification-badge').forEach(badge => {
             badge.style.display = 'none';
         });
+        // Reset the notification button to original state
+        const notificationBtn = document.querySelector('.notification-btn');
+        if (notificationBtn) {
+            notificationBtn.classList.remove('has-notifications');
+        }
     };
 
     window.toggleDetails = function(card) {

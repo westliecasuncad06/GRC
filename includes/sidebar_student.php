@@ -242,76 +242,10 @@
             <i class="fas fa-book"></i>
             <span>My Enrolled Classes</span>
         </a>
-        <a href="#" onclick="openNotificationModal(); return false;" class="nav-item <?php echo ($current_page == 'notifications.php') ? 'active' : ''; ?>">
-            <i class="fas fa-bell"></i>
-            <span>Notifications</span>
-            <?php
-            require_once '../php/db.php';
 
-            // Get enrollment request history
-            $stmt = $pdo->prepare("
-                SELECT
-                    er.request_id,
-                    er.status,
-                    er.requested_at,
-                    er.processed_at,
-                    c.class_name,
-                    s.subject_name,
-                    p.first_name as prof_first_name,
-                    p.last_name as prof_last_name,
-                    'enrollment' as request_type
-                FROM enrollment_requests er
-                JOIN classes c ON er.class_id = c.class_id
-                JOIN subjects s ON c.subject_id = s.subject_id
-                LEFT JOIN professors p ON er.processed_by = p.professor_id
-                WHERE er.student_id = ?
-                ORDER BY er.requested_at DESC
-            ");
-            $stmt->execute([$_SESSION['user_id']]);
-            $enrollment_requests = $stmt->fetchAll();
-
-            // Get unenrollment request history
-            $stmt = $pdo->prepare("
-                SELECT
-                    ur.request_id,
-                    ur.status,
-                    ur.requested_at,
-                    ur.processed_at,
-                    c.class_name,
-                    s.subject_name,
-                    p.first_name as prof_first_name,
-                    p.last_name as prof_last_name,
-                    'unenrollment' as request_type
-                FROM unenrollment_requests ur
-                JOIN classes c ON ur.class_id = c.class_id
-                JOIN subjects s ON c.subject_id = s.subject_id
-                LEFT JOIN professors p ON ur.processed_by = p.professor_id
-                WHERE ur.student_id = ?
-                ORDER BY ur.requested_at DESC
-            ");
-            $stmt->execute([$_SESSION['user_id']]);
-            $unenrollment_requests = $stmt->fetchAll();
-
-            // Combine and sort all requests
-            $all_requests = array_merge($enrollment_requests, $unenrollment_requests);
-            usort($all_requests, function($a, $b) {
-                return strtotime($b['requested_at']) - strtotime($a['requested_at']);
-            });
-
-            $pending_count = count(array_filter($all_requests, fn($r) => $r['status'] === 'pending'));
-
-            if ($pending_count > 0):
-            ?>
-            <span class="notification-badge"><?php echo $pending_count; ?></span>
-            <?php endif; ?>
-        </a>
         <a href="../Student/student_archive.php" class="nav-item <?php echo ($current_page == 'student_archive.php') ? 'active' : ''; ?>">
             <i class="fas fa-archive"></i>
             <span>Archive</span>
-        </a>
-        <a href="../Admin/settings.php" class="nav-item settings-mobile-hide <?php echo ($current_page == 'settings.php') ? 'active' : ''; ?>">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
         </a>
     </nav>
 </div>
