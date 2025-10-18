@@ -1,15 +1,20 @@
 <?php
-// Database connection configuration
+// Database connection settings
 $host = 'localhost';
-$dbname = 'grc_student_portal_for_attendance_monitoring';
-$username = 'root';
-$password = '';
+$db = 'GRC_STUDENT_PORTAL_FOR_ATTENDANCE_MONITORING';
+$user = 'root'; // Change as necessary
+$pass = ''; // Change as necessary
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    $pdo->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'");
 } catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+    // Log the error for debugging
+    error_log("Database connection failed: " . $e->getMessage());
+
+    // Don't output the error directly in production
+    // Instead, set $pdo to null so other scripts can handle the error gracefully
+    $pdo = null;
 }
 ?>
