@@ -304,9 +304,6 @@ if ($professor_id) {
     <span class="welcome-text">Welcome, <span class="full-name"><?php echo htmlspecialchars($prof_name); ?></span><span class="mobile-name"><?php echo htmlspecialchars($professor['first_name'] ?? $_SESSION['first_name'] ?? ''); ?></span></span>
         <button type="button" class="notification-btn" onclick="openNotificationModal()" title="Notifications" style="position: relative;">
             <i class="fas fa-bell" aria-hidden="true"></i>
-            <?php if ($pending_requests_count > 0): ?>
-                <span class="notification-badge"><?php echo $pending_requests_count; ?></span>
-            <?php endif; ?>
         </button>
         <div class="user-dropdown">
             <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
@@ -335,38 +332,9 @@ if ($professor_id) {
             <button class="modal-close" onclick="closeNotificationModal()">&times;</button>
         </div>
         <div class="modal-body">
-            <?php if (!empty($pending_unenrollment_requests)): ?>
             <h4 style="margin: 0 0 1rem 0; font-weight: 600; color: #343a40;">Pending Unenrollment Requests</h4>
-            <div class="notification-list">
-                <?php foreach ($pending_unenrollment_requests as $request): ?>
-                    <div class="notification-item" id="unenrollment-request-<?php echo $request['request_id']; ?>">
-                        <div class="notification-icon">
-                            <i class="fas fa-user-minus"></i>
-                        </div>
-                        <div class="notification-content">
-                            <div class="notification-title">Unenrollment Request</div>
-                            <div class="notification-message">
-                                <?php echo htmlspecialchars($request['first_name'] . ' ' . $request['last_name']); ?> has requested to unenroll from
-                                <strong><?php echo htmlspecialchars($request['subject_name']); ?></strong>
-                                (Class Code: <?php echo htmlspecialchars($request['class_code']); ?>).
-                            </div>
-                            <div class="notification-meta">
-                                <div class="notification-time">
-                                    <i class="fas fa-clock"></i>
-                                    <?php echo date('M j, Y, g:i a', strtotime($request['requested_at'])); ?>
-                                </div>
-                                <div class="notification-status status-unread">PENDING</div>
-                            </div>
-                            <div class="notification-actions" style="margin-top: 10px;">
-                                <button class="btn-enhanced btn-primary" onclick="showConfirmationModal('<?php echo $request['request_id']; ?>', 'accept', 'unenrollment')">Accept</button>
-                                <button class="btn-enhanced btn-secondary" onclick="showConfirmationModal('<?php echo $request['request_id']; ?>', 'reject', 'unenrollment')">Reject</button>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
+            <div class="notification-list" id="pendingUnenrollmentList"></div>
             <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid rgba(0,0,0,0.08);">
-            <?php endif; ?>
 
             <h4 style="margin: 0 0 1rem 0; font-weight: 600; color: #343a40;">All Notifications</h4>
             <div class="notification-list" id="notificationList"></div>
@@ -421,6 +389,8 @@ if ($professor_id) {
 <script>
     // Global function for notification modal close button
     let notificationsIntervalId = null;
+    let lastBadgeCount = null;
+    let lastPendingCount = null;
 
     function closeNotificationModal() {
         const modal = document.getElementById('notificationModal');
@@ -441,10 +411,14 @@ if ($professor_id) {
     function openNotificationModal() {
         const modal = document.getElementById('notificationModal');
         modal.classList.add('show');
-        loadNotifications();
+        refreshPendingUnenrollments();
+        loadNotifications(true);
         // auto-refresh while open
         if (notificationsIntervalId) clearInterval(notificationsIntervalId);
-        notificationsIntervalId = setInterval(loadNotifications, 10000);
+        notificationsIntervalId = setInterval(() => {
+            refreshPendingUnenrollments();
+            loadNotifications(true);
+        }, 2000);
     }
 
     // Close notification modal when clicking outside
@@ -594,12 +568,19 @@ if ($professor_id) {
     }
 
     // Load notifications from API
-    function loadNotifications() {
-        fetch('../php/get_notifications.php')
+    // Paging state
+    let notifOffset = 0;
+    const notifLimit = 4;
+
+    function loadNotifications(reset = false) {
+        if (reset) notifOffset = 0;
+        fetch(`../php/get_notifications.php?limit=${notifLimit}&offset=${notifOffset}`)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    displayNotifications(data.notifications);
+                    displayNotifications(data.notifications, reset);
+                    notifOffset += data.notifications.length;
+                    renderLoadMore(data.has_more);
                 } else {
                     console.error('Failed to load notifications:', data.message);
                     showNoNotifications();
@@ -612,16 +593,18 @@ if ($professor_id) {
     }
 
     // Display notifications in the modal
-    function displayNotifications(notifications) {
+    function displayNotifications(notifications, reset = false) {
         const notificationList = document.getElementById('notificationList');
         if (!notificationList) return;
 
+        if (reset) notificationList.innerHTML = '';
+
         if (!notifications || notifications.length === 0) {
-            showNoNotifications();
+            if (reset || notificationList.children.length === 0) {
+                showNoNotifications();
+            }
             return;
         }
-
-        notificationList.innerHTML = '';
 
         notifications.forEach(notification => {
             const notificationItem = document.createElement('div');
@@ -631,9 +614,11 @@ if ($professor_id) {
             const statusClass = isRead ? 'status-read' : 'status-unread';
             const statusText = isRead ? 'READ' : 'UNREAD';
 
+            const iconClass = getNotificationIcon(notification);
+
             notificationItem.innerHTML = `
                 <div class="notification-icon">
-                    <i class="fas fa-bell"></i>
+                    <i class="fas ${iconClass}"></i>
                 </div>
                 <div class="notification-content">
                     <div class="notification-title">${escapeHtml(notification.title)}</div>
@@ -652,6 +637,36 @@ if ($professor_id) {
 
             notificationList.appendChild(notificationItem);
         });
+    }
+
+    function renderLoadMore(hasMore) {
+        const existing = document.getElementById('loadMoreContainer');
+        const notificationList = document.getElementById('notificationList');
+        if (!notificationList) return;
+        if (existing) existing.remove();
+        if (!hasMore) return;
+        const container = document.createElement('div');
+        container.id = 'loadMoreContainer';
+        container.style.textAlign = 'center';
+        container.style.marginTop = '1rem';
+        const btn = document.createElement('button');
+        btn.className = 'btn-enhanced btn-secondary-enhanced';
+        btn.innerHTML = '<i class="fas fa-chevron-down"></i> Load More';
+        btn.onclick = () => loadNotifications(false);
+        container.appendChild(btn);
+        notificationList.parentNode.appendChild(container);
+    }
+
+    function getNotificationIcon(n) {
+        const t = (n.type || '').toLowerCase();
+        const title = (n.title || '').toLowerCase();
+        if (t === 'enrollment_approved' || title.includes('enrollment approved')) return 'fa-check-circle';
+        if (t === 'enrollment_rejected' || title.includes('enrollment rejected')) return 'fa-times-circle';
+        if (t === 'unenrollment_approved' || title.includes('unenrollment approved')) return 'fa-check-circle';
+        if (t === 'unenrollment_rejected' || title.includes('unenrollment rejected')) return 'fa-times-circle';
+        if (title.includes('new student enrollment')) return 'fa-user-plus';
+        if (title.includes('unenrollment request')) return 'fa-user-minus';
+        return 'fa-bell';
     }
 
     function showNoNotifications() {
@@ -706,27 +721,90 @@ if ($professor_id) {
                     const notificationBtn = document.querySelector('.notification-btn');
                     if (!notificationBtn) return;
                     let badge = notificationBtn.querySelector('.notification-badge');
+                    let pendingPill = notificationBtn.querySelector('.pending-pill');
 
-                    if (data.count > 0) {
-                        if (!badge) {
-                            badge = document.createElement('span');
-                            badge.className = 'notification-badge';
-                            notificationBtn.appendChild(badge);
+                    // Hide/remove the red numeric badge to avoid duplication with Pending pill
+                    if (badge) badge.remove();
+                    notificationBtn.classList.remove('has-notifications');
+
+                    // Track pending count changes to trigger immediate modal refresh if open
+                    const pendingCount = (data.pending || 0);
+                    // Render small "Pending N" pill for unenrollment requests (professor only)
+                    if (pendingCount > 0) {
+                        if (!pendingPill) {
+                            pendingPill = document.createElement('span');
+                            pendingPill.className = 'pending-pill';
+                            pendingPill.title = 'Pending unenrollment requests';
+                            notificationBtn.appendChild(pendingPill);
                         }
-                        badge.textContent = data.count;
-                        notificationBtn.classList.add('has-notifications');
-                    } else {
-                        if (badge) badge.remove();
-                        notificationBtn.classList.remove('has-notifications');
+                        pendingPill.textContent = `Pending ${pendingCount}`;
+                        pendingPill.style.display = 'inline-block';
+                    } else if (pendingPill) {
+                        pendingPill.style.display = 'none';
                     }
+
+                    // If modal is open and counts changed, refresh list immediately
+                    const modal = document.getElementById('notificationModal');
+                    const modalOpen = modal && modal.classList.contains('show');
+                    if (modalOpen && (lastBadgeCount !== data.count || lastPendingCount !== pendingCount)) {
+                        refreshPendingUnenrollments();
+                        loadNotifications(true);
+                    }
+                    lastBadgeCount = data.count;
+                    lastPendingCount = pendingCount;
                 }
             })
             .catch(error => console.error('Error updating notification badge:', error));
     }
 
+    // Render dynamic pending unenrollment requests
+    function refreshPendingUnenrollments() {
+        fetch('../php/get_pending_unenrollment_requests.php')
+            .then(r => r.json())
+            .then(data => {
+                const container = document.getElementById('pendingUnenrollmentList');
+                if (!container) return;
+                container.innerHTML = '';
+                if (!data.success || !Array.isArray(data.requests) || data.requests.length === 0) return;
+                data.requests.forEach(req => {
+                    const div = document.createElement('div');
+                    div.className = 'notification-item';
+                    div.id = `unenrollment-request-${req.request_id}`;
+                    const time = new Date(req.requested_at);
+                    const timeStr = time.toLocaleDateString() + ' ' + time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    div.innerHTML = `
+                        <div class="notification-icon">
+                            <i class="fas fa-user-minus"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">Unenrollment Request</div>
+                            <div class="notification-message">
+                                ${escapeHtml(req.first_name + ' ' + req.last_name)} has requested to unenroll from
+                                <strong>${escapeHtml(req.subject_name)}</strong>
+                                (Class Code: ${escapeHtml(req.class_code)}).
+                            </div>
+                            <div class="notification-meta">
+                                <div class="notification-time">
+                                    <i class="fas fa-clock"></i>
+                                    ${timeStr}
+                                </div>
+                                <div class="notification-status status-unread">PENDING</div>
+                            </div>
+                            <div class="notification-actions" style="margin-top: 10px;">
+                                <button class="btn-enhanced btn-primary" onclick="showConfirmationModal('${req.request_id}', 'accept', 'unenrollment')">Accept</button>
+                                <button class="btn-enhanced btn-secondary" onclick="showConfirmationModal('${req.request_id}', 'reject', 'unenrollment')">Reject</button>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            })
+            .catch(() => {});
+    }
+
     // Initialize badge on page load and set polling for real-time updates
     updateNotificationBadge();
-    setInterval(updateNotificationBadge, 10000); // every 10s
+    setInterval(updateNotificationBadge, 5000); // every 5s
 
     // Utils
     function escapeHtml(text) {
@@ -757,6 +835,21 @@ if ($professor_id) {
     justify-content: center;
     text-align: center;
     border: 1px solid white;
+}
+
+/* Pending pill removed: we now rely solely on the unread badge */
+/* Pending pill styling */
+.pending-pill {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #ff9800;
+    color: #fff;
+    border-radius: 10px;
+    padding: 2px 6px;
+    font-size: 10px;
+    line-height: 1;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 .notification-actions {
     margin-top: 10px;

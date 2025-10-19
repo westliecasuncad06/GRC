@@ -61,9 +61,16 @@ try {
 
         $message = 'Enrollment request approved successfully';
 
+        // Fetch class and subject details
+        $stmt = $pdo->prepare("SELECT s.subject_name, c.class_code FROM classes c JOIN subjects s ON c.subject_id = s.subject_id WHERE c.class_id = ?");
+        $stmt->execute([$class_id]);
+        $class = $stmt->fetch();
+        $subject_name = $class['subject_name'] ?? 'Subject';
+        $class_code = $class['class_code'] ?? '';
+
         // Create notification for student
         $notification_title = 'Enrollment Request Approved';
-        $notification_message = "Your enrollment request has been approved by Professor $professor_name on " . date('M j, Y') . ". You are now enrolled in the class.";
+        $notification_message = "Your enrollment request for {$subject_name} ({$class_code}) has been approved by Professor $professor_name on " . date('M j, Y, g:i a') . ". You are now enrolled in the class.";
         $notification_type = 'enrollment_approved';
 
         $notification_created = $notificationManager->createNotification(
@@ -79,12 +86,36 @@ try {
             error_log("Failed to create enrollment approved notification for student_id: $student_id, request_id: $request_id");
         }
 
+        // Get student name for professor history notification
+        $stmt = $pdo->prepare("SELECT first_name, last_name FROM students WHERE student_id = ?");
+        $stmt->execute([$student_id]);
+        $student_row = $stmt->fetch();
+        $student_name_full = $student_row ? $student_row['first_name'] . ' ' . $student_row['last_name'] : 'Student';
+
+        // Create notification for professor (history)
+        $notificationManager->createNotification(
+            $professor_id,
+            'professor',
+            'Enrollment Approved',
+            "You approved {$student_name_full}'s enrollment to {$subject_name} ({$class_code}) on " . date('M j, Y, g:i a'),
+            'info',
+            $request_id,
+            $class_id
+        );
+
     } else {
         $message = 'Enrollment request rejected';
 
+        // Fetch class and subject details
+        $stmt = $pdo->prepare("SELECT s.subject_name, c.class_code FROM classes c JOIN subjects s ON c.subject_id = s.subject_id WHERE c.class_id = ?");
+        $stmt->execute([$class_id]);
+        $class = $stmt->fetch();
+        $subject_name = $class['subject_name'] ?? 'Subject';
+        $class_code = $class['class_code'] ?? '';
+
         // Create notification for student
         $notification_title = 'Enrollment Request Rejected';
-        $notification_message = "Your enrollment request has been rejected by Professor $professor_name on " . date('M j, Y') . ".";
+        $notification_message = "Your enrollment request for {$subject_name} ({$class_code}) has been rejected by Professor $professor_name on " . date('M j, Y, g:i a') . ".";
         $notification_type = 'enrollment_rejected';
 
         $notificationManager->createNotification(
@@ -93,6 +124,23 @@ try {
             $notification_title,
             $notification_message,
             $notification_type,
+            $request_id,
+            $class_id
+        );
+
+        // Get student name
+        $stmt = $pdo->prepare("SELECT first_name, last_name FROM students WHERE student_id = ?");
+        $stmt->execute([$student_id]);
+        $student_row = $stmt->fetch();
+        $student_name_full = $student_row ? $student_row['first_name'] . ' ' . $student_row['last_name'] : 'Student';
+
+        // Create notification for professor (history)
+        $notificationManager->createNotification(
+            $professor_id,
+            'professor',
+            'Enrollment Rejected',
+            "You rejected {$student_name_full}'s enrollment to {$subject_name} ({$class_code}) on " . date('M j, Y, g:i a'),
+            'info',
             $request_id,
             $class_id
         );

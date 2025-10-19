@@ -1151,6 +1151,50 @@ $unenrollment_requests = $stmt->fetchAll();
             }
         }
 
+        // --- Auto-refresh Pending Approval buttons every 10 seconds ---
+        function refreshPendingButtons() {
+            fetch('../php/get_student_pending_unenrollments.php')
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) return;
+                    const pendingSet = new Set((data.pending_class_ids || []).map(String));
+                    // Desktop table buttons
+                    document.querySelectorAll('.action-cell .btn').forEach(btn => {
+                        const onclick = btn.getAttribute('onclick') || '';
+                        const match = onclick.match(/unenrollFromClass\('([^']+)'\)/);
+                        if (!match) return;
+                        const classId = match[1];
+                        if (pendingSet.has(String(classId))) {
+                            btn.textContent = 'Pending Approval';
+                            btn.classList.remove('btn-danger');
+                            btn.classList.add('btn-warning', 'btn-disabled');
+                            btn.disabled = true;
+                            btn.onclick = null;
+                        } else {
+                            btn.innerHTML = '<i class="fas fa-times"></i> Unenroll';
+                            btn.classList.remove('btn-warning', 'btn-disabled');
+                            btn.classList.add('btn-danger');
+                            btn.disabled = false;
+                            btn.setAttribute('onclick', onclick);
+                        }
+                    });
+
+                    // Update mobile modal action button state if open
+                    const mobile = document.getElementById('mobileDetailsModal');
+                    if (mobile && mobile.classList.contains('show')) {
+                        const btn = document.getElementById('modalActionBtn');
+                        // We don't know classId in scope; rely on disabled state if already set by openMobileDetailsModal
+                        // Optionally could store current modal classId in a variable to update accurately
+                    }
+                })
+                .catch(() => {});
+        }
+
+    // Start polling every 3 seconds
+    setInterval(refreshPendingButtons, 3000);
+        // Initial refresh shortly after page load
+        setTimeout(refreshPendingButtons, 2000);
+
         window.toggleDetails = function(row) {
             const detailsRow = row.nextElementSibling;
             const isExpanded = detailsRow.style.display !== 'none';

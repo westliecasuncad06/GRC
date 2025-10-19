@@ -14,8 +14,8 @@ class NotificationManager {
     public function createNotification($user_id, $user_type, $title, $message, $type, $related_request_id = null, $related_class_id = null) {
         try {
             $stmt = $this->pdo->prepare("
-                INSERT INTO notifications (user_id, user_type, title, message, type, related_request_id, related_class_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO notifications (user_id, user_type, title, message, type, related_request_id, related_class_id, is_read)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 0)
             ");
             $result = $stmt->execute([$user_id, $user_type, $title, $message, $type, $related_request_id, $related_class_id]);
             if (!$result) {
@@ -23,7 +23,9 @@ class NotificationManager {
                 error_log("Error creating notification: " . implode(", ", $errorInfo));
                 return false;
             }
-            return $this->pdo->lastInsertId();
+            $nid = $this->pdo->lastInsertId();
+            error_log("DEBUG: Notification created - ID: $nid, user_id: $user_id, user_type: $user_type, type: $type, is_read: 0");
+            return $nid;
         } catch (PDOException $e) {
             error_log("Exception creating notification: " . $e->getMessage());
             return false;

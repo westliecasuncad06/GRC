@@ -666,10 +666,10 @@ document.addEventListener('DOMContentLoaded', function() {
     window.openNotificationModal = function() {
         const modal = document.getElementById('notificationModal');
         modal.classList.add('show');
-        loadNotifications();
+        loadNotifications(true);
         // auto-refresh while open
         if (notificationsIntervalId) clearInterval(notificationsIntervalId);
-        notificationsIntervalId = setInterval(loadNotifications, 10000);
+        notificationsIntervalId = setInterval(() => loadNotifications(true), 10000);
     };
 
     window.closeNotificationModal = function() {
@@ -691,13 +691,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+    // Paging state
+    let notifOffset = 0;
+    const notifLimit = 4;
+
     // Load notifications from API
-    function loadNotifications() {
-        fetch('../php/get_notifications.php')
+    function loadNotifications(reset = false) {
+        if (reset) notifOffset = 0;
+        fetch(`../php/get_notifications.php?limit=${notifLimit}&offset=${notifOffset}`)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    displayNotifications(data.notifications);
+                    displayNotifications(data.notifications, reset);
+                    notifOffset += data.notifications.length;
+                    renderLoadMore(data.has_more);
                 } else {
                     console.error('Failed to load notifications:', data.message);
                     showNoNotifications();
@@ -710,15 +717,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Display notifications in the modal
-    function displayNotifications(notifications) {
+    function displayNotifications(notifications, reset = false) {
         const notificationList = document.getElementById('notificationList');
 
+        if (reset) notificationList.innerHTML = '';
+
         if (!notifications || notifications.length === 0) {
-            showNoNotifications();
+            if (reset || notificationList.children.length === 0) {
+                showNoNotifications();
+            }
             return;
         }
-
-        notificationList.innerHTML = '';
 
         notifications.forEach(notification => {
             const notificationItem = document.createElement('div');
@@ -729,9 +738,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const statusClass = isRead ? 'status-read' : 'status-unread';
             const statusText = isRead ? 'READ' : 'UNREAD';
 
+            const iconClass = getNotificationIcon(notification);
+
             notificationItem.innerHTML = `
                 <div class="notification-icon">
-                    <i class="fas fa-bell"></i>
+                    <i class="fas ${iconClass}"></i>
                 </div>
                 <div class="notification-content">
                     <div class="notification-title">${escapeHtml(notification.title)}</div>
@@ -748,6 +759,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
             notificationList.appendChild(notificationItem);
         });
+    }
+
+    function renderLoadMore(hasMore) {
+        const existing = document.getElementById('loadMoreContainer');
+        const notificationList = document.getElementById('notificationList');
+        if (existing) existing.remove();
+        if (!hasMore) return;
+        const container = document.createElement('div');
+        container.id = 'loadMoreContainer';
+        container.style.textAlign = 'center';
+        container.style.marginTop = '1rem';
+        const btn = document.createElement('button');
+        btn.className = 'btn-enhanced btn-secondary-enhanced';
+        btn.innerHTML = '<i class="fas fa-chevron-down"></i> Load More';
+        btn.onclick = () => loadNotifications(false);
+        container.appendChild(btn);
+        // Append after list
+        notificationList.parentNode.appendChild(container);
+    }
+
+    function getNotificationIcon(n) {
+        const t = (n.type || '').toLowerCase();
+        const title = (n.title || '').toLowerCase();
+        if (t === 'enrollment_approved' || title.includes('enrollment request approved')) return 'fa-check-circle';
+        if (t === 'enrollment_rejected' || title.includes('enrollment request rejected')) return 'fa-times-circle';
+        if (t === 'unenrollment_approved' || title.includes('unenrollment request approved')) return 'fa-check-circle';
+        if (t === 'unenrollment_rejected' || title.includes('unenrollment request rejected')) return 'fa-times-circle';
+        if (t === 'success' || title.includes('enrollment successful')) return 'fa-user-plus';
+        if (title.includes('unenrollment request')) return 'fa-user-minus';
+        return 'fa-bell';
     }
 
     // Show no notifications message
