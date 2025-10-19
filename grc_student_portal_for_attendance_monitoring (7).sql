@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 18, 2025 at 02:05 AM
+-- Generation Time: Oct 19, 2025 at 10:55 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -151,6 +151,7 @@ INSERT INTO `classes` (`class_id`, `class_name`, `class_code`, `subject_id`, `pr
 ('CLASS1759971443', '2 Class', 'WJR7ZESJ', 'SUB1759971443', 'PROF001', '2', '2', '2025-10-09 08:57:23', '2025-10-09 08:57:23', NULL, 3, 'active', 4),
 ('CLASS1760512359', 'lknsdf;glnk Class', '16P84Y8J', 'SUB1760512359', 'PROF001', ';\'lkdnfg;lkn', '\';lkdnfg;\'lkn', '2025-10-15 15:12:39', '2025-10-15 15:12:39', NULL, NULL, 'active', 3),
 ('CLASS1760514979', '4 Class', '68RS6M1R', 'SUB1760514979', 'PROF001', '4', '4', '2025-10-15 15:56:19', '2025-10-18 00:39:06', NULL, NULL, 'active', 1),
+('CLASS1760862437', 'wewewe Class', 'P1R86CBL', 'SUB1760862437', 'PROF001', 'wed', '21', '2025-10-19 16:27:17', '2025-10-19 16:27:17', NULL, NULL, 'active', 4),
 ('CLASSTEST1', 'Test Subject Class', 'BSBJK30I', 'SUBTEST1', 'PROF001', 'MWF 9:00-10:00', 'Room 101', '2025-08-30 15:40:29', '2025-09-02 06:24:37', '306', 3, 'active', 4);
 
 -- --------------------------------------------------------
@@ -268,54 +269,6 @@ CREATE TABLE `enrollment_requests` (
   `processed_by` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `enrollment_requests`
---
-
-INSERT INTO `enrollment_requests` (`request_id`, `student_id`, `class_id`, `status`, `requested_at`, `handled_at`, `handled_by`, `processed_at`, `processed_by`) VALUES
-(1, 'STU001', 'CLASS1758315545', 'accepted', '2025-09-20 04:59:25', NULL, NULL, NULL, NULL),
-(2, 'STU001', 'CLASS1758316330', 'pending', '2025-09-20 05:12:16', NULL, NULL, NULL, NULL),
-(3, 'STU001', 'CLASS1758316848', 'accepted', '2025-09-20 05:48:48', NULL, NULL, NULL, NULL),
-(4, 'STU001', 'CLASS1758322968', 'accepted', '2025-09-20 07:02:57', NULL, NULL, NULL, NULL),
-(5, 'STU001', 'CLASS1758323183', 'accepted', '2025-09-20 07:06:34', NULL, NULL, NULL, NULL),
-(6, 'STU001', 'CLASS1758324051', 'pending', '2025-09-20 07:21:04', NULL, NULL, NULL, NULL),
-(7, 'STU001', 'CLASS1758324104', 'pending', '2025-09-20 07:22:02', NULL, NULL, NULL, NULL),
-(8, 'STU001', 'CLASS1758324306', 'accepted', '2025-09-20 07:25:12', NULL, NULL, '2025-09-20 07:25:18', 'PROF001'),
-(9, 'STU001', 'CLASS1758325422', 'accepted', '2025-09-20 07:45:55', NULL, NULL, '2025-09-20 07:46:02', 'PROF001'),
-(15, 'STU001', 'CLASS1758326678', 'accepted', '2025-09-20 08:04:45', NULL, NULL, '2025-09-20 08:04:52', 'PROF001'),
-(16, 'STU001', 'CLASS1758327155', 'accepted', '2025-09-20 08:12:45', NULL, NULL, '2025-09-20 08:12:52', 'PROF001'),
-(17, 'STU001', 'CLASS1758327842', 'accepted', '2025-09-20 08:24:15', NULL, NULL, '2025-09-20 08:24:24', 'PROF001'),
-(22, 'STU001', 'CLASS1758327989', 'accepted', '2025-09-20 08:26:39', NULL, NULL, '2025-09-20 08:26:46', 'PROF001'),
-(23, 'STU001', 'CLASS1758336375', 'accepted', '2025-09-20 10:46:29', NULL, NULL, '2025-09-20 10:46:38', 'PROF001'),
-(25, 'STU001', 'CLASS1758337263', 'accepted', '2025-09-20 11:01:11', NULL, NULL, '2025-09-20 11:01:19', 'PROF001'),
-(26, 'STU001', 'CLASS1758337356', 'rejected', '2025-09-20 11:02:48', NULL, NULL, '2025-09-20 11:05:22', 'PROF001'),
-(28, 'STU001', 'CLASS1758337557', 'accepted', '2025-09-20 11:06:09', NULL, NULL, '2025-09-20 11:06:18', 'PROF001'),
-(30, 'STU001', 'CLASS1758362678', 'pending', '2025-09-20 18:04:47', NULL, NULL, NULL, NULL),
-(31, 'STU001', 'CLASS1758364037', 'accepted', '2025-09-20 18:27:26', NULL, NULL, '2025-09-20 18:27:32', 'PROF001'),
-(32, 'STU001', 'CLASS1758379061', 'accepted', '2025-09-20 22:37:52', NULL, NULL, '2025-09-20 22:38:23', 'PROF001'),
-(33, 'STU001', 'CLASS1758431306', 'accepted', '2025-09-21 13:08:35', NULL, NULL, '2025-09-21 13:14:14', 'PROF001'),
-(34, 'STU001', 'CLASS1758439340', 'accepted', '2025-09-21 15:22:30', NULL, NULL, '2025-09-21 15:22:39', 'PROF001'),
-(36, 'STU001', 'CLASS1758439515', 'accepted', '2025-09-21 15:25:21', NULL, NULL, '2025-09-21 15:25:28', 'PROF001'),
-(37, 'STU001', 'CLASS1758440607', 'accepted', '2025-09-21 15:44:32', NULL, NULL, '2025-09-21 15:44:46', 'PROF001'),
-(38, 'STU001', 'CLASS1758955783', 'rejected', '2025-09-27 14:50:02', NULL, NULL, '2025-09-27 14:50:23', 'PROF001'),
-(40, 'STU001', 'CLASS1759024920', 'rejected', '2025-09-28 10:02:26', NULL, NULL, '2025-09-28 10:03:26', 'PROF001'),
-(43, 'STU001', 'CLASS1759033268', 'pending', '2025-09-28 12:21:28', NULL, NULL, NULL, NULL),
-(44, 'STU001', 'CLASS1759034012', 'pending', '2025-09-28 12:33:48', NULL, NULL, NULL, NULL),
-(45, 'STU001', 'CLASS1759034585', 'accepted', '2025-09-28 12:43:22', NULL, NULL, '2025-09-28 13:22:33', 'PROF001'),
-(46, 'STU001', 'CLASS1759042465', 'accepted', '2025-09-28 14:54:37', NULL, NULL, '2025-09-28 14:54:59', 'PROF001'),
-(47, 'STU001', 'CLASS1759528083', 'pending', '2025-10-04 05:48:17', NULL, NULL, NULL, NULL),
-(48, 'STU001', 'CLASS1759530017', 'accepted', '2025-10-04 06:20:39', NULL, NULL, '2025-10-04 06:44:47', 'PROF001'),
-(50, 'STU001', 'CLASS1759532102', 'accepted', '2025-10-04 06:55:12', NULL, NULL, '2025-10-04 06:55:51', 'PROF001'),
-(51, 'STU001', 'CLASS1759549022', 'accepted', '2025-10-04 11:38:27', NULL, NULL, '2025-10-04 11:38:54', 'PROF001'),
-(52, 'STU001', 'CLASS1759963777', 'accepted', '2025-10-09 06:49:47', NULL, NULL, '2025-10-09 06:49:56', 'PROF001'),
-(53, 'STU001', 'CLASS1759965189', 'accepted', '2025-10-09 07:25:46', NULL, NULL, '2025-10-09 07:25:50', 'PROF001'),
-(56, 'STU001', 'CLASS1759966442', 'accepted', '2025-10-09 07:35:26', NULL, NULL, '2025-10-09 07:35:36', 'PROF001'),
-(57, 'STU001', 'CLASS1759966660', 'accepted', '2025-10-09 07:37:45', NULL, NULL, '2025-10-09 07:37:49', 'PROF001'),
-(58, 'STU001', 'CLASS1759966921', 'accepted', '2025-10-09 07:42:08', NULL, NULL, '2025-10-09 07:42:17', 'PROF001'),
-(59, 'STU001', 'CLASS1759967600', 'accepted', '2025-10-09 08:34:58', NULL, NULL, '2025-10-09 08:35:05', 'PROF001'),
-(60, 'STU001', 'CLASS1759971443', 'accepted', '2025-10-13 10:43:46', NULL, NULL, '2025-10-15 12:54:33', 'PROF001'),
-(61, 'STU001', 'CLASS1760514979', 'pending', '2025-10-18 07:42:38', NULL, NULL, NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -340,37 +293,16 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`notification_id`, `user_id`, `user_type`, `title`, `message`, `type`, `is_read`, `created_at`, `related_request_id`, `related_class_id`) VALUES
-(1, '12345', 'student', 'Test Notification', 'This is a test notification to verify the system works.', 'info', 0, '2025-09-28 10:44:42', NULL, NULL),
-(2, '12345', 'student', 'Test Notification', 'This is a test notification to verify the system works.', 'info', 0, '2025-09-28 10:45:02', NULL, NULL),
-(3, '12345', 'student', 'Test Notification', 'This is a test notification to verify the system works.', 'info', 0, '2025-09-28 10:45:28', NULL, NULL),
-(4, '12345', 'student', 'Test Notification', 'This is a test notification to verify the system works.', 'info', 0, '2025-09-28 10:45:50', NULL, NULL),
-(5, '12345', 'student', 'Test Notification', 'This is a test notification to verify the system works.', 'info', 0, '2025-09-28 10:46:11', NULL, NULL),
-(6, '12345', 'student', 'Test Notification', 'This is a test notification to verify the system works.', 'info', 0, '2025-09-28 10:46:26', NULL, NULL),
-(7, '12345', 'student', 'Test Notification', 'This is a test notification to verify the system works.', 'info', 0, '2025-09-28 10:46:39', NULL, NULL),
-(8, '12345', 'student', 'Test Notification', 'This is a test notification to verify the system works.', 'info', 0, '2025-09-28 10:46:52', NULL, NULL),
-(15, 'STU001', 'student', 'Unenrollment Request Approved', 'Your unenrollment request has been approved by Professor Danhil Baluyot on Oct 4, 2025. You have been unenrolled from the class.', 'unenrollment_approved', 0, '2025-10-04 11:38:57', 25, 'CLASS001'),
-(16, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 9, 2025.', 'unenrollment_rejected', 0, '2025-10-09 06:41:09', 26, 'CLASS1759549022'),
-(17, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 9, 2025.', 'unenrollment_rejected', 0, '2025-10-09 06:46:20', 28, 'CLASS1756494311'),
-(20, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 9, 2025.', 'unenrollment_rejected', 0, '2025-10-09 07:02:39', 30, 'CLASS1759963777'),
-(21, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 9, 2025.', 'unenrollment_rejected', 0, '2025-10-09 07:02:50', 31, 'CLASS1759963777'),
-(22, 'STU001', 'student', 'Unenrollment Request Approved', 'Your unenrollment request has been approved by Professor Danhil Baluyot on Oct 9, 2025. You have been unenrolled from the class.', 'unenrollment_approved', 0, '2025-10-09 07:03:05', 32, 'CLASS1759963777'),
-(26, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 9, 2025.', 'unenrollment_rejected', 0, '2025-10-09 07:29:33', 33, 'CLASS1759965189'),
-(27, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 9, 2025.', 'unenrollment_rejected', 0, '2025-10-09 07:30:01', 34, 'CLASS1759965189'),
-(31, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 9, 2025.', 'unenrollment_rejected', 0, '2025-10-09 07:36:17', 36, 'CLASS1759966442'),
-(32, 'STU001', 'student', 'Unenrollment Request Approved', 'Your unenrollment request has been approved by Professor Danhil Baluyot on Oct 9, 2025. You have been unenrolled from the class.', 'unenrollment_approved', 0, '2025-10-09 07:36:35', 37, 'CLASS1759966442'),
-(34, 'STU001', 'student', 'Unenrollment Request Approved', 'Your unenrollment request has been approved by Professor Danhil Baluyot on Oct 9, 2025. You have been unenrolled from the class.', 'unenrollment_approved', 0, '2025-10-09 07:38:03', 38, 'CLASS1759966660'),
-(38, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 9, 2025.', 'unenrollment_rejected', 0, '2025-10-09 07:56:34', 40, 'CLASS1759967600'),
-(48, 'STU001', 'student', 'Unenrollment Request Submitted', 'Your unenrollment request has been submitted and is pending professor approval.', '', 0, '2025-10-09 08:46:08', 43, 'CLASS1759967600'),
-(49, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 9, 2025.', 'unenrollment_rejected', 0, '2025-10-09 08:46:23', 43, 'CLASS1759967600'),
-(52, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 9, 2025.', 'unenrollment_rejected', 0, '2025-10-09 08:58:13', 44, 'CLASS1759971443'),
-(53, 'STU001', 'student', 'Unenrollment Request Approved', 'Your unenrollment request has been approved by Professor Danhil Baluyot on Oct 9, 2025. You have been unenrolled from the class.', 'unenrollment_approved', 0, '2025-10-09 08:58:35', 45, 'CLASS1759971443'),
-(58, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 13, 2025.', 'unenrollment_rejected', 0, '2025-10-13 10:43:08', 46, 'CLASS1759971443'),
-(59, 'STU001', 'student', 'Unenrollment Request Approved', 'Your unenrollment request has been approved by Professor Danhil Baluyot on Oct 13, 2025. You have been unenrolled from the class.', 'unenrollment_approved', 0, '2025-10-13 10:43:25', 47, 'CLASS1759971443'),
-(61, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 15, 2025.', 'unenrollment_rejected', 0, '2025-10-15 12:57:22', 48, 'CLASS1759971443'),
-(70, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 15, 2025.', 'unenrollment_rejected', 0, '2025-10-15 16:10:11', 50, 'CLASS1760514979'),
-(71, 'STU001', 'student', 'Unenrollment Request Approved', 'Your unenrollment request has been approved by Professor Danhil Baluyot on Oct 15, 2025. You have been unenrolled from the class.', 'unenrollment_approved', 0, '2025-10-15 16:10:22', 51, 'CLASS1760514979'),
-(73, 'STU001', 'student', 'Unenrollment Request Rejected', 'Your unenrollment request has been rejected by Professor Danhil Baluyot on Oct 17, 2025.', 'unenrollment_rejected', 0, '2025-10-18 05:34:09', 52, 'CLASS1760514979'),
-(74, 'STU001', 'student', 'Unenrollment Request Approved', 'Your unenrollment request has been approved by Professor Danhil Baluyot on Oct 17, 2025. You have been unenrolled from the class.', 'unenrollment_approved', 0, '2025-10-18 05:34:27', 53, 'CLASS1760514979');
+(96, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in 4 (68RS6M1R).', '', 1, '2025-10-19 11:18:26', NULL, 'CLASS1760514979'),
+(97, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in 4 (68RS6M1R).\nDate: October 19, 2025, 11:18 AM', '', 0, '2025-10-19 11:18:26', NULL, 'CLASS1760514979'),
+(100, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in 4 (68RS6M1R).', '', 1, '2025-10-19 11:25:37', NULL, 'CLASS1760514979'),
+(101, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in 4 (68RS6M1R).\nDate: October 19, 2025, 11:25 AM', '', 0, '2025-10-19 11:25:37', NULL, 'CLASS1760514979'),
+(103, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in 4 (68RS6M1R).', '', 1, '2025-10-19 12:22:17', NULL, 'CLASS1760514979'),
+(104, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in 4 (68RS6M1R).\nDate: October 19, 2025, 12:22 PM', '', 0, '2025-10-19 12:22:17', NULL, 'CLASS1760514979'),
+(106, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in 4 (68RS6M1R).', '', 1, '2025-10-19 12:27:52', NULL, 'CLASS1760514979'),
+(107, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in 4 (68RS6M1R).\nDate: October 19, 2025, 12:27 PM', '', 0, '2025-10-19 12:27:52', NULL, 'CLASS1760514979'),
+(109, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in wewewe (P1R86CBL).', '', 1, '2025-10-19 16:27:26', NULL, 'CLASS1760862437'),
+(110, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in wewewe (P1R86CBL).\nDate: Oct 19, 2025, 10:27 am', '', 0, '2025-10-19 16:27:26', NULL, 'CLASS1760862437');
 
 -- --------------------------------------------------------
 
@@ -580,9 +512,10 @@ INSERT INTO `student_classes` (`enrollment_id`, `student_id`, `class_id`, `enrol
 (11, 'STU001', 'CLASS1756441963', '2025-08-29 12:33:12'),
 (13, 'STU001', 'CLASS1756542883', '2025-08-30 16:35:48'),
 (35, 'STU001', 'CLASS1756494311', '2025-08-31 00:40:34'),
-(36, 'STU001', 'CLASS005', '2025-09-02 06:41:39'),
 (37, 'STU001', 'CLASS1756767458', '2025-09-02 06:57:51'),
-(38, 'STU002', 'CLASS1756767458', '2025-09-02 06:58:34');
+(38, 'STU002', 'CLASS1756767458', '2025-09-02 06:58:34'),
+(102, 'STU001', 'CLASS1760514979', '2025-10-19 12:27:52'),
+(103, 'STU001', 'CLASS1760862437', '2025-10-19 16:27:26');
 
 -- --------------------------------------------------------
 
@@ -626,6 +559,7 @@ INSERT INTO `subjects` (`subject_id`, `subject_name`, `subject_code`, `descripti
 ('SUB1760510658', '3', '3', NULL, 3, 3, '2025-10-15 14:44:18', '2025-10-15 14:44:18', NULL),
 ('SUB1760512359', 'lknsdf;glnk', 'sd;fknjs;lk', NULL, 3, 1, '2025-10-15 15:12:39', '2025-10-15 15:12:39', NULL),
 ('SUB1760514979', '4', '4', NULL, 3, 3, '2025-10-15 15:56:19', '2025-10-18 00:39:06', NULL),
+('SUB1760862437', 'wewewe', '324234', NULL, 3, 3, '2025-10-19 16:27:17', '2025-10-19 16:27:17', NULL),
 ('SUBARCH1', 'Archived Subject 2024-2025', 'ARCH2024', NULL, 3, 1, '2025-09-20 08:21:50', '2025-09-20 08:21:50', NULL),
 ('SUBARCH2', 'Archived Subject 2023-2024', 'ARCH2023', NULL, 3, 3, '2025-09-20 08:21:54', '2025-09-20 08:21:54', NULL),
 ('SUBTEST1', 'Test Subject', 'TS101', NULL, 3, 3, '2025-08-30 15:35:29', '2025-09-02 06:24:37', NULL);
@@ -673,50 +607,12 @@ CREATE TABLE `unenrollment_requests` (
 --
 
 INSERT INTO `unenrollment_requests` (`request_id`, `student_id`, `class_id`, `status`, `requested_at`, `handled_at`, `handled_by`, `processed_at`, `processed_by`) VALUES
-(5, 'STU001', 'CLASS1758325422', 'pending', '2025-09-20 07:46:22', NULL, NULL, '2025-09-20 07:46:32', 'PROF001'),
-(6, 'STU001', 'CLASS1758326678', 'rejected', '2025-09-20 08:05:05', NULL, NULL, '2025-09-20 08:05:14', 'PROF001'),
-(10, 'STU001', 'CLASS1758327155', 'rejected', '2025-09-20 08:13:11', NULL, NULL, '2025-09-20 08:13:18', 'PROF001'),
-(11, 'STU001', 'CLASS1758327842', 'pending', '2025-09-20 08:24:30', NULL, NULL, '2025-09-20 08:24:37', 'PROF001'),
-(12, 'STU001', 'CLASS1756767458', 'rejected', '2025-09-20 08:24:47', NULL, NULL, '2025-09-20 08:25:03', 'PROF001'),
-(13, 'STU001', 'CLASS1758336375', 'pending', '2025-09-20 10:49:03', NULL, NULL, '2025-09-20 10:52:16', 'PROF001'),
-(14, 'STU001', 'CLASS1758337263', 'rejected', '2025-09-20 11:01:30', NULL, NULL, '2025-09-20 11:01:40', 'PROF001'),
-(16, 'STU001', 'CLASS1758337557', 'pending', '2025-09-20 11:06:26', NULL, NULL, '2025-09-20 11:06:48', 'PROF001'),
-(17, 'STU001', 'CLASS1758431306', 'pending', '2025-09-21 13:28:29', NULL, NULL, '2025-09-21 13:28:42', 'PROF001'),
-(18, 'STU001', 'CLASS1758439340', 'pending', '2025-09-21 15:22:48', NULL, NULL, '2025-09-21 15:24:29', 'PROF001'),
-(19, 'STU001', 'CLASS1758439515', 'rejected', '2025-09-21 15:26:13', NULL, NULL, '2025-09-21 15:40:43', 'PROF001'),
-(21, 'STU001', 'CLASS1758440607', 'pending', '2025-09-21 15:45:16', NULL, NULL, '2025-09-21 15:47:05', 'PROF001'),
-(22, 'STU001', 'CLASS1756542883', 'rejected', '2025-09-21 15:50:49', NULL, NULL, '2025-09-21 15:51:32', 'PROF001'),
-(23, 'STU001', 'CLASS1756441963', 'rejected', '2025-09-21 15:51:14', NULL, NULL, '2025-09-21 15:51:30', 'PROF001'),
-(24, 'STU001', 'CLASS1759530017', 'pending', '2025-10-04 06:46:48', NULL, NULL, '2025-10-04 06:47:04', 'PROF001'),
-(25, 'STU001', 'CLASS001', 'accepted', '2025-10-04 11:34:08', NULL, NULL, '2025-10-04 11:38:57', 'PROF001'),
-(26, 'STU001', 'CLASS1759549022', 'rejected', '2025-10-09 06:40:52', NULL, NULL, '2025-10-09 06:41:09', 'PROF001'),
-(28, 'STU001', 'CLASS1756494311', 'rejected', '2025-10-09 06:46:14', NULL, NULL, '2025-10-09 06:46:20', 'PROF001'),
-(29, 'STU001', 'CLASS1759963777', 'rejected', '2025-10-09 06:50:24', NULL, NULL, '2025-10-09 06:50:31', 'PROF001'),
-(30, 'STU001', 'CLASS1759963777', 'rejected', '2025-10-09 07:02:35', NULL, NULL, '2025-10-09 07:02:39', 'PROF001'),
-(31, 'STU001', 'CLASS1759963777', 'rejected', '2025-10-09 07:02:45', NULL, NULL, '2025-10-09 07:02:50', 'PROF001'),
-(32, 'STU001', 'CLASS1759963777', 'accepted', '2025-10-09 07:02:57', NULL, NULL, '2025-10-09 07:03:05', 'PROF001'),
-(33, 'STU001', 'CLASS1759965189', 'rejected', '2025-10-09 07:29:25', NULL, NULL, '2025-10-09 07:29:33', 'PROF001'),
-(34, 'STU001', 'CLASS1759965189', 'rejected', '2025-10-09 07:29:52', NULL, NULL, '2025-10-09 07:30:01', 'PROF001'),
-(35, 'STU001', 'CLASS1759965189', 'accepted', '2025-10-09 07:30:07', NULL, NULL, '2025-10-09 07:30:12', 'PROF001'),
-(36, 'STU001', 'CLASS1759966442', 'rejected', '2025-10-09 07:36:06', NULL, NULL, '2025-10-09 07:36:17', 'PROF001'),
-(37, 'STU001', 'CLASS1759966442', 'accepted', '2025-10-09 07:36:28', NULL, NULL, '2025-10-09 07:36:35', 'PROF001'),
-(38, 'STU001', 'CLASS1759966660', 'accepted', '2025-10-09 07:38:00', NULL, NULL, '2025-10-09 07:38:03', 'PROF001'),
-(39, 'STU001', 'CLASS1759966921', 'accepted', '2025-10-09 07:42:23', NULL, NULL, '2025-10-09 07:42:28', 'PROF001'),
-(40, 'STU001', 'CLASS1759967600', 'rejected', '2025-10-09 07:56:22', NULL, NULL, '2025-10-09 07:56:34', 'PROF001'),
-(41, 'STU001', 'CLASS1759967600', 'accepted', '2025-10-09 07:56:52', NULL, NULL, '2025-10-09 07:57:00', 'PROF001'),
-(42, 'STU001', 'CLASS1759967600', 'accepted', '2025-10-09 07:59:14', NULL, NULL, '2025-10-09 07:59:20', 'PROF001'),
-(43, 'STU001', 'CLASS1759967600', 'rejected', '2025-10-09 08:46:08', NULL, NULL, '2025-10-09 08:46:23', 'PROF001'),
-(44, 'STU001', 'CLASS1759971443', 'rejected', '2025-10-09 08:58:08', NULL, NULL, '2025-10-09 08:58:13', 'PROF001'),
-(45, 'STU001', 'CLASS1759971443', 'accepted', '2025-10-09 08:58:19', NULL, NULL, '2025-10-09 08:58:35', 'PROF001'),
-(46, 'STU001', 'CLASS1759971443', 'rejected', '2025-10-13 10:42:58', NULL, NULL, '2025-10-13 10:43:08', 'PROF001'),
-(47, 'STU001', 'CLASS1759971443', 'accepted', '2025-10-13 10:43:16', NULL, NULL, '2025-10-13 10:43:25', 'PROF001'),
-(48, 'STU001', 'CLASS1759971443', 'rejected', '2025-10-15 12:57:18', NULL, NULL, '2025-10-15 12:57:22', 'PROF001'),
-(49, 'STU001', 'CLASS1759971443', 'accepted', '2025-10-15 12:57:29', NULL, NULL, '2025-10-15 12:57:36', 'PROF001'),
-(50, 'STU001', 'CLASS1760514979', 'rejected', '2025-10-15 16:10:06', NULL, NULL, '2025-10-15 16:10:11', 'PROF001'),
-(51, 'STU001', 'CLASS1760514979', 'accepted', '2025-10-15 16:10:17', NULL, NULL, '2025-10-15 16:10:22', 'PROF001'),
-(52, 'STU001', 'CLASS1760514979', 'rejected', '2025-10-18 05:33:45', NULL, NULL, '2025-10-18 05:34:09', 'PROF001'),
-(53, 'STU001', 'CLASS1760514979', 'accepted', '2025-10-18 05:34:18', NULL, NULL, '2025-10-18 05:34:27', 'PROF001'),
-(54, 'STU001', 'CLASS1760514979', 'accepted', '2025-10-18 07:40:30', NULL, NULL, '2025-10-18 07:42:25', 'PROF001');
+(64, 'STU001', 'CLASS005', 'accepted', '2025-10-19 11:24:30', NULL, NULL, '2025-10-19 11:24:42', 'PROF001'),
+(65, 'STU001', 'CLASS1760514979', 'accepted', '2025-10-19 11:25:19', NULL, NULL, '2025-10-19 11:25:26', 'PROF001'),
+(66, 'STU001', 'CLASS1760514979', 'accepted', '2025-10-19 12:21:23', NULL, NULL, '2025-10-19 12:22:11', 'PROF001'),
+(67, 'STU001', 'CLASS1760514979', 'accepted', '2025-10-19 12:27:26', NULL, NULL, '2025-10-19 12:27:35', 'PROF001'),
+(68, 'STU001', 'CLASS1756767458', 'rejected', '2025-10-19 16:26:22', NULL, NULL, '2025-10-19 16:26:39', 'PROF001'),
+(69, 'STU001', 'CLASS1760862437', 'rejected', '2025-10-19 16:50:30', NULL, NULL, '2025-10-19 16:50:42', 'PROF001');
 
 --
 -- Indexes for dumped tables
@@ -919,7 +815,7 @@ ALTER TABLE `enrollment_requests`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
 
 --
 -- AUTO_INCREMENT for table `professor_attendance`
@@ -955,7 +851,7 @@ ALTER TABLE `semesters`
 -- AUTO_INCREMENT for table `student_classes`
 --
 ALTER TABLE `student_classes`
-  MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
+  MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
 
 --
 -- AUTO_INCREMENT for table `subject_durations`
@@ -967,7 +863,7 @@ ALTER TABLE `subject_durations`
 -- AUTO_INCREMENT for table `unenrollment_requests`
 --
 ALTER TABLE `unenrollment_requests`
-  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
 
 --
 -- Constraints for dumped tables

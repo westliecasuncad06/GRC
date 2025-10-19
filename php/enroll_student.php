@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'db.php';
+require_once 'notifications.php';
 
 header('Content-Type: application/json');
 
@@ -23,8 +24,8 @@ if (empty($class_code)) {
 }
 
 try {
-    // Get class ID from class code
-    $stmt = $pdo->prepare("SELECT class_id FROM classes WHERE class_code = ?");
+    // Get class ID, professor ID, and subject details from class code
+    $stmt = $pdo->prepare("SELECT c.class_id, c.professor_id, s.subject_name, c.class_code FROM classes c JOIN subjects s ON c.subject_id = s.subject_id WHERE c.class_code = ?");
     $stmt->execute([$class_code]);
     $class = $stmt->fetch();
 
@@ -34,6 +35,9 @@ try {
     }
 
     $class_id = $class['class_id'];
+    $professor_id = $class['professor_id'];
+    $subject_name = $class['subject_name'];
+    $class_code_display = $class['class_code'];
 
     // Check if student is already enrolled in the class
     $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM student_classes WHERE student_id = ? AND class_id = ?");
@@ -56,41 +60,48 @@ try {
         $stmt->execute([$pending_unenrollment['request_id']]);
     }
 
-    // Check if student already has a request for this class
-    $stmt = $pdo->prepare("SELECT status FROM enrollment_requests WHERE student_id = ? AND class_id = ?");
+    // Insert directly into student_classes for instant enrollment
+    $stmt = $pdo->prepare("INSERT INTO student_classes (student_id, class_id, enrolled_at) VALUES (?, ?, NOW())");
     $stmt->execute([$student_id, $class_id]);
-    $existing_request = $stmt->fetch();
 
-    if ($existing_request) {
-        if ($existing_request['status'] === 'pending') {
-            echo json_encode(['success' => false, 'message' => 'You already have a pending enrollment request for this class']);
-            exit();
-        } elseif ($existing_request['status'] === 'accepted') {
-            // Check if still enrolled
-            if ($enrolled > 0) {
-                echo json_encode(['success' => false, 'message' => 'You are already enrolled in this class']);
-                exit();
-            } else {
-                // Was unenrolled, allow re-enrollment by updating to pending
-                $stmt = $pdo->prepare("UPDATE enrollment_requests SET status = 'pending', requested_at = NOW(), handled_at = NULL, handled_by = NULL, processed_at = NULL, processed_by = NULL WHERE student_id = ? AND class_id = ?");
-                $stmt->execute([$student_id, $class_id]);
-            }
-        } elseif ($existing_request['status'] === 'rejected') {
-            // Update the rejected request to pending
-            $stmt = $pdo->prepare("UPDATE enrollment_requests SET status = 'pending', requested_at = NOW(), handled_at = NULL, handled_by = NULL, processed_at = NULL, processed_by = NULL WHERE student_id = ? AND class_id = ?");
-            $stmt->execute([$student_id, $class_id]);
-        }
-    } else {
-        // Insert new enrollment request
-        $stmt = $pdo->prepare("INSERT INTO enrollment_requests (student_id, class_id, status, requested_at) VALUES (?, ?, 'pending', NOW())");
-        $stmt->execute([$student_id, $class_id]);
-    }
+    // Get student name for notifications
+    $stmt = $pdo->prepare("SELECT first_name, last_name FROM students WHERE student_id = ?");
+    $stmt->execute([$student_id]);
+    $student = $stmt->fetch();
+    $student_name = $student ? $student['first_name'] . ' ' . $student['last_name'] : 'Student';
 
-    echo json_encode(['success' => true, 'message' => 'Enrollment request submitted successfully. Please wait for professor approval.']);
+    // Create notification for the student
+    $student_notification_title = 'Enrollment Successful';
+    $student_notification_message = "You have successfully enrolled in {$subject_name} ({$class_code_display}).";
+    $notificationManager->createNotification(
+        $student_id,
+        'student',
+        $student_notification_title,
+        $student_notification_message,
+        'enrollment_success',
+        null,
+        $class_id
+    );
+
+    // Create notification for the professor
+    $enrollment_date = date('M j, Y, g:i a');
+    $professor_notification_title = 'New Student Enrollment';
+    $professor_notification_message = "A new student has enrolled in {$subject_name} ({$class_code_display}).\nDate: {$enrollment_date}";
+    $notificationManager->createNotification(
+        $professor_id,
+        'professor',
+        $professor_notification_title,
+        $professor_notification_message,
+        'student_enrolled',
+        null,
+        $class_id
+    );
+
+    echo json_encode(['success' => true, 'message' => 'Successfully enrolled in the class!']);
 
 } catch (PDOException $e) {
     if ($e->getCode() == 23000) { // Integrity constraint violation
-        echo json_encode(['success' => false, 'message' => 'You already have a pending or accepted enrollment request for this class']);
+        echo json_encode(['success' => false, 'message' => 'You are already enrolled in this class']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
     }

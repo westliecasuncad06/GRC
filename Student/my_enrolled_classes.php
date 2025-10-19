@@ -104,10 +104,10 @@ $unenrollment_requests = $stmt->fetchAll();
                                     ? 'Prof. ' . $class['first_name'] . ' ' . $class['last_name']
                                     : 'N/A';
 
-                                // Check if there's any unenrollment request for this class (any status)
+                                // Check if there's a pending unenrollment request for this class
                                 $has_pending_request = false;
                                 foreach ($unenrollment_requests as $request) {
-                                    if (isset($request['class_id']) && $request['class_id'] == $class['class_id']) {
+                                    if (isset($request['class_id']) && $request['class_id'] == $class['class_id'] && $request['status'] == 'pending') {
                                         $has_pending_request = true;
                                         break;
                                     }

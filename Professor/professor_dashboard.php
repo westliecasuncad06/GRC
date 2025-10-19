@@ -47,21 +47,21 @@ try {
     // Log or handle error silently to avoid breaking the page
 }
 
-// Fetch pending enrollment requests for professor's classes
-$pending_requests_query = "
-    SELECT er.request_id, er.student_id, er.class_id, er.requested_at,
-           st.first_name, st.last_name,
+// Fetch recent enrollment notifications for professor's classes (last 30 days)
+$enrollment_notifications_query = "
+    SELECT n.notification_id, n.title, n.message, n.created_at, n.is_read,
            c.class_code, s.subject_name
-    FROM enrollment_requests er
-    JOIN students st ON er.student_id = st.student_id
-    JOIN classes c ON er.class_id = c.class_id
+    FROM notifications n
+    JOIN classes c ON n.related_class_id = c.class_id
     JOIN subjects s ON c.subject_id = s.subject_id
-    WHERE er.status = 'pending' AND c.professor_id = ?
-    ORDER BY er.requested_at DESC
+    WHERE n.user_type = 'professor' AND n.user_id = ? AND n.type = 'student_enrolled'
+    AND n.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+    ORDER BY n.created_at DESC
+    LIMIT 20
 ";
-$pending_stmt = $pdo->prepare($pending_requests_query);
-$pending_stmt->execute([$professor_id]);
-$pending_requests = $pending_stmt->fetchAll();
+$enrollment_stmt = $pdo->prepare($enrollment_notifications_query);
+$enrollment_stmt->execute([$professor_id]);
+$enrollment_notifications = $enrollment_stmt->fetchAll();
 
 // Fetch pending unenrollment requests for professor's classes
 $pending_unenrollment_requests_query = "
@@ -79,8 +79,8 @@ $pending_unenrollment_stmt = $pdo->prepare($pending_unenrollment_requests_query)
 $pending_unenrollment_stmt->execute([$professor_id]);
 $pending_unenrollment_requests = $pending_unenrollment_stmt->fetchAll();
 
-// Add pending requests count for notification badge (enrollment + unenrollment)
-$pending_requests_count = count($pending_requests) + count($pending_unenrollment_requests);
+// Add pending requests count for notification badge (only unenrollment requests now)
+$pending_requests_count = count($pending_unenrollment_requests);
 
 // Get sections and students for professor's classes
 $query = "SELECT DISTINCT c.section, st.student_id, st.first_name, st.last_name, st.email, sc.enrolled_at, c.class_name
@@ -1746,37 +1746,31 @@ foreach ($subjects as $subject) {
             </div>
             <div class="modal-body">
                 <div class="notification-list" id="notificationList">
-                    <?php if (empty($pending_requests) && empty($pending_unenrollment_requests)): ?>
+                    <?php if (empty($enrollment_notifications) && empty($pending_unenrollment_requests)): ?>
                         <div class="no-notifications">
                             <div class="no-notifications-icon">
                                 <i class="fas fa-bell-slash"></i>
                             </div>
                             <div class="no-notifications-text">No new notifications</div>
-                            <div class="no-notifications-subtext">You have no pending requests.</div>
+                            <div class="no-notifications-subtext">You have no pending requests or recent enrollments.</div>
                         </div>
                     <?php else: ?>
-                        <?php foreach ($pending_requests as $request): ?>
-                            <div class="notification-item" data-request-id="<?php echo $request['request_id']; ?>" data-type="enrollment">
+                        <?php foreach ($enrollment_notifications as $notification): ?>
+                            <div class="notification-item">
                                 <div class="notification-icon">
                                     <i class="fas fa-user-plus"></i>
                                 </div>
                                 <div class="notification-content">
-                                    <div class="notification-title">Enrollment Request</div>
-                                    <div class="notification-message">
-                                        <?php echo htmlspecialchars($request['first_name'] . ' ' . $request['last_name']); ?> has requested to enroll in
-                                        <strong><?php echo htmlspecialchars($request['subject_name']); ?></strong>
-                                        (Class Code: <?php echo htmlspecialchars($request['class_code']); ?>).
-                                    </div>
+                                    <div class="notification-title"><?php echo htmlspecialchars($notification['title']); ?></div>
+                                    <div class="notification-message"><?php echo htmlspecialchars($notification['message']); ?></div>
                                     <div class="notification-meta">
                                         <div class="notification-time">
                                             <i class="fas fa-clock"></i>
-                                            <?php echo date('M j, Y, g:i a', strtotime($request['requested_at'])); ?>
+                                            <?php echo date('M j, Y, g:i a', strtotime($notification['created_at'])); ?>
                                         </div>
-                                        <div class="notification-status status-unread">PENDING</div>
-                                    </div>
-                                    <div class="notification-actions" style="margin-top: 10px;">
-                                        <button class="btn-enhanced btn-primary" onclick="handleEnrollmentRequest('<?php echo $request['request_id']; ?>', 'accept')">Accept</button>
-                                        <button class="btn-enhanced btn-secondary" onclick="handleEnrollmentRequest('<?php echo $request['request_id']; ?>', 'reject')">Reject</button>
+                                        <div class="notification-status <?php echo $notification['is_read'] ? 'status-read' : 'status-unread'; ?>">
+                                            <?php echo $notification['is_read'] ? 'READ' : 'UNREAD'; ?>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

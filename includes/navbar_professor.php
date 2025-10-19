@@ -2,51 +2,45 @@
 require_once '../php/db.php';
 
 $professor_id = $_SESSION['user_id'] ?? null;
-$pending_requests = [];
+$enrollment_notifications = [];
 $pending_unenrollment_requests = [];
 $pending_requests_count = 0;
 
 if ($professor_id) {
-    // Fetch enrollment requests for professor's classes including handled ones
-    $stmt = $pdo->prepare("
-        SELECT er.request_id, er.requested_at, er.status, s.subject_name, c.class_code, st.first_name, st.last_name
-        FROM enrollment_requests er
-        JOIN classes c ON er.class_id = c.class_id
+    // Fetch recent enrollment notifications for professor's classes (last 30 days)
+    $enrollment_notifications_query = "
+        SELECT n.notification_id, n.title, n.message, n.created_at, n.is_read,
+               c.class_code, s.subject_name
+        FROM notifications n
+        JOIN classes c ON n.related_class_id = c.class_id
         JOIN subjects s ON c.subject_id = s.subject_id
-        JOIN students st ON er.student_id = st.student_id
-        WHERE c.professor_id = ?
-        ORDER BY er.requested_at DESC
-    ");
-    $stmt->execute([$professor_id]);
-    $all_requests = $stmt->fetchAll();
+        WHERE n.user_type = 'professor' AND c.professor_id = ? AND n.type = 'student_enrolled'
+        AND n.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        ORDER BY n.created_at DESC
+        LIMIT 20
 
-    // Separate pending and handled requests
-    $pending_requests = array_filter($all_requests, function($req) {
-        return $req['status'] === 'pending';
-    });
-    $handled_requests = array_filter($all_requests, function($req) {
-        return $req['status'] !== 'pending';
-    });
+    ";
+    $enrollment_stmt = $pdo->prepare($enrollment_notifications_query);
+    $enrollment_stmt->execute([$professor_id]);
+    $enrollment_notifications = $enrollment_stmt->fetchAll();
+
+    echo '<script>console.log(' . json_encode($enrollment_notifications) . ')</script>';
 
     // Fetch unenrollment requests for professor's classes
+
     $stmt = $pdo->prepare("
         SELECT ur.request_id, ur.requested_at, ur.status, s.subject_name, c.class_code, st.first_name, st.last_name
         FROM unenrollment_requests ur
         JOIN classes c ON ur.class_id = c.class_id
         JOIN subjects s ON c.subject_id = s.subject_id
         JOIN students st ON ur.student_id = st.student_id
-        WHERE c.professor_id = ?
+        WHERE c.professor_id = ? AND ur.status = 'pending'
         ORDER BY ur.requested_at DESC
     ");
     $stmt->execute([$professor_id]);
-    $all_unenrollment_requests = $stmt->fetchAll();
+    $pending_unenrollment_requests = $stmt->fetchAll();
 
-    // Separate pending and handled unenrollment requests
-    $pending_unenrollment_requests = array_filter($all_unenrollment_requests, function($req) {
-        return $req['status'] === 'pending';
-    });
-
-    $pending_requests_count = count($pending_requests) + count($pending_unenrollment_requests);
+    $pending_requests_count = count($pending_unenrollment_requests);
 }
 ?>
 
@@ -342,32 +336,23 @@ if ($professor_id) {
         </div>
         <div class="modal-body">
             <div class="notification-list">
-                <?php if ($pending_requests_count > 0): ?>
-                    <?php foreach ($pending_requests as $request): ?>
-                        <div class="notification-item" id="request-<?php echo $request['request_id']; ?>">
+                <?php if (!empty($enrollment_notifications) || !empty($pending_unenrollment_requests)): ?>
+                    <?php foreach ($enrollment_notifications as $notification): ?>
+                        <div class="notification-item">
                             <div class="notification-icon">
                                 <i class="fas fa-user-plus"></i>
                             </div>
                             <div class="notification-content">
-                                <div class="notification-title">Enrollment Request</div>
-                                <div class="notification-message">
-                                    <?php echo htmlspecialchars($request['first_name'] . ' ' . $request['last_name']); ?> has requested to enroll in
-                                    <strong><?php echo htmlspecialchars($request['subject_name']); ?></strong>
-                                    (Class Code: <?php echo htmlspecialchars($request['class_code']); ?>).
-                                </div>
+                                <div class="notification-title"><?php echo htmlspecialchars($notification['title']); ?></div>
+                                <div class="notification-message"><?php echo nl2br(htmlspecialchars($notification['message'])); ?></div>
                                 <div class="notification-meta">
                                     <div class="notification-time">
                                         <i class="fas fa-clock"></i>
-                                        <?php
-                                            $datetime = new DateTime($request['requested_at']);
-                                            echo $datetime->format('M j, Y, g:i a');
-                                        ?>
+                                        <?php echo date('M j, Y, g:i a', strtotime($notification['created_at'])); ?>
                                     </div>
-                                    <div class="notification-status status-unread">PENDING</div>
-                                </div>
-                                <div class="notification-actions" style="margin-top: 10px;">
-                                    <button class="btn-enhanced btn-primary" onclick="showConfirmationModal('<?php echo $request['request_id']; ?>', 'accept', 'enrollment')">Accept</button>
-                                    <button class="btn-enhanced btn-secondary" onclick="showConfirmationModal('<?php echo $request['request_id']; ?>', 'reject', 'enrollment')">Reject</button>
+                                    <div class="notification-status <?php echo $notification['is_read'] ? 'status-read' : 'status-unread'; ?>">
+                                        <?php echo $notification['is_read'] ? 'READ' : 'UNREAD'; ?>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -388,10 +373,7 @@ if ($professor_id) {
                                 <div class="notification-meta">
                                     <div class="notification-time">
                                         <i class="fas fa-clock"></i>
-                                        <?php
-                                            $datetime = new DateTime($request['requested_at']);
-                                            echo $datetime->format('M j, Y, g:i a');
-                                        ?>
+                                        <?php echo date('M j, Y, g:i a', strtotime($request['requested_at'])); ?>
                                     </div>
                                     <div class="notification-status status-unread">PENDING</div>
                                 </div>
@@ -408,7 +390,7 @@ if ($professor_id) {
                             <i class="fas fa-bell-slash"></i>
                         </div>
                         <div class="no-notifications-text">No new notifications</div>
-                        <div class="no-notifications-subtext">You have no pending requests.</div>
+                        <div class="no-notifications-subtext">You have no pending requests or recent enrollments.</div>
                     </div>
                 <?php endif; ?>
             </div>

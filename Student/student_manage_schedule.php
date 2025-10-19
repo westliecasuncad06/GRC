@@ -21,16 +21,8 @@ $stmt = $pdo->prepare("SELECT c.class_id, c.class_name, c.class_code, s.subject_
 $stmt->execute([$student_id]);
 $enrolled_classes = $stmt->fetchAll();
 
-// Get pending enrollment requests
-$stmt = $pdo->prepare("SELECT er.request_id, er.requested_at, c.class_code, s.subject_name, p.first_name, p.last_name
-                     FROM enrollment_requests er
-                     JOIN classes c ON er.class_id = c.class_id
-                     JOIN subjects s ON c.subject_id = s.subject_id
-                     LEFT JOIN professors p ON c.professor_id = p.professor_id
-                     WHERE er.student_id = ? AND er.status = 'pending'
-                     ORDER BY er.requested_at DESC");
-$stmt->execute([$student_id]);
-$pending_requests = $stmt->fetchAll();
+// No pending enrollment requests since enrollment is instant
+$pending_requests = [];
 
 if (empty($enrolled_classes)) {
     // Debug: Log to error log
@@ -1181,7 +1173,7 @@ if (empty($enrolled_classes)) {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showToast('Successfully sent a pending approval for the subject.', 'success');
+                    showToast('Successfully enrolled in the class!', 'success');
                     closeEnrollModal();
                     // Refresh the page to show the updated status
                     location.reload();
