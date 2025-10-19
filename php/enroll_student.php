@@ -93,7 +93,7 @@ try {
         'professor',
         $professor_notification_title,
         $professor_notification_message,
-        'info',
+        'student_enrolled',
         null,
         $class_id
     );

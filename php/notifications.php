@@ -67,6 +67,23 @@ class NotificationManager {
     }
 
     /**
+     * Get unread notification count for a user filtered by notification type
+     */
+    public function getUnreadCountByType($user_id, $user_type, $type) {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT COUNT(*) as count FROM notifications
+                WHERE user_id = ? AND user_type = ? AND is_read = 0 AND type = ?
+            ");
+            $stmt->execute([$user_id, $user_type, $type]);
+            return $stmt->fetch()['count'];
+        } catch (PDOException $e) {
+            error_log("Error getting unread count by type: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
      * Mark notification as read
      */
     public function markAsRead($notification_id, $user_id, $user_type) {

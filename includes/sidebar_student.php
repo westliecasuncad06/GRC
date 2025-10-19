@@ -158,13 +158,13 @@
 
             }
 
-            .nav-item[href*="my_enrolled_classes.php"] span {
+            .nav-item[href*="my_classes.php"] span {
 
                 display: none;
 
             }
 
-            .nav-item[href*="my_enrolled_classes.php"]::after {
+            .nav-item[href*="my_classes.php"]::after {
 
                 content: "Classes";
 
@@ -229,13 +229,9 @@
             <i class="fas fa-tachometer-alt"></i>
             <span>Dashboard</span>
         </a>
-        <a href="../Student/student_manage_schedule.php" class="nav-item <?php echo ($current_page == 'student_manage_schedule.php') ? 'active' : ''; ?>">
-            <i class="fas fa-calendar-alt"></i>
-            <span>My Schedule</span>
-        </a>
-        <a href="../Student/my_enrolled_classes.php" class="nav-item <?php echo ($current_page == 'my_enrolled_classes.php') ? 'active' : ''; ?>">
+        <a href="../Student/my_classes.php" class="nav-item <?php echo ($current_page == 'my_classes.php' || $current_page == 'student_manage_schedule.php' || $current_page == 'my_enrolled_classes.php') ? 'active' : ''; ?>">
             <i class="fas fa-book"></i>
-            <span>My Enrolled Classes</span>
+            <span>My Classes</span>
         </a>
         <a href="../Student/student_archive.php" class="nav-item <?php echo ($current_page == 'student_archive.php') ? 'active' : ''; ?>">
             <i class="fas fa-archive"></i>

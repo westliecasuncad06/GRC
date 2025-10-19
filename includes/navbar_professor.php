@@ -118,6 +118,14 @@ if ($professor_id) {
     border-color: #F75270;
 }
 
+.notification-badge {
+    display: inline-block;
+}
+
+.pending-pill {
+    display: inline-block;
+}
+
 @media (max-width: 768px) {
 
     .navbar-title {
@@ -304,6 +312,10 @@ if ($professor_id) {
     <span class="welcome-text">Welcome, <span class="full-name"><?php echo htmlspecialchars($prof_name); ?></span><span class="mobile-name"><?php echo htmlspecialchars($professor['first_name'] ?? $_SESSION['first_name'] ?? ''); ?></span></span>
         <button type="button" class="notification-btn" onclick="openNotificationModal()" title="Notifications" style="position: relative;">
             <i class="fas fa-bell" aria-hidden="true"></i>
+            <!-- numeric badge for enrollment notifications (red) -->
+            <span class="notification-badge" id="profEnrollBadge" style="display:none;position:absolute;top:-8px;right:-8px;background:#DC3545;color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;box-shadow:0 2px 8px rgba(220,53,69,0.35);border:2px solid white;line-height:1;">0</span>
+            <!-- pending unenrollment pill (orange indicator) -->
+            <span class="pending-pill" id="profPendingPill" style="display:none;position:absolute;bottom:-8px;right:-8px;background:#FF9800;color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;box-shadow:0 2px 10px rgba(255,152,0,0.4);border:2px solid white;line-height:1;" title="Pending unenrollment requests">!</span>
         </button>
         <div class="user-dropdown">
             <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
@@ -714,47 +726,68 @@ if ($professor_id) {
     }
 
     function updateNotificationBadge() {
-        fetch('../php/get_unread_notification_count.php')
+        // Fetch only enrollment-type unread notifications for the numeric badge
+        fetch('../php/get_unread_notification_count.php?type=student_enrolled')
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     const notificationBtn = document.querySelector('.notification-btn');
                     if (!notificationBtn) return;
-                    let badge = notificationBtn.querySelector('.notification-badge');
-                    let pendingPill = notificationBtn.querySelector('.pending-pill');
+                    const badge = document.getElementById('profEnrollBadge');
+                    const pendingPill = document.getElementById('profPendingPill');
 
-                    // Hide/remove the red numeric badge to avoid duplication with Pending pill
-                    if (badge) badge.remove();
-                    notificationBtn.classList.remove('has-notifications');
+                    // Update enrollment numeric badge
+                    const enrollCount = (data.count || 0);
+                    if (enrollCount > 0) {
+                        badge.style.display = 'inline-block';
+                        badge.textContent = enrollCount;
+                        notificationBtn.classList.add('has-notifications');
+                    } else {
+                        badge.style.display = 'none';
+                        notificationBtn.classList.remove('has-notifications');
+                    }
 
-                    // Track pending count changes to trigger immediate modal refresh if open
+                    // Update pending unenrollment pill (server still returns pending field)
                     const pendingCount = (data.pending || 0);
-                    // Render small "Pending N" pill for unenrollment requests (professor only)
                     if (pendingCount > 0) {
-                        if (!pendingPill) {
-                            pendingPill = document.createElement('span');
-                            pendingPill.className = 'pending-pill';
-                            pendingPill.title = 'Pending unenrollment requests';
-                            notificationBtn.appendChild(pendingPill);
-                        }
-                        pendingPill.textContent = `Pending ${pendingCount}`;
-                        pendingPill.style.display = 'inline-block';
-                    } else if (pendingPill) {
+                        pendingPill.style.display = 'flex';
+                        pendingPill.textContent = pendingCount > 9 ? '9+' : pendingCount;
+                    } else {
                         pendingPill.style.display = 'none';
                     }
 
-                    // If modal is open and counts changed, refresh list immediately
+                    // If modal is open and counts changed, refresh lists immediately
                     const modal = document.getElementById('notificationModal');
                     const modalOpen = modal && modal.classList.contains('show');
-                    if (modalOpen && (lastBadgeCount !== data.count || lastPendingCount !== pendingCount)) {
+                    if (modalOpen && (lastBadgeCount !== enrollCount || lastPendingCount !== pendingCount)) {
                         refreshPendingUnenrollments();
                         loadNotifications(true);
                     }
-                    lastBadgeCount = data.count;
+                    lastBadgeCount = enrollCount;
                     lastPendingCount = pendingCount;
                 }
             })
             .catch(error => console.error('Error updating notification badge:', error));
+    }
+
+    // Initial poll and periodic 2-second refresh (global)
+    updateNotificationBadge();
+    if (!window.__profBadgeInterval) {
+        window.__profBadgeInterval = setInterval(updateNotificationBadge, 2000);
+    }
+
+    // Full notifications refresh every 2 minutes to capture real-time changes
+    if (!window.__profFullRefreshInterval) {
+        window.__profFullRefreshInterval = setInterval(() => {
+            try {
+                refreshPendingUnenrollments();
+                loadNotifications(true);
+                updateNotificationBadge();
+                console.debug('Performed full notification refresh (2min)');
+            } catch (e) {
+                console.error('Error during full notification refresh:', e);
+            }
+        }, 120000); // 120000 ms = 2 minutes
     }
 
     // Render dynamic pending unenrollment requests
