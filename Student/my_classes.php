@@ -203,11 +203,11 @@ $unenrollment_requests = $stmt->fetchAll();
                         </div>
                         <div class="class-actions">
                             <button class="btn btn-primary" onclick="viewAttendance('<?php echo $class['class_id']; ?>')"><i class="fas fa-eye"></i> View Attendance</button>
-                            <?php if ($has_pending_request): ?>
-                                <button class="btn btn-warning btn-disabled" disabled><i class="fas fa-clock"></i> Pending Approval</button>
-                            <?php else: ?>
-                                <button class="btn btn-danger" onclick="unenrollFromClass('<?php echo $class['class_id']; ?>')"><i class="fas fa-times"></i> Unenroll</button>
-                            <?php endif; ?>
+                                <?php if ($has_pending_request): ?>
+                                    <button class="btn btn-warning btn-disabled pending-button" disabled data-class-id="<?php echo $class['class_id']; ?>"><i class="fas fa-clock"></i> Pending Approval</button>
+                                <?php else: ?>
+                                    <button class="btn btn-danger unenroll-button" onclick="unenrollFromClass('<?php echo $class['class_id']; ?>')" data-class-id="<?php echo $class['class_id']; ?>"><i class="fas fa-times"></i> Unenroll</button>
+                                <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -555,6 +555,82 @@ $unenrollment_requests = $stmt->fetchAll();
 
         // Accessibility: allow toggle via keyboard
         document.getElementById('toggle').addEventListener('keydown', function(e){ if (e.key==='Enter' || e.key===' ') { e.preventDefault(); toggleView(); } });
+
+        // Polling: check for pending unenrollment request status every 2 seconds
+        (function(){
+            let lastPendingIds = null;
+            // Helper to fetch current pending unenrollments for this student
+            function fetchPending() {
+                return fetch('../php/get_student_pending_unenrollments.php', { cache: 'no-store' })
+                    .then(r => r.json())
+                    .catch(() => ({ success: false }));
+            }
+
+            function arraysEqual(a, b) {
+                if (a === null || b === null) return false;
+                if (a.length !== b.length) return false;
+                const sa = a.slice().sort();
+                const sb = b.slice().sort();
+                for (let i = 0; i < sa.length; i++) if (sa[i] !== sb[i]) return false;
+                return true;
+            }
+
+            function updateUI(pendingIds) {
+                // Disable unenroll buttons for pending classes, enable others
+                document.querySelectorAll('.unenroll-button').forEach(btn => {
+                    const cid = btn.getAttribute('data-class-id');
+                    if (pendingIds.includes(cid)) {
+                        // replace with disabled pending button visually
+                        const pendingBtn = document.createElement('button');
+                        pendingBtn.className = 'btn btn-warning btn-disabled pending-button';
+                        pendingBtn.disabled = true;
+                        pendingBtn.setAttribute('data-class-id', cid);
+                        pendingBtn.innerHTML = '<i class="fas fa-clock"></i> Pending Approval';
+                        btn.replaceWith(pendingBtn);
+                    }
+                });
+
+                // Show enroll buttons back to actionable state when not pending
+                document.querySelectorAll('.pending-button').forEach(btn => {
+                    const cid = btn.getAttribute('data-class-id');
+                    if (!pendingIds.includes(cid)) {
+                        const unenrollBtn = document.createElement('button');
+                        unenrollBtn.className = 'btn btn-danger unenroll-button';
+                        unenrollBtn.setAttribute('data-class-id', cid);
+                        unenrollBtn.setAttribute('onclick', `unenrollFromClass('${cid}')`);
+                        unenrollBtn.innerHTML = '<i class="fas fa-times"></i> Unenroll';
+                        btn.replaceWith(unenrollBtn);
+                    }
+                });
+            }
+
+            // Initial fetch
+            fetchPending().then(data => {
+                if (data && data.success) {
+                    lastPendingIds = data.pending_class_ids || [];
+                }
+            });
+
+            // Poll every 2 seconds
+            setInterval(() => {
+                fetchPending().then(data => {
+                    if (!data || !data.success) return;
+                    const pendingIds = data.pending_class_ids || [];
+                    // If there's any change (professor accepted/rejected -> pending list changed), reload to sync UI
+                    if (!arraysEqual(pendingIds, lastPendingIds)) {
+                        // If difference is only that a new pending was added, update UI accordingly without full reload
+                        // But to ensure full sync (and handle removals), reload after a short delay
+                        lastPendingIds = pendingIds.slice();
+                        // Update UI quickly
+                        updateUI(pendingIds.map(String));
+                        // If a pending was removed (professor acted), reload to reflect removal/unenrollment
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                    }
+                });
+            }, 2000);
+        })();
     </script>
 </body>
 </html>

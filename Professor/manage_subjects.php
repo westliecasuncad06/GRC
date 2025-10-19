@@ -227,6 +227,10 @@ $durations = $durations_stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Subjects - Global Reciprocal College</title>
     <link rel="stylesheet" href="../css/styles_fixed.css">
+    <link rel="stylesheet" href="../css/responsive-enhanced.css">
+    <link rel="stylesheet" href="../css/mobile-enhanced.css">
+    <link rel="stylesheet" href="../css/mobile-responsive.css">
+    <link rel="stylesheet" href="../css/notifications-mobile.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -460,7 +464,9 @@ $durations = $durations_stmt->fetchAll(PDO::FETCH_ASSOC);
             background: white;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            /* allow horizontal scrolling on narrow viewports instead of clipping */
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             margin-bottom: 2rem;
         }
 
@@ -505,10 +511,15 @@ $durations = $durations_stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
         @media (min-width: 769px) {
+            /* ensure subject links are clickable on wider screens */
             .subject-link {
-                pointer-events: none;
-                color: inherit;
+                pointer-events: auto;
+                color: var(--primary);
                 text-decoration: none;
+            }
+            .subject-link:hover {
+                color: var(--primary-dark);
+                text-decoration: underline;
             }
         }
 
@@ -1086,9 +1097,13 @@ $durations = $durations_stmt->fetchAll(PDO::FETCH_ASSOC);
                 width: 100%;
             }
 
+            /* keep table for tablets but allow horizontal scroll; only hide on very small phones */
             .table-container-enhanced {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
+                display: block;
+            }
+
+            .mobile-subjects-cards {
+                display: none;
             }
 
             .table-enhanced th,
@@ -1099,6 +1114,12 @@ $durations = $durations_stmt->fetchAll(PDO::FETCH_ASSOC);
 
             .action-buttons {
                 flex-direction: column;
+            }
+
+            .table-enhanced td, .table-enhanced th {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             .modal-content {
@@ -1123,7 +1144,9 @@ $durations = $durations_stmt->fetchAll(PDO::FETCH_ASSOC);
             }
 
             .stats-grid {
-                display: none;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
             }
 
             .modal-footer {
@@ -1138,6 +1161,26 @@ $durations = $durations_stmt->fetchAll(PDO::FETCH_ASSOC);
 
             .mobile-hidden {
                 display: none;
+            }
+        }
+
+        /* Very small phone layout: switch to mobile cards and hide the table */
+        @media (max-width: 480px) {
+            .table-container-enhanced {
+                display: none;
+            }
+            .mobile-subjects-cards {
+                display: block;
+            }
+            .btn-sm-enhanced {
+                width: 100%;
+            }
+            .subject-card-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .subject-card-title {
+                font-size: 1rem;
             }
         }
 
@@ -1428,32 +1471,87 @@ $durations = $durations_stmt->fetchAll(PDO::FETCH_ASSOC);
                 padding: 0.75rem;
             }
 
-            .custom-alert {
-                top: 10px;
-                left: 10px;
-                right: 10px;
-                padding: 0.75rem 1rem;
-                font-size: 0.85rem;
+            .subject-card {
+                padding: 1rem;
+            }
+
+            .subject-card-title {
+                font-size: 1.1rem;
+            }
+
+            .subject-card-actions {
+                flex-direction: column;
+            }
+
+            .btn-sm-enhanced {
+                width: 100%;
+                margin-bottom: 0.5rem;
             }
         }
 
-        /* Touch-friendly enhancements */
-        @media (hover: none) and (pointer: coarse) {
-            .stat-card-enhanced:hover {
-                transform: none;
-            }
+        /* Mobile Cards View */
+        .mobile-subjects-cards {
+            display: none;
+        }
 
-            .btn-enhanced:hover {
-                transform: none;
-            }
+        .subject-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
 
-            .subject-link:hover {
-                text-decoration: none;
-            }
+        .subject-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
 
-            .table-enhanced tr:hover {
-                background-color: #f8f9fa;
-            }
+        .subject-card-header {
+            margin-bottom: 1rem;
+        }
+
+        .subject-card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .subject-card-code {
+            font-size: 0.9rem;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .subject-card-details {
+            margin-bottom: 1rem;
+        }
+
+        .detail-item {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .detail-item strong {
+            color: var(--gray);
+        }
+
+        .subject-card-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .no-data-mobile {
+            text-align: center;
+            padding: 3rem 1rem;
         }
     </style>
 </head>
@@ -1559,13 +1657,6 @@ $durations = $durations_stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <button class="btn-sm-enhanced btn-primary-enhanced" onclick="editSubject(<?php echo htmlspecialchars(json_encode($subject)); ?>)">
                                         <i class="fas fa-edit"></i> Edit
                                     </button>
-                                    <form action="" method="POST" style="display:inline;">
-                                        <input type="hidden" name="action" value="delete_subject">
-                                        <input type="hidden" name="subject_id" value="<?php echo $subject['subject_id']; ?>">
-                                        <button type="submit" class="btn-sm-enhanced btn-danger-enhanced" onclick="return confirm('Are you sure you want to delete this subject?')">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </button>
-                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -1585,6 +1676,49 @@ $durations = $durations_stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php endif; ?>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile Cards View -->
+            <div class="mobile-subjects-cards">
+                <?php foreach ($subjects as $subject): ?>
+                <div class="subject-card">
+                    <div class="subject-card-header">
+                        <h4 class="subject-card-title">
+                            <a href="javascript:void(0)" onclick="viewSubjectDetails('<?php echo $subject['subject_id']; ?>')" class="subject-link">
+                                <?php echo $subject['subject_name']; ?>
+                            </a>
+                        </h4>
+                        <div class="subject-card-code">
+                            <strong>Class Code:</strong> <?php echo $subject['class_code']; ?>
+                            <button class="btn-sm-enhanced btn-warning-enhanced" onclick="regenerateCode('<?php echo $subject['class_code']; ?>')">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                    </div>
+                    <div class="subject-card-details">
+                        <div class="detail-item"><strong>Subject Code:</strong> <?php echo $subject['subject_code']; ?></div>
+                        <div class="detail-item"><strong>Schedule:</strong> <?php echo $subject['schedule']; ?></div>
+                        <div class="detail-item"><strong>Room:</strong> <?php echo $subject['room']; ?></div>
+                        <div class="detail-item"><strong>Enrolled:</strong> <?php echo $enrollment_counts[$subject['subject_id']] ?? 0; ?> students</div>
+                    </div>
+                    <div class="subject-card-actions">
+                        <button class="btn-sm-enhanced btn-primary-enhanced" onclick="editSubject(<?php echo htmlspecialchars(json_encode($subject)); ?>)">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+
+                <?php if (empty($subjects)): ?>
+                <div class="no-data-mobile">
+                    <div class="stat-empty-enhanced">
+                        <div class="stat-empty-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="stat-empty-text">No subjects found. Click "Add Subject" to create your first subject.</div>
+                    </div>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
 

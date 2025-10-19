@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 19, 2025 at 10:55 AM
+-- Generation Time: Oct 19, 2025 at 09:44 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -98,10 +98,6 @@ INSERT INTO `attendance` (`attendance_id`, `student_id`, `class_id`, `date`, `st
 (36, 'STU004', 'CLASS005', '2025-10-04', 'Late', '', '2025-10-04 11:45:47'),
 (37, 'STU005', 'CLASS005', '2025-10-04', 'Absent', '', '2025-10-04 11:45:47'),
 (38, 'STU001', 'CLASS005', '2025-10-04', 'Excused', 'May sakit', '2025-10-04 11:45:47'),
-(39, 'STU001', 'CLASS1760514979', '2025-10-15', 'Present', '10 points', '2025-10-15 16:11:01'),
-(40, 'STU001', 'CLASS1760514979', '2025-10-18', 'Present', '', '2025-10-18 03:56:47'),
-(41, 'STU001', 'CLASS1760514979', '2025-10-17', 'Absent', '', '2025-10-18 03:42:34'),
-(42, 'STU001', 'CLASS1760514979', '2025-10-19', 'Absent', '', '2025-10-18 04:07:36'),
 (43, 'STU002', 'CLASS003', '2025-10-18', 'Absent', '', '2025-10-18 04:15:31'),
 (44, 'STU004', 'CLASS003', '2025-10-18', 'Absent', '', '2025-10-18 04:15:31'),
 (45, 'STU004', 'CLASS005', '2025-10-18', 'Absent', '', '2025-10-18 04:18:20'),
@@ -150,7 +146,6 @@ INSERT INTO `classes` (`class_id`, `class_name`, `class_code`, `subject_id`, `pr
 ('CLASS1757248087', 'Funda Class', '6IXPRD3R', 'SUB1757248087', 'PF0F004', 'SHELL', 'SHELL CAFE', '2025-09-07 20:28:07', '2025-09-07 20:29:31', '306', 3, 'active', 4),
 ('CLASS1759971443', '2 Class', 'WJR7ZESJ', 'SUB1759971443', 'PROF001', '2', '2', '2025-10-09 08:57:23', '2025-10-09 08:57:23', NULL, 3, 'active', 4),
 ('CLASS1760512359', 'lknsdf;glnk Class', '16P84Y8J', 'SUB1760512359', 'PROF001', ';\'lkdnfg;lkn', '\';lkdnfg;\'lkn', '2025-10-15 15:12:39', '2025-10-15 15:12:39', NULL, NULL, 'active', 3),
-('CLASS1760514979', '4 Class', '68RS6M1R', 'SUB1760514979', 'PROF001', '4', '4', '2025-10-15 15:56:19', '2025-10-18 00:39:06', NULL, NULL, 'active', 1),
 ('CLASS1760862437', 'wewewe Class', 'P1R86CBL', 'SUB1760862437', 'PROF001', 'wed', '21', '2025-10-19 16:27:17', '2025-10-19 16:27:17', NULL, NULL, 'active', 4),
 ('CLASSTEST1', 'Test Subject Class', 'BSBJK30I', 'SUBTEST1', 'PROF001', 'MWF 9:00-10:00', 'Room 101', '2025-08-30 15:40:29', '2025-09-02 06:24:37', '306', 3, 'active', 4);
 
@@ -294,15 +289,59 @@ CREATE TABLE `notifications` (
 
 INSERT INTO `notifications` (`notification_id`, `user_id`, `user_type`, `title`, `message`, `type`, `is_read`, `created_at`, `related_request_id`, `related_class_id`) VALUES
 (96, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in 4 (68RS6M1R).', '', 1, '2025-10-19 11:18:26', NULL, 'CLASS1760514979'),
-(97, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in 4 (68RS6M1R).\nDate: October 19, 2025, 11:18 AM', '', 0, '2025-10-19 11:18:26', NULL, 'CLASS1760514979'),
+(97, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in 4 (68RS6M1R).\nDate: October 19, 2025, 11:18 AM', '', 1, '2025-10-19 11:18:26', NULL, 'CLASS1760514979'),
 (100, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in 4 (68RS6M1R).', '', 1, '2025-10-19 11:25:37', NULL, 'CLASS1760514979'),
-(101, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in 4 (68RS6M1R).\nDate: October 19, 2025, 11:25 AM', '', 0, '2025-10-19 11:25:37', NULL, 'CLASS1760514979'),
+(101, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in 4 (68RS6M1R).\nDate: October 19, 2025, 11:25 AM', '', 1, '2025-10-19 11:25:37', NULL, 'CLASS1760514979'),
 (103, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in 4 (68RS6M1R).', '', 1, '2025-10-19 12:22:17', NULL, 'CLASS1760514979'),
-(104, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in 4 (68RS6M1R).\nDate: October 19, 2025, 12:22 PM', '', 0, '2025-10-19 12:22:17', NULL, 'CLASS1760514979'),
+(104, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in 4 (68RS6M1R).\nDate: October 19, 2025, 12:22 PM', '', 1, '2025-10-19 12:22:17', NULL, 'CLASS1760514979'),
 (106, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in 4 (68RS6M1R).', '', 1, '2025-10-19 12:27:52', NULL, 'CLASS1760514979'),
-(107, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in 4 (68RS6M1R).\nDate: October 19, 2025, 12:27 PM', '', 0, '2025-10-19 12:27:52', NULL, 'CLASS1760514979'),
+(107, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in 4 (68RS6M1R).\nDate: October 19, 2025, 12:27 PM', '', 1, '2025-10-19 12:27:52', NULL, 'CLASS1760514979'),
 (109, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in wewewe (P1R86CBL).', '', 1, '2025-10-19 16:27:26', NULL, 'CLASS1760862437'),
-(110, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in wewewe (P1R86CBL).\nDate: Oct 19, 2025, 10:27 am', '', 0, '2025-10-19 16:27:26', NULL, 'CLASS1760862437');
+(110, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in wewewe (P1R86CBL).\nDate: Oct 19, 2025, 10:27 am', '', 1, '2025-10-19 16:27:26', NULL, 'CLASS1760862437'),
+(115, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in 4 (68RS6M1R).', '', 1, '2025-10-19 17:16:02', NULL, 'CLASS1760514979'),
+(116, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in 4 (68RS6M1R).\nDate: Oct 19, 2025, 11:16 am', '', 1, '2025-10-19 17:16:02', NULL, 'CLASS1760514979'),
+(125, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in 4 (68RS6M1R).', '', 1, '2025-10-19 18:12:30', NULL, 'CLASS1760514979'),
+(126, 'PROF001', 'professor', 'New Student Enrollment', 'A new student has enrolled in 4 (68RS6M1R).\nDate: Oct 19, 2025, 12:12 pm', '', 1, '2025-10-19 18:12:30', NULL, 'CLASS1760514979'),
+(139, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in 4 (68RS6M1R) on Oct 19, 2025, 1:34 pm.', '', 1, '2025-10-19 19:34:59', NULL, 'CLASS1760514979'),
+(140, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in 4 (68RS6M1R).\nDate: Oct 19, 2025, 1:34 pm', '', 1, '2025-10-19 19:34:59', NULL, 'CLASS1760514979'),
+(145, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in wewewe (P1R86CBL) on Oct 19, 2025, 2:07 pm.', 'success', 1, '2025-10-19 20:07:26', NULL, 'CLASS1760862437'),
+(146, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in wewewe (P1R86CBL).\nDate: Oct 19, 2025, 2:07 pm', 'info', 1, '2025-10-19 20:07:26', NULL, 'CLASS1760862437'),
+(155, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in wewewe (P1R86CBL) on Oct 19, 2025, 2:31 pm.', 'success', 1, '2025-10-19 20:31:12', NULL, 'CLASS1760862437'),
+(156, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in wewewe (P1R86CBL).\nDate: Oct 19, 2025, 2:31 pm', 'info', 1, '2025-10-19 20:31:12', NULL, 'CLASS1760862437'),
+(169, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in wewewe (P1R86CBL) on Oct 19, 2025, 3:14 pm.', 'success', 1, '2025-10-19 21:14:15', NULL, 'CLASS1760862437'),
+(170, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in wewewe (P1R86CBL).\nDate: Oct 19, 2025, 3:14 pm', 'info', 1, '2025-10-19 21:14:15', NULL, 'CLASS1760862437'),
+(175, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in wewewe (P1R86CBL) on Oct 19, 2025, 3:20 pm.', 'success', 1, '2025-10-19 21:20:40', NULL, 'CLASS1760862437'),
+(176, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in wewewe (P1R86CBL).\nDate: Oct 19, 2025, 3:20 pm', 'info', 1, '2025-10-19 21:20:40', NULL, 'CLASS1760862437'),
+(211, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in lknsdf;glnk (16P84Y8J) on Oct 19, 2025, 7:52 pm.', 'success', 1, '2025-10-20 01:52:02', NULL, 'CLASS1760512359'),
+(212, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in lknsdf;glnk (16P84Y8J).\nDate: Oct 19, 2025, 7:52 pm', 'info', 1, '2025-10-20 01:52:02', NULL, 'CLASS1760512359'),
+(213, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in wewewe (P1R86CBL) on Oct 19, 2025, 7:52 pm.', 'success', 1, '2025-10-20 01:52:24', NULL, 'CLASS1760862437'),
+(214, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in wewewe (P1R86CBL).\nDate: Oct 19, 2025, 7:52 pm', 'info', 1, '2025-10-20 01:52:24', NULL, 'CLASS1760862437'),
+(275, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in wewewe (P1R86CBL) on Oct 19, 2025, 8:09 pm.', 'success', 1, '2025-10-20 02:09:14', NULL, 'CLASS1760862437'),
+(276, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in wewewe (P1R86CBL).\nDate: Oct 19, 2025, 8:09 pm', 'info', 1, '2025-10-20 02:09:14', NULL, 'CLASS1760862437'),
+(281, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in wewewe (P1R86CBL) on Oct 19, 2025, 8:14 pm.', 'success', 1, '2025-10-20 02:14:18', NULL, 'CLASS1760862437'),
+(282, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in wewewe (P1R86CBL).\nDate: Oct 19, 2025, 8:14 pm', 'info', 1, '2025-10-20 02:14:18', NULL, 'CLASS1760862437'),
+(283, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in Engineering Mathematics (6XL8WS9V) on Oct 19, 2025, 8:18 pm.', 'success', 1, '2025-10-20 02:18:10', NULL, 'CLASS005'),
+(284, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in Engineering Mathematics (6XL8WS9V).\nDate: Oct 19, 2025, 8:18 pm', '', 1, '2025-10-20 02:18:10', NULL, 'CLASS005'),
+(309, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in Introduction to Programming (5OK7ZE0C) on Oct 19, 2025, 8:47 pm.', 'success', 1, '2025-10-20 02:47:33', NULL, 'CLASS001'),
+(310, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in Introduction to Programming (5OK7ZE0C).\nDate: Oct 19, 2025, 8:47 pm', '', 1, '2025-10-20 02:47:33', NULL, 'CLASS001'),
+(311, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in wewewe (P1R86CBL) on Oct 19, 2025, 8:47 pm.', 'success', 1, '2025-10-20 02:47:47', NULL, 'CLASS1760862437'),
+(312, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in wewewe (P1R86CBL).\nDate: Oct 19, 2025, 8:47 pm', '', 1, '2025-10-20 02:47:47', NULL, 'CLASS1760862437'),
+(313, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in HOW TO BE HOTDOG (A3U3ZXL6) on Oct 19, 2025, 9:03 pm.', 'success', 1, '2025-10-20 03:03:31', NULL, 'CLASS1756441963'),
+(314, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in HOW TO BE HOTDOG (A3U3ZXL6).\nDate: Oct 19, 2025, 9:03 pm', '', 1, '2025-10-20 03:03:31', NULL, 'CLASS1756441963'),
+(315, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in Database Systems (NOW0G94U) on Oct 19, 2025, 9:05 pm.', 'success', 1, '2025-10-20 03:05:33', NULL, 'CLASS003'),
+(316, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in Database Systems (NOW0G94U).\nDate: Oct 19, 2025, 9:05 pm', '', 1, '2025-10-20 03:05:33', NULL, 'CLASS003'),
+(317, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in System Architecture (N2X1QVPI) on Oct 19, 2025, 9:05 pm.', 'success', 1, '2025-10-20 03:05:41', NULL, 'CLASS1756425193'),
+(318, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in System Architecture (N2X1QVPI).\nDate: Oct 19, 2025, 9:05 pm', '', 1, '2025-10-20 03:05:41', NULL, 'CLASS1756425193'),
+(319, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in 2 (WJR7ZESJ) on Oct 19, 2025, 9:08 pm.', 'success', 1, '2025-10-20 03:08:44', NULL, 'CLASS1759971443'),
+(320, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in 2 (WJR7ZESJ).\nDate: Oct 19, 2025, 9:08 pm', '', 1, '2025-10-20 03:08:44', NULL, 'CLASS1759971443'),
+(321, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in Test Subject (BSBJK30I) on Oct 19, 2025, 9:08 pm.', 'success', 1, '2025-10-20 03:08:51', NULL, 'CLASSTEST1'),
+(322, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in Test Subject (BSBJK30I).\nDate: Oct 19, 2025, 9:08 pm', '', 1, '2025-10-20 03:08:51', NULL, 'CLASSTEST1'),
+(351, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in 2 (WJR7ZESJ) on Oct 19, 2025, 9:11 pm.', 'success', 1, '2025-10-20 03:11:48', NULL, 'CLASS1759971443'),
+(352, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in 2 (WJR7ZESJ).\nDate: Oct 19, 2025, 9:11 pm', '', 1, '2025-10-20 03:11:48', NULL, 'CLASS1759971443'),
+(357, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in Introduction to Programming (5OK7ZE0C) on Oct 19, 2025, 9:20 pm.', 'success', 1, '2025-10-20 03:20:16', NULL, 'CLASS001'),
+(358, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in Introduction to Programming (5OK7ZE0C).\nDate: Oct 19, 2025, 9:20 pm', '', 1, '2025-10-20 03:20:16', NULL, 'CLASS001'),
+(363, 'STU001', 'student', 'Enrollment Successful', 'You have successfully enrolled in EWAN (WLCV0T8N) on Oct 19, 2025, 9:22 pm.', 'success', 0, '2025-10-20 03:22:37', NULL, 'CLASS1756542883'),
+(364, 'PROF001', 'professor', 'New Student Enrollment', 'Denmar Curtivo has enrolled in EWAN (WLCV0T8N).\nDate: Oct 19, 2025, 9:22 pm', '', 1, '2025-10-20 03:22:37', NULL, 'CLASS1756542883');
 
 -- --------------------------------------------------------
 
@@ -509,13 +548,19 @@ INSERT INTO `student_classes` (`enrollment_id`, `student_id`, `class_id`, `enrol
 (8, 'STU004', 'CLASS005', '2025-08-28 07:13:53'),
 (9, 'STU005', 'CLASS004', '2025-08-28 07:13:53'),
 (10, 'STU005', 'CLASS005', '2025-08-28 07:13:53'),
-(11, 'STU001', 'CLASS1756441963', '2025-08-29 12:33:12'),
-(13, 'STU001', 'CLASS1756542883', '2025-08-30 16:35:48'),
 (35, 'STU001', 'CLASS1756494311', '2025-08-31 00:40:34'),
 (37, 'STU001', 'CLASS1756767458', '2025-09-02 06:57:51'),
 (38, 'STU002', 'CLASS1756767458', '2025-09-02 06:58:34'),
-(102, 'STU001', 'CLASS1760514979', '2025-10-19 12:27:52'),
-(103, 'STU001', 'CLASS1760862437', '2025-10-19 16:27:26');
+(111, 'STU001', 'CLASS1760512359', '2025-10-20 01:52:02'),
+(115, 'STU001', 'CLASS005', '2025-10-20 02:18:10'),
+(117, 'STU001', 'CLASS1760862437', '2025-10-20 02:47:47'),
+(118, 'STU001', 'CLASS1756441963', '2025-10-20 03:03:31'),
+(119, 'STU001', 'CLASS003', '2025-10-20 03:05:33'),
+(120, 'STU001', 'CLASS1756425193', '2025-10-20 03:05:41'),
+(122, 'STU001', 'CLASSTEST1', '2025-10-20 03:08:51'),
+(123, 'STU001', 'CLASS1759971443', '2025-10-20 03:11:48'),
+(124, 'STU001', 'CLASS001', '2025-10-20 03:20:16'),
+(125, 'STU001', 'CLASS1756542883', '2025-10-20 03:22:37');
 
 -- --------------------------------------------------------
 
@@ -558,7 +603,6 @@ INSERT INTO `subjects` (`subject_id`, `subject_name`, `subject_code`, `descripti
 ('SUB1760509671', 'New', 'New', NULL, 3, 3, '2025-10-15 14:27:51', '2025-10-15 14:27:51', NULL),
 ('SUB1760510658', '3', '3', NULL, 3, 3, '2025-10-15 14:44:18', '2025-10-15 14:44:18', NULL),
 ('SUB1760512359', 'lknsdf;glnk', 'sd;fknjs;lk', NULL, 3, 1, '2025-10-15 15:12:39', '2025-10-15 15:12:39', NULL),
-('SUB1760514979', '4', '4', NULL, 3, 3, '2025-10-15 15:56:19', '2025-10-18 00:39:06', NULL),
 ('SUB1760862437', 'wewewe', '324234', NULL, 3, 3, '2025-10-19 16:27:17', '2025-10-19 16:27:17', NULL),
 ('SUBARCH1', 'Archived Subject 2024-2025', 'ARCH2024', NULL, 3, 1, '2025-09-20 08:21:50', '2025-09-20 08:21:50', NULL),
 ('SUBARCH2', 'Archived Subject 2023-2024', 'ARCH2023', NULL, 3, 3, '2025-09-20 08:21:54', '2025-09-20 08:21:54', NULL),
@@ -612,7 +656,69 @@ INSERT INTO `unenrollment_requests` (`request_id`, `student_id`, `class_id`, `st
 (66, 'STU001', 'CLASS1760514979', 'accepted', '2025-10-19 12:21:23', NULL, NULL, '2025-10-19 12:22:11', 'PROF001'),
 (67, 'STU001', 'CLASS1760514979', 'accepted', '2025-10-19 12:27:26', NULL, NULL, '2025-10-19 12:27:35', 'PROF001'),
 (68, 'STU001', 'CLASS1756767458', 'rejected', '2025-10-19 16:26:22', NULL, NULL, '2025-10-19 16:26:39', 'PROF001'),
-(69, 'STU001', 'CLASS1760862437', 'rejected', '2025-10-19 16:50:30', NULL, NULL, '2025-10-19 16:50:42', 'PROF001');
+(69, 'STU001', 'CLASS1760862437', 'rejected', '2025-10-19 16:50:30', NULL, NULL, '2025-10-19 16:50:42', 'PROF001'),
+(70, 'STU001', 'CLASS1760862437', 'rejected', '2025-10-19 17:14:01', NULL, NULL, '2025-10-19 17:14:19', 'PROF001'),
+(71, 'STU001', 'CLASS1760514979', 'rejected', '2025-10-19 17:14:37', NULL, NULL, '2025-10-19 17:15:03', 'PROF001'),
+(72, 'STU001', 'CLASS1760514979', 'accepted', '2025-10-19 17:15:19', NULL, NULL, '2025-10-19 17:15:30', 'PROF001'),
+(73, 'STU001', 'CLASS1760514979', 'rejected', '2025-10-19 17:23:43', NULL, NULL, '2025-10-19 17:23:55', 'PROF001'),
+(74, 'STU001', 'CLASS1760514979', 'rejected', '2025-10-19 17:26:49', NULL, NULL, '2025-10-19 17:28:27', 'PROF001'),
+(75, 'STU001', 'CLASS1760514979', 'rejected', '2025-10-19 17:40:04', NULL, NULL, '2025-10-19 17:40:11', 'PROF001'),
+(76, 'STU001', 'CLASS1760514979', 'rejected', '2025-10-19 17:40:34', NULL, NULL, '2025-10-19 17:40:45', 'PROF001'),
+(77, 'STU001', 'CLASS1760514979', 'rejected', '2025-10-19 17:44:12', NULL, NULL, '2025-10-19 17:44:20', 'PROF001'),
+(78, 'STU001', 'CLASS1760514979', 'rejected', '2025-10-19 17:49:28', NULL, NULL, '2025-10-19 18:04:40', 'PROF001'),
+(79, 'STU001', 'CLASS1760514979', 'rejected', '2025-10-19 18:05:40', NULL, NULL, '2025-10-19 18:05:51', 'PROF001'),
+(80, 'STU001', 'CLASS1760514979', 'accepted', '2025-10-19 18:08:09', NULL, NULL, '2025-10-19 18:08:37', 'PROF001'),
+(81, 'STU001', 'CLASS1760514979', 'rejected', '2025-10-19 19:07:00', NULL, NULL, '2025-10-19 19:31:52', 'PROF001'),
+(82, 'STU001', 'CLASS1760862437', 'rejected', '2025-10-19 19:12:54', NULL, NULL, '2025-10-19 19:31:49', 'PROF001'),
+(83, 'STU001', 'CLASS1760514979', 'accepted', '2025-10-19 19:32:08', NULL, NULL, '2025-10-19 19:34:29', 'PROF001'),
+(84, 'STU001', 'CLASS1760862437', 'accepted', '2025-10-19 20:03:43', NULL, NULL, '2025-10-19 20:07:05', 'PROF001'),
+(85, 'STU001', 'CLASS1760862437', 'accepted', '2025-10-19 20:11:15', NULL, NULL, '2025-10-19 20:11:47', 'PROF001'),
+(86, 'STU001', 'CLASS1756441963', 'accepted', '2025-10-19 20:17:45', NULL, NULL, '2025-10-19 20:31:00', 'PROF001'),
+(87, 'STU001', 'CLASS1760862437', 'rejected', '2025-10-19 20:34:55', NULL, NULL, '2025-10-19 20:37:07', 'PROF001'),
+(88, 'STU001', 'CLASS1760862437', 'rejected', '2025-10-19 20:39:46', NULL, NULL, '2025-10-19 20:44:37', 'PROF001'),
+(89, 'STU001', 'CLASS1760862437', 'accepted', '2025-10-19 20:44:43', NULL, NULL, '2025-10-19 21:13:54', 'PROF001'),
+(90, 'STU001', 'CLASS1760862437', 'accepted', '2025-10-19 21:15:50', NULL, NULL, '2025-10-19 21:16:03', 'PROF001'),
+(91, 'STU001', 'CLASS1756494311', 'rejected', '2025-10-19 21:21:33', NULL, NULL, '2025-10-19 21:21:51', 'PROF001'),
+(92, 'STU001', 'CLASS1756494311', 'rejected', '2025-10-19 21:22:00', NULL, NULL, '2025-10-19 21:25:53', 'PROF001'),
+(93, 'STU001', 'CLASS1760862437', 'rejected', '2025-10-19 21:26:07', NULL, NULL, '2025-10-19 21:41:00', 'PROF001'),
+(94, 'STU001', 'CLASS1760862437', 'accepted', '2025-10-19 21:46:45', NULL, NULL, '2025-10-19 21:47:23', 'PROF001'),
+(95, 'STU001', 'CLASS1756767458', 'rejected', '2025-10-19 21:49:37', NULL, NULL, '2025-10-19 22:16:04', 'PROF001'),
+(96, 'STU001', 'CLASS1756767458', 'rejected', '2025-10-19 22:16:20', NULL, NULL, '2025-10-19 22:22:47', 'PROF001'),
+(97, 'STU001', 'CLASS1756767458', 'rejected', '2025-10-19 22:23:00', NULL, NULL, '2025-10-19 22:28:40', 'PROF001'),
+(98, 'STU001', 'CLASS1756767458', 'rejected', '2025-10-19 22:28:45', NULL, NULL, '2025-10-19 22:30:55', 'PROF001'),
+(99, 'STU001', 'CLASS1756494311', 'rejected', '2025-10-20 00:01:29', NULL, NULL, '2025-10-20 00:06:48', 'PROF001'),
+(100, 'STU001', 'CLASS1760862437', 'rejected', '2025-10-20 01:52:43', NULL, NULL, '2025-10-20 01:53:00', 'PROF001'),
+(101, 'STU001', 'CLASS1760862437', 'rejected', '2025-10-20 01:55:50', NULL, NULL, '2025-10-20 01:57:13', 'PROF001'),
+(102, 'STU001', 'CLASS1760862437', 'accepted', '2025-10-20 01:57:23', NULL, NULL, '2025-10-20 01:57:35', 'PROF001'),
+(103, 'STU001', 'CLASS1760512359', 'rejected', '2025-10-20 01:58:45', NULL, NULL, '2025-10-20 01:59:06', 'PROF001'),
+(104, 'STU001', 'CLASS1760512359', 'rejected', '2025-10-20 01:59:15', NULL, NULL, '2025-10-20 02:00:45', 'PROF001'),
+(105, 'STU001', 'CLASS1756767458', 'rejected', '2025-10-20 02:00:28', NULL, NULL, '2025-10-20 02:00:43', 'PROF001'),
+(106, 'STU001', 'CLASS1756542883', 'rejected', '2025-10-20 02:00:32', NULL, NULL, '2025-10-20 02:00:42', 'PROF001'),
+(107, 'STU001', 'CLASS1760512359', 'rejected', '2025-10-20 02:02:14', NULL, NULL, '2025-10-20 02:05:23', 'PROF001'),
+(108, 'STU001', 'CLASS1756767458', 'rejected', '2025-10-20 02:02:20', NULL, NULL, '2025-10-20 02:05:22', 'PROF001'),
+(109, 'STU001', 'CLASS1756542883', 'rejected', '2025-10-20 02:04:11', NULL, NULL, '2025-10-20 02:05:21', 'PROF001'),
+(110, 'STU001', 'CLASS1756494311', 'rejected', '2025-10-20 02:04:55', NULL, NULL, '2025-10-20 02:05:19', 'PROF001'),
+(111, 'STU001', 'CLASS1760512359', 'rejected', '2025-10-20 02:06:48', NULL, NULL, '2025-10-20 02:08:01', 'PROF001'),
+(112, 'STU001', 'CLASS1760512359', 'rejected', '2025-10-20 02:08:07', NULL, NULL, '2025-10-20 02:08:09', 'PROF001'),
+(113, 'STU001', 'CLASS1760512359', 'rejected', '2025-10-20 02:08:15', NULL, NULL, '2025-10-20 02:08:20', 'PROF001'),
+(114, 'STU001', 'CLASS1756767458', 'rejected', '2025-10-20 02:08:35', NULL, NULL, '2025-10-20 02:08:40', 'PROF001'),
+(115, 'STU001', 'CLASS1760862437', 'accepted', '2025-10-20 02:14:00', NULL, NULL, '2025-10-20 02:14:07', 'PROF001'),
+(116, 'STU001', 'CLASS1760862437', 'rejected', '2025-10-20 02:18:19', NULL, NULL, '2025-10-20 02:18:42', 'PROF001'),
+(117, 'STU001', 'CLASS1760862437', 'rejected', '2025-10-20 02:19:06', NULL, NULL, '2025-10-20 02:20:44', 'PROF001'),
+(118, 'STU001', 'CLASS1760862437', 'rejected', '2025-10-20 02:20:51', NULL, NULL, '2025-10-20 02:22:43', 'PROF001'),
+(119, 'STU001', 'CLASS1760862437', 'rejected', '2025-10-20 02:24:13', NULL, NULL, '2025-10-20 02:24:24', 'PROF001'),
+(120, 'STU001', 'CLASS1760862437', 'rejected', '2025-10-20 02:29:34', NULL, NULL, '2025-10-20 02:29:46', 'PROF001'),
+(121, 'STU001', 'CLASS1760862437', 'accepted', '2025-10-20 02:29:51', NULL, NULL, '2025-10-20 02:30:02', 'PROF001'),
+(122, 'STU001', 'CLASS001', 'rejected', '2025-10-20 03:09:06', NULL, NULL, '2025-10-20 03:10:05', 'PROF001'),
+(123, 'STU001', 'CLASS003', 'rejected', '2025-10-20 03:09:11', NULL, NULL, '2025-10-20 03:10:03', 'PROF001'),
+(124, 'STU001', 'CLASS005', 'rejected', '2025-10-20 03:09:13', NULL, NULL, '2025-10-20 03:10:07', 'PROF001'),
+(125, 'STU001', 'CLASS1756425193', 'rejected', '2025-10-20 03:09:16', NULL, NULL, '2025-10-20 03:10:01', 'PROF001'),
+(126, 'STU001', 'CLASS001', 'accepted', '2025-10-20 03:10:13', NULL, NULL, '2025-10-20 03:10:22', 'PROF001'),
+(127, 'STU001', 'CLASS1756542883', 'accepted', '2025-10-20 03:10:15', NULL, NULL, '2025-10-20 03:10:20', 'PROF001'),
+(128, 'STU001', 'CLASS1759971443', 'accepted', '2025-10-20 03:10:51', NULL, NULL, '2025-10-20 03:10:56', 'PROF001'),
+(129, 'STU001', 'CLASS003', 'rejected', '2025-10-20 03:13:41', NULL, NULL, '2025-10-20 03:20:26', 'PROF001'),
+(130, 'STU001', 'CLASS005', 'rejected', '2025-10-20 03:19:57', NULL, NULL, '2025-10-20 03:20:23', 'PROF001'),
+(131, 'STU001', 'CLASS005', 'rejected', '2025-10-20 03:22:44', NULL, NULL, '2025-10-20 03:22:52', 'PROF001');
 
 --
 -- Indexes for dumped tables
@@ -815,7 +921,7 @@ ALTER TABLE `enrollment_requests`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=369;
 
 --
 -- AUTO_INCREMENT for table `professor_attendance`
@@ -851,7 +957,7 @@ ALTER TABLE `semesters`
 -- AUTO_INCREMENT for table `student_classes`
 --
 ALTER TABLE `student_classes`
-  MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
+  MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
 
 --
 -- AUTO_INCREMENT for table `subject_durations`
@@ -863,7 +969,7 @@ ALTER TABLE `subject_durations`
 -- AUTO_INCREMENT for table `unenrollment_requests`
 --
 ALTER TABLE `unenrollment_requests`
-  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=132;
 
 --
 -- Constraints for dumped tables

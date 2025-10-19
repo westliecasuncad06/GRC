@@ -82,8 +82,10 @@
     <div class="navbar-user">
         <span>Welcome, <?php echo $_SESSION['first_name']; ?></span>
         <div class="navbar-actions">
-            <button type="button" class="notification-btn" onclick="openNotificationModal()" title="Notifications">
+            <button type="button" class="notification-btn" onclick="openNotificationModal()" title="Notifications" style="position: relative;">
                 <i class="fas fa-bell"></i>
+                <!-- Student notification badge placed at the top-right of the bell -->
+                <span class="notification-badge" style="display: none;">0</span>
             </button>
             <div class="user-dropdown">
                 <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
@@ -184,21 +186,22 @@
 
 .notification-badge {
     position: absolute;
-    bottom: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #dc3545;
+    top: -8px;
+    right: -8px;
+    background: rgb(220, 53, 69);
     color: white;
     border-radius: 50%;
-    width: 0.8rem;
-    height: 0.8rem;
-    font-size: 0.5rem;
-    font-weight: bold;
+    width: 20px;
+    height: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    border: 1px solid white;
+    border: 2px solid white;
+    line-height: 1;
+    box-shadow: rgba(220, 53, 69, 0.35) 0px 2px 8px;
 }
 
 /* Enhanced Notification Modal Styles */
@@ -857,20 +860,16 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.success) {
                     const notificationBtn = document.querySelector('.notification-btn');
-                    let badge = notificationBtn.querySelector('.notification-badge');
-
-                    if (data.count > 0) {
-                        if (!badge) {
-                            badge = document.createElement('span');
-                            badge.className = 'notification-badge';
-                            notificationBtn.appendChild(badge);
-                        }
-                        badge.textContent = data.count;
+                    if (!notificationBtn) return;
+                    const badge = notificationBtn.querySelector('.notification-badge');
+                    if (!badge) return;
+                    const count = parseInt(data.count || 0, 10);
+                    if (count > 0) {
+                        badge.style.display = 'flex';
+                        badge.textContent = count > 9 ? '9+' : String(count);
                         notificationBtn.classList.add('has-notifications');
                     } else {
-                        if (badge) {
-                            badge.remove();
-                        }
+                        badge.style.display = 'none';
                         notificationBtn.classList.remove('has-notifications');
                     }
                 }

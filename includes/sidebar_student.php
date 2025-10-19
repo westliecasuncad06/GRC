@@ -233,6 +233,10 @@
             <i class="fas fa-book"></i>
             <span>My Classes</span>
         </a>
+        <a href="../Student/enrollment.php" class="nav-item <?php echo ($current_page == 'enrollment.php') ? 'active' : ''; ?>">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Enrollment</span>
+        </a>
         <a href="../Student/student_archive.php" class="nav-item <?php echo ($current_page == 'student_archive.php') ? 'active' : ''; ?>">
             <i class="fas fa-archive"></i>
             <span>Archive</span>
