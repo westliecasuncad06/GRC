@@ -72,27 +72,28 @@ try {
 
     // Create notification for the student
     $student_notification_title = 'Enrollment Successful';
-    $student_notification_message = "You have successfully enrolled in {$subject_name} ({$class_code_display}).";
+    $enrollment_date_display = date('M j, Y, g:i a');
+    $student_notification_message = "You have successfully enrolled in {$subject_name} ({$class_code_display}) on {$enrollment_date_display}.";
     $notificationManager->createNotification(
         $student_id,
         'student',
         $student_notification_title,
         $student_notification_message,
-        'enrollment_success',
+        'success',
         null,
         $class_id
     );
 
     // Create notification for the professor
-    $enrollment_date = date('M j, Y, g:i a');
+    $enrollment_date = $enrollment_date_display;
     $professor_notification_title = 'New Student Enrollment';
-    $professor_notification_message = "A new student has enrolled in {$subject_name} ({$class_code_display}).\nDate: {$enrollment_date}";
+    $professor_notification_message = "{$student_name} has enrolled in {$subject_name} ({$class_code_display}).\nDate: {$enrollment_date}";
     $notificationManager->createNotification(
         $professor_id,
         'professor',
         $professor_notification_title,
         $professor_notification_message,
-        'student_enrolled',
+        'info',
         null,
         $class_id
     );

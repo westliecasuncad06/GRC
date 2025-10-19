@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'db.php';
+require_once 'notifications.php';
 
 header('Content-Type: application/json');
 
@@ -46,6 +47,47 @@ try {
     // Insert unenrollment request
     $stmt = $pdo->prepare("INSERT INTO unenrollment_requests (student_id, class_id, status, requested_at) VALUES (?, ?, 'pending', NOW())");
     $stmt->execute([$student_id, $class_id]);
+    $request_id = $pdo->lastInsertId();
+
+    // Fetch details for notifications (professor id, subject, class code)
+    $stmt = $pdo->prepare("SELECT c.professor_id, s.subject_name, c.class_code FROM classes c JOIN subjects s ON c.subject_id = s.subject_id WHERE c.class_id = ?");
+    $stmt->execute([$class_id]);
+    $class = $stmt->fetch();
+
+    // Fetch student name
+    $stmt = $pdo->prepare("SELECT first_name, last_name FROM students WHERE student_id = ?");
+    $stmt->execute([$student_id]);
+    $student = $stmt->fetch();
+    $student_name = $student ? $student['first_name'] . ' ' . $student['last_name'] : 'Student';
+
+    $subject_name = $class['subject_name'] ?? 'Subject';
+    $class_code = $class['class_code'] ?? '';
+    $professor_id = $class['professor_id'] ?? null;
+    $now_display = date('M j, Y, g:i a');
+
+    // Notify student that request was submitted
+    $notificationManager->createNotification(
+        $student_id,
+        'student',
+        'Unenrollment Request Submitted',
+        "Your request to unenroll from {$subject_name} ({$class_code}) was submitted on {$now_display}. Waiting for professor approval.",
+        'info',
+        $request_id,
+        $class_id
+    );
+
+    // Notify professor about the new unenrollment request
+    if ($professor_id) {
+        $notificationManager->createNotification(
+            $professor_id,
+            'professor',
+            'Unenrollment Request',
+            "{$student_name} requested to unenroll from {$subject_name} ({$class_code}).\nDate: {$now_display}",
+            'info',
+            $request_id,
+            $class_id
+        );
+    }
 
     echo json_encode([
         'success' => true,

@@ -35,13 +35,11 @@ class NotificationManager {
      */
     public function getNotifications($user_id, $user_type, $limit = 20, $offset = 0) {
         try {
-            $stmt = $this->pdo->prepare("
-                SELECT * FROM notifications
-                WHERE user_id = ? AND user_type = ?
-                ORDER BY created_at DESC
-                LIMIT ? OFFSET ?
-            ");
-            $stmt->execute([$user_id, $user_type, $limit, $offset]);
+            $limit = (int)$limit;
+            $offset = (int)$offset;
+            $sql = "SELECT * FROM notifications WHERE user_id = ? AND user_type = ? ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$user_id, $user_type]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("Error getting notifications: " . $e->getMessage());

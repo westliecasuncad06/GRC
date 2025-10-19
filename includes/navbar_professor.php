@@ -335,69 +335,48 @@ if ($professor_id) {
             <button class="modal-close" onclick="closeNotificationModal()">&times;</button>
         </div>
         <div class="modal-body">
+            <?php if (!empty($pending_unenrollment_requests)): ?>
+            <h4 style="margin: 0 0 1rem 0; font-weight: 600; color: #343a40;">Pending Unenrollment Requests</h4>
             <div class="notification-list">
-                <?php if (!empty($enrollment_notifications) || !empty($pending_unenrollment_requests)): ?>
-                    <?php foreach ($enrollment_notifications as $notification): ?>
-                        <div class="notification-item">
-                            <div class="notification-icon">
-                                <i class="fas fa-user-plus"></i>
+                <?php foreach ($pending_unenrollment_requests as $request): ?>
+                    <div class="notification-item" id="unenrollment-request-<?php echo $request['request_id']; ?>">
+                        <div class="notification-icon">
+                            <i class="fas fa-user-minus"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">Unenrollment Request</div>
+                            <div class="notification-message">
+                                <?php echo htmlspecialchars($request['first_name'] . ' ' . $request['last_name']); ?> has requested to unenroll from
+                                <strong><?php echo htmlspecialchars($request['subject_name']); ?></strong>
+                                (Class Code: <?php echo htmlspecialchars($request['class_code']); ?>).
                             </div>
-                            <div class="notification-content">
-                                <div class="notification-title"><?php echo htmlspecialchars($notification['title']); ?></div>
-                                <div class="notification-message"><?php echo nl2br(htmlspecialchars($notification['message'])); ?></div>
-                                <div class="notification-meta">
-                                    <div class="notification-time">
-                                        <i class="fas fa-clock"></i>
-                                        <?php echo date('M j, Y, g:i a', strtotime($notification['created_at'])); ?>
-                                    </div>
-                                    <div class="notification-status <?php echo $notification['is_read'] ? 'status-read' : 'status-unread'; ?>">
-                                        <?php echo $notification['is_read'] ? 'READ' : 'UNREAD'; ?>
-                                    </div>
+                            <div class="notification-meta">
+                                <div class="notification-time">
+                                    <i class="fas fa-clock"></i>
+                                    <?php echo date('M j, Y, g:i a', strtotime($request['requested_at'])); ?>
                                 </div>
+                                <div class="notification-status status-unread">PENDING</div>
+                            </div>
+                            <div class="notification-actions" style="margin-top: 10px;">
+                                <button class="btn-enhanced btn-primary" onclick="showConfirmationModal('<?php echo $request['request_id']; ?>', 'accept', 'unenrollment')">Accept</button>
+                                <button class="btn-enhanced btn-secondary" onclick="showConfirmationModal('<?php echo $request['request_id']; ?>', 'reject', 'unenrollment')">Reject</button>
                             </div>
                         </div>
-                    <?php endforeach; ?>
-
-                    <?php foreach ($pending_unenrollment_requests as $request): ?>
-                        <div class="notification-item" id="unenrollment-request-<?php echo $request['request_id']; ?>">
-                            <div class="notification-icon">
-                                <i class="fas fa-user-minus"></i>
-                            </div>
-                            <div class="notification-content">
-                                <div class="notification-title">Unenrollment Request</div>
-                                <div class="notification-message">
-                                    <?php echo htmlspecialchars($request['first_name'] . ' ' . $request['last_name']); ?> has requested to unenroll from
-                                    <strong><?php echo htmlspecialchars($request['subject_name']); ?></strong>
-                                    (Class Code: <?php echo htmlspecialchars($request['class_code']); ?>).
-                                </div>
-                                <div class="notification-meta">
-                                    <div class="notification-time">
-                                        <i class="fas fa-clock"></i>
-                                        <?php echo date('M j, Y, g:i a', strtotime($request['requested_at'])); ?>
-                                    </div>
-                                    <div class="notification-status status-unread">PENDING</div>
-                                </div>
-                                <div class="notification-actions" style="margin-top: 10px;">
-                                    <button class="btn-enhanced btn-primary" onclick="showConfirmationModal('<?php echo $request['request_id']; ?>', 'accept', 'unenrollment')">Accept</button>
-                                    <button class="btn-enhanced btn-secondary" onclick="showConfirmationModal('<?php echo $request['request_id']; ?>', 'reject', 'unenrollment')">Reject</button>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <div class="no-notifications">
-                        <div class="no-notifications-icon">
-                            <i class="fas fa-bell-slash"></i>
-                        </div>
-                        <div class="no-notifications-text">No new notifications</div>
-                        <div class="no-notifications-subtext">You have no pending requests or recent enrollments.</div>
                     </div>
-                <?php endif; ?>
+                <?php endforeach; ?>
             </div>
+            <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid rgba(0,0,0,0.08);">
+            <?php endif; ?>
+
+            <h4 style="margin: 0 0 1rem 0; font-weight: 600; color: #343a40;">All Notifications</h4>
+            <div class="notification-list" id="notificationList"></div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn-enhanced btn-secondary-enhanced" onclick="closeNotificationModal()">
                 <i class="fas fa-times"></i> Close
+            </button>
+            <button type="button" class="btn-enhanced btn-primary" onclick="markAllNotificationsRead()">
+                <i class="fas fa-check"></i> Mark All Read
             </button>
         </div>
     </div>
@@ -441,6 +420,8 @@ if ($professor_id) {
 
 <script>
     // Global function for notification modal close button
+    let notificationsIntervalId = null;
+
     function closeNotificationModal() {
         const modal = document.getElementById('notificationModal');
         modal.classList.remove('show');
@@ -449,12 +430,21 @@ if ($professor_id) {
         if (notificationBtn) {
             notificationBtn.classList.remove('has-notifications');
         }
+        // stop auto-refresh
+        if (notificationsIntervalId) {
+            clearInterval(notificationsIntervalId);
+            notificationsIntervalId = null;
+        }
     }
 
     // Function to open notification modal
     function openNotificationModal() {
         const modal = document.getElementById('notificationModal');
         modal.classList.add('show');
+        loadNotifications();
+        // auto-refresh while open
+        if (notificationsIntervalId) clearInterval(notificationsIntervalId);
+        notificationsIntervalId = setInterval(loadNotifications, 10000);
     }
 
     // Close notification modal when clicking outside
@@ -601,6 +591,152 @@ if ($professor_id) {
             console.error('Error:', error);
             alert('An error occurred while handling the request.');
         });
+    }
+
+    // Load notifications from API
+    function loadNotifications() {
+        fetch('../php/get_notifications.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayNotifications(data.notifications);
+                } else {
+                    console.error('Failed to load notifications:', data.message);
+                    showNoNotifications();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading notifications:', error);
+                showNoNotifications();
+            });
+    }
+
+    // Display notifications in the modal
+    function displayNotifications(notifications) {
+        const notificationList = document.getElementById('notificationList');
+        if (!notificationList) return;
+
+        if (!notifications || notifications.length === 0) {
+            showNoNotifications();
+            return;
+        }
+
+        notificationList.innerHTML = '';
+
+        notifications.forEach(notification => {
+            const notificationItem = document.createElement('div');
+            notificationItem.className = 'notification-item';
+
+            const isRead = notification.is_read == 1;
+            const statusClass = isRead ? 'status-read' : 'status-unread';
+            const statusText = isRead ? 'READ' : 'UNREAD';
+
+            notificationItem.innerHTML = `
+                <div class="notification-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">${escapeHtml(notification.title)}</div>
+                    <div class="notification-message">${escapeHtml(notification.message)}</div>
+                    <div class="notification-meta">
+                        <div class="notification-time">
+                            <i class="fas fa-clock"></i>
+                            ${formatDate(notification.created_at)}
+                        </div>
+                        <div class="notification-status ${statusClass}">${statusText}</div>
+                    </div>
+                </div>
+            `;
+
+            notificationItem.addEventListener('click', () => markNotificationRead(notification.notification_id));
+
+            notificationList.appendChild(notificationItem);
+        });
+    }
+
+    function showNoNotifications() {
+        const notificationList = document.getElementById('notificationList');
+        if (!notificationList) return;
+        notificationList.innerHTML = `
+            <div class="no-notifications">
+                <div class="no-notifications-icon">
+                    <i class="fas fa-bell-slash"></i>
+                </div>
+                <div class="no-notifications-text">No notifications</div>
+                <div class="no-notifications-subtext">You're all caught up.</div>
+            </div>
+        `;
+    }
+
+    function markNotificationRead(notificationId) {
+        fetch('../php/mark_notification_read.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({ notification_id: notificationId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadNotifications();
+                updateNotificationBadge();
+            }
+        })
+        .catch(error => console.error('Error marking notification read:', error));
+    }
+
+    function markAllNotificationsRead() {
+        fetch('../php/mark_all_notifications_read.php', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadNotifications();
+                updateNotificationBadge();
+            }
+        })
+        .catch(error => console.error('Error marking all notifications as read:', error));
+    }
+
+    function updateNotificationBadge() {
+        fetch('../php/get_unread_notification_count.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const notificationBtn = document.querySelector('.notification-btn');
+                    if (!notificationBtn) return;
+                    let badge = notificationBtn.querySelector('.notification-badge');
+
+                    if (data.count > 0) {
+                        if (!badge) {
+                            badge = document.createElement('span');
+                            badge.className = 'notification-badge';
+                            notificationBtn.appendChild(badge);
+                        }
+                        badge.textContent = data.count;
+                        notificationBtn.classList.add('has-notifications');
+                    } else {
+                        if (badge) badge.remove();
+                        notificationBtn.classList.remove('has-notifications');
+                    }
+                }
+            })
+            .catch(error => console.error('Error updating notification badge:', error));
+    }
+
+    // Initialize badge on page load and set polling for real-time updates
+    updateNotificationBadge();
+    setInterval(updateNotificationBadge, 10000); // every 10s
+
+    // Utils
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 </script>
 <style>

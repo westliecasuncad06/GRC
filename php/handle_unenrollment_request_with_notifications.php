@@ -44,6 +44,19 @@ try {
     $professor = $stmt->fetch();
     $professor_name = $professor ? $professor['first_name'] . ' ' . $professor['last_name'] : 'Professor';
 
+    // Get class and subject details
+    $stmt = $pdo->prepare("SELECT s.subject_name, c.class_code FROM classes c JOIN subjects s ON c.subject_id = s.subject_id WHERE c.class_id = ?");
+    $stmt->execute([$class_id]);
+    $class = $stmt->fetch();
+    $subject_name = $class['subject_name'] ?? 'Subject';
+    $class_code = $class['class_code'] ?? '';
+
+    // Get student name
+    $stmt = $pdo->prepare("SELECT first_name, last_name FROM students WHERE student_id = ?");
+    $stmt->execute([$student_id]);
+    $student = $stmt->fetch();
+    $student_name = $student ? $student['first_name'] . ' ' . $student['last_name'] : 'Student';
+
     if ($action === 'accept') {
         // Remove from student_classes table
         $stmt = $pdo->prepare("DELETE FROM student_classes WHERE student_id = ? AND class_id = ?");
@@ -53,8 +66,8 @@ try {
 
         // Create notification for student
         $notification_title = 'Unenrollment Request Approved';
-        $notification_message = "Your unenrollment request has been approved by Professor $professor_name on " . date('M j, Y') . ". You have been unenrolled from the class.";
-        $notification_type = 'unenrollment_approved';
+        $notification_message = "Your unenrollment request for {$subject_name} ({$class_code}) has been approved by Professor $professor_name on " . date('M j, Y, g:i a') . ". You have been unenrolled from the class.";
+    $notification_type = 'unenrollment_approved';
 
         $notification_created = $notificationManager->createNotification(
             $student_id,
@@ -69,13 +82,24 @@ try {
             error_log("Failed to create unenrollment approved notification for student_id: $student_id, request_id: $request_id");
         }
 
+        // Create notification for professor (history)
+        $notificationManager->createNotification(
+            $professor_id,
+            'professor',
+            'Unenrollment Approved',
+            "You approved {$student_name}'s unenrollment from {$subject_name} ({$class_code}) on " . date('M j, Y, g:i a'),
+            'info',
+            $request_id,
+            $class_id
+        );
+
     } else {
         $message = 'Unenrollment request rejected';
 
         // Create notification for student
         $notification_title = 'Unenrollment Request Rejected';
-        $notification_message = "Your unenrollment request has been rejected by Professor $professor_name on " . date('M j, Y') . ".";
-        $notification_type = 'unenrollment_rejected';
+        $notification_message = "Your unenrollment request for {$subject_name} ({$class_code}) has been rejected by Professor $professor_name on " . date('M j, Y, g:i a') . ".";
+    $notification_type = 'unenrollment_rejected';
 
         $notificationManager->createNotification(
             $student_id,
@@ -83,6 +107,17 @@ try {
             $notification_title,
             $notification_message,
             $notification_type,
+            $request_id,
+            $class_id
+        );
+
+        // Create notification for professor (history)
+        $notificationManager->createNotification(
+            $professor_id,
+            'professor',
+            'Unenrollment Rejected',
+            "You rejected {$student_name}'s unenrollment from {$subject_name} ({$class_code}) on " . date('M j, Y, g:i a'),
+            'info',
             $request_id,
             $class_id
         );

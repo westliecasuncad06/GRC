@@ -661,15 +661,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Modal functions
+    let notificationsIntervalId = null;
+
     window.openNotificationModal = function() {
         const modal = document.getElementById('notificationModal');
         modal.classList.add('show');
         loadNotifications();
+        // auto-refresh while open
+        if (notificationsIntervalId) clearInterval(notificationsIntervalId);
+        notificationsIntervalId = setInterval(loadNotifications, 10000);
     };
 
     window.closeNotificationModal = function() {
         const modal = document.getElementById('notificationModal');
         modal.classList.remove('show');
+        // stop auto-refresh
+        if (notificationsIntervalId) {
+            clearInterval(notificationsIntervalId);
+            notificationsIntervalId = null;
+        }
         // Hide the notification badges after viewing
         document.querySelectorAll('.notification-badge').forEach(badge => {
             badge.style.display = 'none';
@@ -829,8 +839,9 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // Initialize notification badge on page load
+    // Initialize notification badge on page load and poll for real-time updates
     updateNotificationBadge();
+    setInterval(updateNotificationBadge, 10000); // every 10s
 
     // Utility functions
     function escapeHtml(text) {
