@@ -1857,5 +1857,6 @@ function saveAttendance(date) {
             }
         }
     </script>
+    <?php include '../includes/footbar.php'; ?>
 </body>
 </html>

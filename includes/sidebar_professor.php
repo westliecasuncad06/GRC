@@ -144,6 +144,8 @@ if ($professor_id) {
 
                 box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 
+                z-index: 1010;
+
             }
 
             .sidebar-header {
@@ -204,7 +206,7 @@ if ($professor_id) {
 
                 width: 100%;
 
-                padding-bottom: 60px;
+                padding-bottom: 200px; /* Increased to ensure room for both sidebar and footbar */
 
             }
 
@@ -212,6 +214,13 @@ if ($professor_id) {
 
                 display: none;
 
+            }
+
+            /* Ensure footbar is above sidebar */
+            .footbar {
+                position: relative !important;
+                z-index: 900 !important;
+                margin-bottom: 70px !important; /* Space for bottom navigation */
             }
 
         }
@@ -246,8 +255,12 @@ if ($professor_id) {
 
             .main-content {
 
-                padding-bottom: 50px;
+                padding-bottom: 180px; /* Increased for footbar visibility */
 
+            }
+
+            .footbar {
+                margin-bottom: 60px !important; /* Space for smaller sidebar */
             }
 
         }

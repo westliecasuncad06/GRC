@@ -398,5 +398,6 @@ try {
             form.style.display = form.style.display === 'none' ? 'block' : 'none';
         }
     </script>
+    <?php include '../includes/footbar.php'; ?>
 </body>
 </html>

@@ -201,4 +201,68 @@
     .stat-recent-item {
         padding: 6px;
     }
+
+    /* Footbar Mobile Optimization for 300-420px */
+    .footbar {
+        position: relative !important;
+        margin-left: 0 !important;
+        width: 100% !important;
+        float: none !important;
+        clear: both;
+        z-index: 1000;
+        padding: 0.75rem 0.5rem;
+        font-size: 0.7rem;
+        box-sizing: border-box;
+    }
+
+    .footbar-content {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.4rem !important;
+    }
+
+    .footbar-section {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.3rem !important;
+    }
+
+    .footbar-section span {
+        display: block !important;
+        width: 100%;
+        line-height: 1.4;
+    }
+
+    .footbar-links {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.3rem !important;
+    }
+
+    .footbar-credits {
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        padding-top: 0.4rem;
+        margin-top: 0.4rem;
+        font-size: 0.65rem;
+    }
+
+    .footbar-credits span {
+        display: block !important;
+        margin: 0.2rem 0 !important;
+    }
+
+    .footbar a {
+        font-size: 0.7rem;
+        padding: 0.2rem 0;
+    }
+
+    .footbar svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    /* Ensure proper spacing */
+    .main-content {
+        padding-bottom: 1rem !important;
+    }
 }

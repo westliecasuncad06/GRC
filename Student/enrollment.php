@@ -83,13 +83,406 @@ if (isset($_GET['action'])) {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-        :root { --primary: #F75270; --primary-dark:#DC143C; --accent:#F7CAC9; --dark:#343a40; --gray:#6c757d; --light:#FDEBD0; --warning:#ffc107; --danger:#dc3545; --success: #28a745; }
-        body { font-family: 'Poppins', sans-serif; background: var(--light); }
-        .main-content { padding: 2rem; min-height: calc(100vh - 70px); }
-        .page-header { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 8px 25px rgba(247,82,112,0.18); margin-bottom: 1rem; }
-        .controls { display:flex; gap:1rem; align-items:center; justify-content:space-between; margin-bottom:1rem; flex-wrap:wrap; }
-        .search-row { display:flex; gap:0.75rem; align-items:center; }
-        .search-input, .select-dept { padding:0.6rem 0.8rem; border-radius:8px; border:1px solid #eee; min-width:240px; }
+    :root { 
+        /* Core colors */
+        --primary: #F75270; 
+        --primary-dark: #DC143C; 
+        --primary-light: #FF8DA3;
+        --accent: #F7CAC9; 
+        --dark: #343a40; 
+        --gray: #6c757d;
+        --light: #FDEBD0; 
+        --warning: #ffc107; 
+        --danger: #dc3545; 
+        --success: #28a745;
+        
+        /* Shadows */
+        --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+        --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+        --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        --shadow-primary: 0 8px 24px rgba(247,82,112,0.15);
+        
+        /* Transitions */
+        --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+        
+        /* Spacing */
+        --space-xs: 0.25rem;
+        --space-sm: 0.5rem;
+        --space-md: 1rem;
+        --space-lg: 1.5rem;
+        --space-xl: 2rem;
+        
+        /* Border Radius */
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-full: 9999px;
+    }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content { 
+            padding: 2rem; 
+            min-height: calc(100vh - 70px);
+            flex: 1;
+            margin-left: 250px; /* Match sidebar width */
+            width: calc(100% - 250px);
+            transition: margin-left 0.3s, width 0.3s;
+        }
+        .page-header { 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); 
+            color: white; 
+            padding: 1.5rem; 
+            border-radius: 16px; 
+            box-shadow: 0 8px 25px rgba(247,82,112,0.18); 
+            margin-bottom: 2rem;
+        }
+        .page-header h1 {
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        .controls { 
+            display: flex; 
+            flex-direction: column;
+            gap: 1rem; 
+            margin-bottom: 1.5rem; 
+            background: white;
+            padding: 1.25rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        
+        /* First Row: Search + View Toggle */
+        .search-toggle-row { 
+            display: flex; 
+            gap: 1rem; 
+            align-items: center;
+            width: 100%;
+        }
+        
+        /* Second Row: Dropdown */
+        .dropdown-row {
+            display: flex;
+            width: 100%;
+        }
+        
+        /* Third Row: Button */
+        .button-row {
+            display: flex;
+            width: 100%;
+        }
+        /* Common input/select styling */
+        .search-input, .select-dept { 
+            padding: 0.625rem 0.875rem; 
+            border-radius: 10px; 
+            border: 2px solid #e8e8e8; 
+            font-size: 0.95rem;
+            transition: all 0.25s ease;
+            box-sizing: border-box;
+            background: #FFFFFF;
+            height: 44px;
+            outline: none;
+            color: #343a40;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+        }
+        
+        /* Search input specific */
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%236c757d"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 0.875rem center;
+            background-size: 18px;
+            padding-right: 2.5rem;
+            padding-left: 0.875rem;
+        }
+        /* Dropdown specific - full width in its row */
+        .select-dept {
+            width: 100%;
+            background-color: #FFFFFF;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23F75270"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 20px;
+            padding-right: 2.75rem;
+            padding-left: 0.875rem;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            color: #343a40;
+            font-weight: 600;
+        }
+        .select-dept option {
+            color: #343a40;
+            background: white;
+            padding: 0.625rem;
+            font-weight: 500;
+        }
+        .search-input:hover, .select-dept:hover {
+            border-color: #d0d0d0;
+            background-color: #fafafa;
+            transform: translateY(-1px);
+        }
+        .search-input:focus, .select-dept:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(247,82,112,0.12);
+            background-color: white;
+            transform: translateY(-1px);
+        }
+        
+        /* View toggle - compact for top right */
+        .view-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(247,82,112,0.06);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            transition: all 0.25s ease;
+            border: 2px solid rgba(247,82,112,0.12);
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+        .view-toggle:hover {
+            background: rgba(247,82,112,0.08);
+            border-color: rgba(247,82,112,0.2);
+        }
+        .view-toggle label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--dark);
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.2s ease;
+        }
+        .view-toggle label:hover {
+            color: var(--primary);
+        }
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            background: white;
+            border-radius: 999px;
+            box-shadow: inset 0 0 0 2px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .toggle-knob {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 6px rgba(247,82,112,0.25);
+        }
+        .toggle-switch.active {
+            background: rgba(247,82,112,0.12);
+            box-shadow: inset 0 0 0 2px var(--primary);
+        }
+        .toggle-switch.active .toggle-knob {
+            left: 25px;
+            background: var(--primary-dark);
+            box-shadow: 0 2px 8px rgba(220,20,60,0.3);
+        }
+        
+        /* Clear button - full width in its row */
+        .btn-clear {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            background: linear-gradient(135deg, var(--gray) 0%, #5a6268 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.625rem;
+            height: 44px;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .btn-clear:hover {
+            background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .btn-clear:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .btn-clear i {
+            font-size: 1rem;
+        }
+
+        /* Responsive adjustments */
+        /* Tablet breakpoint */
+        @media (max-width: 992px) {
+            .main-content {
+                padding: 1.25rem;
+                margin-left: 0;
+                width: 100%;
+            }
+            .controls {
+                padding: 1rem;
+            }
+            .search-toggle-row {
+                gap: 0.75rem;
+            }
+        }
+
+        /* Small tablet / Large mobile */
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 1rem;
+                border-radius: 10px;
+                margin-bottom: 1rem;
+            }
+            .page-header h1 {
+                font-size: 1.25rem;
+            }
+            .controls {
+                padding: 1rem;
+                gap: 0.875rem;
+                border-radius: 10px;
+            }
+            .search-toggle-row {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .search-input {
+                width: 100%;
+                min-width: 100%;
+                font-size: 0.95rem;
+                height: 44px;
+                padding: 0.625rem 2.5rem 0.625rem 0.875rem;
+                background-position: right 0.875rem center;
+                background-size: 18px;
+            }
+            .select-dept {
+                width: 100%;
+                font-size: 0.95rem;
+                height: 44px;
+                padding: 0.625rem 2.75rem 0.625rem 0.875rem;
+                background-position: right 0.875rem center;
+                background-size: 18px;
+            }
+            .view-toggle {
+                width: 100%;
+                justify-content: center;
+                padding: 0.625rem 1rem;
+            }
+            .btn-clear {
+                width: 100%;
+                height: 44px;
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Mobile breakpoint */
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 0.75rem;
+            }
+            .page-header {
+                padding: 0.875rem;
+                border-radius: 8px;
+                margin-bottom: 0.875rem;
+            }
+            .page-header h1 {
+                font-size: 1.15rem;
+                font-weight: 600;
+            }
+            .controls {
+                padding: 0.875rem;
+                gap: 0.75rem;
+            }
+            .search-input, .select-dept, .btn-clear {
+                height: 42px;
+                font-size: 0.9rem;
+            }
+
+        }
+        
+        /* Small mobile optimization */
+        @media (max-width: 360px) {
+            .main-content {
+                padding: 0.5rem;
+            }
+            .controls {
+                padding: 0.625rem;
+                gap: 0.625rem;
+            }
+            .search-input, .select-dept, .btn-clear {
+                height: 40px;
+                font-size: 0.875rem;
+                padding: 0.5rem 0.75rem;
+            }
+            .search-input {
+                padding-right: 2rem;
+                background-position: right 0.625rem center;
+                background-size: 16px;
+            }
+            .select-dept {
+                padding-right: 2rem;
+                background-position: right 0.625rem center;
+                background-size: 16px;
+            }
+        }
+            .toggle-switch {
+                width: 44px;
+                height: 24px;
+            }
+            .toggle-knob {
+                width: 18px;
+                height: 18px;
+                top: 3px;
+                left: 3px;
+            }
+            .toggle-switch.active .toggle-knob {
+                left: 21px;
+            }
+    
+        /* Dropdown responsiveness */
+        .select-dept {
+            max-width: 220px;
+        }
+        @media (max-width: 480px) {
+            .select-dept {
+                max-width: 100%;
+            }
+        }
+        /* Responsive modal for mobile */
+        @media (max-width: 480px) {
+            .modal .modal-content {
+                padding: 0.5rem !important;
+                border-radius: 8px !important;
+            }
+            .modal-header, .modal-footer {
+                padding: 0.5rem 0.5rem !important;
+                border-radius: 8px 8px 0 0 !important;
+            }
+            .modal-body {
+                padding: 0.5rem !important;
+            }
+        }
+
 
         /* Professor Tile Grid */
         .prof-list { 
@@ -170,174 +563,185 @@ if (isset($_GET['action'])) {
         .btn-secondary { background:var(--gray); color:white; }
         .no-results { color:var(--gray); padding:1rem; text-align:center; }
 
-        /* View toggle */
-        .view-toggle { display:flex; gap:0.5rem; align-items:center; }
-        .toggle-switch { position:relative; width:56px; height:30px; background:#fff; border-radius:999px; box-shadow: inset 0 0 0 2px rgba(0,0,0,0.05); cursor:pointer; }
-        .toggle-knob { position:absolute; top:3px; left:3px; width:24px; height:24px; background:var(--primary); border-radius:50%; transition:all .25s ease; }
-        .toggle-switch.active .toggle-knob { left:29px; background:var(--primary-dark); }
+
+        .toggle-switch { 
+            position: relative; 
+            width: 40px; 
+            height: 22px; 
+            background: #fff; 
+            border-radius: 999px; 
+            box-shadow: inset 0 0 0 1px #e0e0e0; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .toggle-knob { 
+            position: absolute; 
+            top: 2px; 
+            left: 2px; 
+            width: 18px; 
+            height: 18px; 
+            background: var(--primary); 
+            border-radius: 50%; 
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .toggle-switch.active { 
+            background: rgba(247,82,112,0.1);
+            box-shadow: inset 0 0 0 1px var(--primary);
+        }
+        .toggle-switch.active .toggle-knob { 
+            left: 20px; 
+            background: var(--primary);
+        }
 
         /* List table */
         .list-table { width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.06); }
         .list-table th { background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%); color:white; padding:0.75rem; text-align:left; font-weight:600; }
         .list-table td { padding:0.75rem; border-bottom:1px solid rgba(0,0,0,0.05); }
 
-        /* Responsive */
-        @media (max-width:768px) { 
-            .search-row { flex-direction:column; align-items:stretch; } 
-            .search-input, .select-dept { width:100%; }
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .prof-list {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) { 
+            .prof-list { 
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            .prof-card { 
+                aspect-ratio: auto; 
+                flex-direction: row; 
+                align-items: center; 
+                padding: 1rem;
+                transform: none !important;
+            }
+            .prof-card .meta { 
+                padding: 0 1rem 0 0;
+                text-align: left;
+                background: none;
+                flex: 1;
+            }
+            .prof-card .meta strong {
+                font-size: 1rem;
+                margin-bottom: 0.35rem;
+            }
+            .prof-card .meta .dept {
+                font-size: 0.85rem;
+                padding: 0.25rem 0.6rem;
+            }
+            .prof-card .card-footer { 
+                justify-content: flex-end;
+                margin: 0;
+                width: auto;
+                min-width: 120px;
+            }
+            .prof-card .btn.btn-primary {
+                padding: 0.5rem 1rem;
+                width: auto;
+                font-size: 0.9rem;
+            }
+
+            /* Subject list responsiveness */
+            .subject-list {
+                gap: 0.5rem;
+            }
+            .subject-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+                padding: 1rem;
+            }
+            .subject-card > div {
+                width: 100%;
+            }
+            .subject-card .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header {
+                padding: 1rem;
+            }
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+            .controls {
+                gap: 0.75rem;
+            }
+            .controls-inner { gap: 0.5rem; }
+            .view-toggle {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .prof-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.25rem;
+            }
+            .prof-card .meta {
+                text-align: center;
+                padding: 0;
+                margin-bottom: 1rem;
+            }
+            .prof-card .card-footer {
+                width: 100%;
+                justify-content: center;
+            }
+            .prof-card .btn.btn-primary {
+                width: 100%;
+            }
+            .btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.9rem;
+            }
             
-            .prof-list { grid-template-columns: 1fr; }
-            .prof-card { 
-                aspect-ratio: auto; 
-                flex-direction:row; 
-                align-items:center; 
-                padding:1rem;
-                transform: none !important;
+            /* Keep horizontal cards on mobile for better alignment */
+            .prof-list {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
             }
-            .prof-card .meta { 
+            .prof-card {
+                aspect-ratio: auto;
+                flex-direction: row;
+                align-items: center;
+                padding: 1rem;
+                transform: none !important;
+                min-height: 100px; /* Ensure consistent height */
+                justify-content: space-between;
+            }
+            .prof-card .meta {
+                flex: 1;
                 padding: 0 1rem 0 0;
                 text-align: left;
                 background: none;
+                margin: 0;
             }
             .prof-card .meta strong {
                 font-size: 1rem;
                 margin-bottom: 0.35rem;
+                display: block;
             }
             .prof-card .meta .dept {
                 font-size: 0.85rem;
                 padding: 0.25rem 0.6rem;
+                display: inline-block;
             }
-            .prof-card .card-footer { 
+            .prof-card .card-footer {
                 justify-content: flex-end;
                 margin: 0;
                 width: auto;
+                flex-shrink: 0;
             }
             .prof-card .btn.btn-primary {
                 padding: 0.5rem 1rem;
                 width: auto;
-            }
-        }
-    /* Tile grid for professors: make square tiles */
-        /* Tile grid for professors */
-        .prof-list { 
-            margin-top:1rem; 
-            display:grid; 
-            gap:1rem; 
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
-        }
-        .prof-card { 
-            background:white; 
-            border-radius:16px; 
-            padding:1.25rem; 
-            box-shadow: 0 8px 24px rgba(247,82,112,0.08), 0 2px 8px rgba(0,0,0,0.03);
-            display:flex; 
-            flex-direction:column; 
-            justify-content:space-between; 
-            align-items:center; 
-            aspect-ratio: 1 / 1; 
-            overflow:hidden;
-            position: relative;
-            transition: all 0.2s ease;
-        }
-        .prof-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(247,82,112,0.12), 0 4px 12px rgba(0,0,0,0.05);
-        }
-        .prof-card .meta { 
-            width:100%; 
-            text-align:center; 
-            position: relative;
-            padding: 0.5rem;
-            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.95) 100%);
-            border-radius: 12px;
-        }
-        .prof-card .meta strong { 
-            display:block; 
-            margin-bottom:0.5rem; 
-            font-size: 1.1rem;
-            color: var(--dark);
-        }
-        .prof-card .meta .dept { 
-            color:var(--gray); 
-            font-size:0.9rem;
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            background: rgba(247,82,112,0.06);
-            border-radius: 999px;
-            margin-top: 0.25rem;
-        }
-        .prof-card .card-footer { 
-            width:100%; 
-            display:flex; 
-            justify-content:center;
-            margin-top: 0.5rem;
-        }
-        .prof-card .btn.btn-primary {
-            padding: 0.7rem 1.2rem;
-            font-size: 0.95rem;
-            width: 100%;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            border: none;
-            box-shadow: 0 4px 12px rgba(247,82,112,0.2);
-            transition: all 0.2s ease;
-        }
-        .prof-card .btn.btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(247,82,112,0.25);
-        }
-    .prof-card .card-footer { width:100%; display:flex; justify-content:flex-end; }
-        .subject-list { margin-top:1rem; display:grid; gap:0.75rem; }
-        .subject-card { background:white; border-radius:12px; padding:0.8rem; box-shadow:0 6px 18px rgba(0,0,0,0.06); display:flex; justify-content:space-between; align-items:center; }
-        .btn { padding:0.55rem 0.9rem; border-radius:10px; border:none; cursor:pointer; font-weight:600; display:inline-flex; gap:0.5rem; align-items:center; }
-        .btn-primary { background:linear-gradient(135deg,var(--primary) 0%, var(--primary-dark) 100%); color:white; }
-        .btn-secondary { background:var(--gray); color:white; }
-        .no-results { color:var(--gray); padding:1rem; text-align:center; }
-
-        /* View toggle (match My Classes) */
-        .view-toggle { display:flex; gap:0.5rem; align-items:center; }
-        .toggle-switch { position:relative; width:56px; height:30px; background:#fff; border-radius:999px; box-shadow: inset 0 0 0 2px rgba(0,0,0,0.05); cursor:pointer; }
-        .toggle-knob { position:absolute; top:3px; left:3px; width:24px; height:24px; background:var(--primary); border-radius:50%; transition:all .25s ease; }
-        .toggle-switch.active .toggle-knob { left:29px; background:var(--primary-dark); }
-
-        /* List table for professors */
-        .list-table { width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.06); }
-        .list-table th { background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%); color:white; padding:0.75rem; text-align:left; font-weight:600; }
-        .list-table td { padding:0.75rem; border-bottom:1px solid rgba(0,0,0,0.05); }
-
-        @media (max-width:768px) { 
-            .search-row { flex-direction:column; align-items:stretch; } 
-            .search-input, .select-dept { width:100%; }
-            /* On small screens show tiles as full-width horizontal cards instead of square */
-            .prof-list { grid-template-columns: 1fr; }
-            .prof-card { 
-                aspect-ratio: auto; 
-                flex-direction:row; 
-                align-items:center; 
-                padding:1rem;
-                transform: none !important;
-            }
-            .prof-card .meta { 
-                padding: 0 1rem 0 0;
-                text-align: left;
-                background: none;
-            }
-            .prof-card .meta strong {
-                font-size: 1rem;
-                margin-bottom: 0.35rem;
-            }
-            .prof-card .meta .dept {
-                font-size: 0.85rem;
-                padding: 0.25rem 0.6rem;
-            }
-            .prof-card .card-footer { 
-                justify-content: flex-end;
-                margin: 0;
-                width: auto;
-            }
-            .prof-card .btn.btn-primary {
-                padding: 0.5rem 1rem;
-                width: auto;
+                min-width: 100px;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -353,23 +757,31 @@ if (isset($_GET['action'])) {
         </div>
 
         <div class="controls">
-            <div style="display:flex; gap:1rem; align-items:center; flex:1;">
-                <div class="search-row" style="flex:1;">
-                    <input id="profSearch" class="search-input" type="search" placeholder="Search professors by name or ID..." autocomplete="off" />
-                    <select id="deptFilter" class="select-dept">
-                        <option value="">All Departments</option>
-                    </select>
+            <!-- First Row: Search Bar + View Toggle -->
+            <div class="search-toggle-row">
+                <input id="profSearch" class="search-input" type="search" placeholder="Search professors by name or ID..." autocomplete="off" />
+                <div class="view-toggle">
+                    <label>Tile View</label>
+                    <div id="toggleViewSwitch" class="toggle-switch" role="switch" aria-checked="false" tabindex="0" onclick="toggleProfView()">
+                        <div class="toggle-knob"></div>
+                    </div>
+                    <label>List View</label>
                 </div>
-                <div class="view-toggle" style="white-space:nowrap;">
-                                <label style="font-weight:600; color:var(--dark);">Tile View</label>
-                                <div id="toggleViewSwitch" class="toggle-switch" role="switch" aria-checked="false" tabindex="0" onclick="toggleProfView()">
-                                    <div class="toggle-knob"></div>
-                                </div>
-                                <label style="font-weight:600; color:var(--dark);">List View</label>
-                            </div>
             </div>
-            <div>
-                <button class="btn btn-secondary" onclick="clearFilters()">Clear</button>
+            
+            <!-- Second Row: Department Dropdown (Full Width) -->
+            <div class="dropdown-row">
+                <select id="deptFilter" class="select-dept">
+                    <option value="">All Departments</option>
+                </select>
+            </div>
+            
+            <!-- Third Row: Clear Filters Button -->
+            <div class="button-row">
+                <button class="btn-clear" onclick="clearFilters()">
+                    <i class="fas fa-times"></i>
+                    Clear Filters
+                </button>
             </div>
         </div>
 
@@ -581,10 +993,10 @@ if (isset($_GET['action'])) {
     <style>
         /* Modal base styles matching portal theme */
     .modal { position:fixed; left:0; top:0; right:0; bottom:0; display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.45); z-index:99999; }
-        .modal .modal-content { background: transparent; }
-        .modal.show { display:flex; }
-        .modal:not(.show) { display:none; }
-        @media (max-width:768px) { .modal .modal-content { width: calc(100% - 1rem); } }
+    .modal .modal-content { background: transparent; }
+    .modal.show { display:flex; }
+    .modal:not(.show) { display:none; }
+    @media (max-width:768px) { .modal .modal-content { width: calc(100% - 1rem); } }
     /* Inline modal alert styles */
     .modal-alert { padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 0.75rem; font-weight: 500; }
     .modal-alert.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
@@ -613,5 +1025,6 @@ if (isset($_GET['action'])) {
         // Close modal on Esc
         document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeSubjectsModal(); });
     </script>
+    <?php include '../includes/footbar.php'; ?>
 </body>
 </html>

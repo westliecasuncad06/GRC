@@ -2184,6 +2184,10 @@ foreach ($subjects as $subject) {
             history.replaceState(null, null, ' ');
         }
     </script>
+
+
+
+    <?php include '../includes/footbar.php'; ?>
 </body>
 </html>
-?>
+

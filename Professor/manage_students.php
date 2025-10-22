@@ -116,6 +116,9 @@ $students = $stmt->fetchAll();
             --warning: #ffc107;
             --danger: #dc3545;
             --info: #17a2b8;
+            /* Add missing darker variants to avoid invalid CSS values on hover */
+            --warning-dark: #e0a800;
+            --danger-dark: #c82333;
         }
 
         .dashboard-container {
@@ -670,31 +673,6 @@ $students = $stmt->fetchAll();
             .mobile-hidden {
                 display: none;
             }
-
-        .password-container {
-            position: relative;
-        }
-
-        .password-container input {
-            padding-right: 50px;
-        }
-
-        .password-toggle {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--gray);
-            font-size: 1.2rem;
-            padding: 5px;
-            transition: color 0.3s ease;
-        }
-
-        .password-toggle:hover {
-            color: var(--primary);
         }
     </style>
 </head>
@@ -1025,15 +1003,7 @@ $students = $stmt->fetchAll();
             openModal('editStudentModal');
         }
 
-        // Add student form submission
-        document.getElementById('addStudentForm').addEventListener('submit', function(e) {
-            // Allow default form submission to PHP handler
-        });
-
-        // Edit student form submission
-        document.getElementById('editStudentForm').addEventListener('submit', function(e) {
-            // Allow default form submission to PHP handler
-        });
+        // Note: Forms submit normally to PHP handlers. No extra JS is required here.
 
         // Close modal when clicking outside
         document.addEventListener('click', function(event) {
@@ -1044,14 +1014,17 @@ $students = $stmt->fetchAll();
 
 
 
-        // Hamburger menu toggle
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('show');
-            if (window.innerWidth <= 900) {
-                document.body.classList.toggle('sidebar-open');
-            }
-        });
+        // Hamburger menu toggle (guard in case the element isn't present)
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                const sidebar = document.querySelector('.sidebar');
+                sidebar.classList.toggle('show');
+                if (window.innerWidth <= 900) {
+                    document.body.classList.toggle('sidebar-open');
+                }
+            });
+        }
 
         // Optional: Close sidebar when clicking outside on mobile
         document.addEventListener('click', function(event) {
@@ -1065,5 +1038,6 @@ $students = $stmt->fetchAll();
             }
         });
     </script>
+    <?php include '../includes/footbar.php'; ?>
 </body>
 </html>

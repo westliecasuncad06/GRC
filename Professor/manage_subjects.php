@@ -2140,5 +2140,6 @@ $durations = $durations_stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Dropdown behaviour is handled in the included navbar script
     </script>
+    <?php include '../includes/footbar.php'; ?>
 </body>
 </html>

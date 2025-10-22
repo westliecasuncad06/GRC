@@ -165,4 +165,62 @@
     .stat-value-enhanced {
         font-size: 1.25rem;
     }
+
+    /* Footbar adjustments for very small screens */
+    .footbar {
+        font-size: 0.65rem;
+        padding: 0.5rem 0.4rem;
+    }
+
+    .footbar-credits {
+        font-size: 0.6rem;
+    }
+}
+
+/* Footbar Mobile Responsive Styles */
+@media screen and (max-width: 768px) {
+    .footbar {
+        position: relative !important;
+        margin-left: 0 !important;
+        width: 100% !important;
+        float: none !important;
+        clear: both;
+        z-index: 1000;
+        box-sizing: border-box;
+    }
+
+    .footbar-content {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+
+    .footbar-section {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.4rem !important;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .footbar {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.7rem;
+    }
+
+    .footbar-links {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.3rem !important;
+    }
+
+    .footbar-credits span {
+        display: block !important;
+        margin: 0.2rem 0 !important;
+    }
+
+    .main-content {
+        padding-bottom: 1.5rem !important;
+    }
 }

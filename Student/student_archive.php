@@ -560,5 +560,6 @@ foreach ($archived_classes as $class) {
             }
         }
     </script>
+    <?php include '../includes/footbar.php'; ?>
 </body>
 </html>

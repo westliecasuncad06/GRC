@@ -19,39 +19,7 @@ $_SESSION['last_name'] = $student['last_name'];
 $_SESSION['email'] = $student['email'];
 $_SESSION['mobile'] = $student['mobile'];
 $_SESSION['address'] = $student['address'];
-// Attendance analytics
-$overall_stmt = $pdo->prepare("SELECT status, COUNT(*) as count FROM attendance WHERE student_id = ? GROUP BY status");
-$overall_stmt->execute([$student_id]);
-$overall_analytics = $overall_stmt->fetchAll(PDO::FETCH_KEY_PAIR);
-// Overall statistics
-$overall_stats_stmt = $pdo->prepare("SELECT
-    COUNT(*) as total_records,
-    SUM(CASE WHEN status = 'Present' THEN 1 ELSE 0 END) as present,
-    SUM(CASE WHEN status = 'Absent' THEN 1 ELSE 0 END) as absent,
-    SUM(CASE WHEN status = 'Late' THEN 1 ELSE 0 END) as late,
-    SUM(CASE WHEN status = 'Excused' THEN 1 ELSE 0 END) as excused,
-    MIN(date) as first_date,
-    MAX(date) as last_date
-FROM attendance WHERE student_id = ?");
-$overall_stats_stmt->execute([$student_id]);
-$overall_stats = $overall_stats_stmt->fetch();
-// Monthly data
-$monthly_stmt = $pdo->prepare("SELECT DATE_FORMAT(date, '%Y-%m') as month, status, COUNT(*) as count FROM attendance WHERE student_id = ? GROUP BY month, status ORDER BY month");
-$monthly_stmt->execute([$student_id]);
-$monthly_raw = $monthly_stmt->fetchAll();
-// Process monthly data
-$monthly_data = [];
-$months = [];
-foreach ($monthly_raw as $row) {
-    $month = $row['month'];
-    if (!in_array($month, $months)) {
-        $months[] = $month;
-    }
-    if (!isset($monthly_data[$month])) {
-        $monthly_data[$month] = ['Present' => 0, 'Absent' => 0, 'Late' => 0, 'Excused' => 0];
-    }
-    $monthly_data[$month][$row['status']] = $row['count'];
-}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -62,8 +30,27 @@ foreach ($monthly_raw as $row) {
     <link rel="stylesheet" href="../css/styles_fixed.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* Page structure */
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            min-height: calc(100vh - 60px); /* Adjust based on your navbar height */
+            margin-left: 250px; /* Adjust based on your sidebar width */
+            padding-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
         :root {
             --primary: #F75270;
             --primary-dark: #DC143C;
@@ -85,6 +72,7 @@ foreach ($monthly_raw as $row) {
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
+            min-height: calc(100vh - 200px); /* Ensure content pushes footer down */
         }
 
         /* Enhanced Stats Grid */
@@ -1174,20 +1162,6 @@ foreach ($monthly_raw as $row) {
             <?php endforeach; ?>
         </div>
 
-        <!-- Overall Analytics Charts -->
-        <div class="charts-section">
-            <h2>Overall Attendance Analytics</h2>
-            <div class="charts-container">
-                <div class="chart-item">
-                    <h3>Attendance Distribution</h3>
-                    <canvas id="pieChart" width="400" height="400"></canvas>
-                </div>
-                <div class="chart-item">
-                    <h3>Monthly Attendance</h3>
-                    <canvas id="barChart" width="400" height="400"></canvas>
-                </div>
-            </div>
-        </div>
         </div>
 
         <!-- Recent Attendance -->
@@ -1325,86 +1299,6 @@ foreach ($monthly_raw as $row) {
         
 
         <script>
-            // Pie Chart
-            const pieCtx = document.getElementById('pieChart').getContext('2d');
-            const attendanceData = <?php echo json_encode($attendance_analytics); ?>;
-            const labels = Object.keys(attendanceData);
-            const data = Object.values(attendanceData);
-            if (data.length > 0) {
-                new Chart(pieCtx, {
-                    type: 'pie',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            data: data,
-                            backgroundColor: [
-                                '#28a745',
-                                '#dc3545',
-                                '#ffc107',
-                                '#17a2b8'
-                            ]
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'bottom'
-                            }
-                        }
-                    }
-                });
-            } else {
-                pieCtx.font = '20px Arial';
-                pieCtx.fillText('No attendance data available', 10, 50);
-            }
-
-            // Bar Chart
-            const barCtx = document.getElementById('barChart').getContext('2d');
-            const monthlyData = <?php echo json_encode($monthly_data); ?>;
-            const months = Object.keys(monthlyData).sort();
-            const presentData = months.map(month => monthlyData[month]['Present'] || 0);
-            const absentData = months.map(month => monthlyData[month]['Absent'] || 0);
-
-            new Chart(barCtx, {
-                type: 'bar',
-                data: {
-                    labels: months,
-                    datasets: [
-                        {
-                            label: 'Present',
-                            data: presentData,
-                            backgroundColor: '#28a745'
-                        },
-                        {
-                            label: 'Absent',
-                            data: absentData,
-                            backgroundColor: '#dc3545'
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Month'
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Number of Records'
-                            },
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        </script>
-
-        <script>
             const studentId = '<?php echo $student_id; ?>';
 
             // Attendance Modal Functions
@@ -1501,5 +1395,7 @@ foreach ($monthly_raw as $row) {
             }
         }
     </script>
+    </main>
+    <?php include '../includes/footbar.php'; ?>
 </body>
 </html>

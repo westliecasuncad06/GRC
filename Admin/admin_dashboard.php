@@ -1026,6 +1026,9 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
         </div>
     </div>
 
+        <br>
+    <br>
+    <br>
             <?php include '../includes/footbar.php'; ?>
 
     <!-- Bootstrap 5 JS -->
@@ -1138,5 +1141,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_attendance_details') {
             console.log('Admin Dashboard initialized');
         });
     </script>
+
+
 </body>
 </html>

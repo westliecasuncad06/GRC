@@ -1016,6 +1016,7 @@ body {
 
     .main-content {
         padding: 1rem;
+        padding-bottom: 2rem; /* Add bottom padding for footbar visibility */
     }
     .dashboard-grid {
         grid-template-columns: 1fr;
@@ -1027,6 +1028,16 @@ body {
     }
     .table-actions {
         justify-content: center;
+    }
+
+    /* Ensure footbar is visible on mobile */
+    .footbar {
+        position: relative !important;
+        margin-left: 0 !important;
+        width: 100% !important;
+        float: none !important;
+        clear: both;
+        z-index: 1000;
     }
 }
 

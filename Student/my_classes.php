@@ -29,11 +29,37 @@ $unenrollment_requests = $stmt->fetchAll();
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
     <title>My Classes - Global Reciprocal College</title>
     <link rel="stylesheet" href="../css/styles.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        /* Critical Mobile Fix - Prevent any overlay issues */
+        @media (max-width: 768px) {
+            /* Reset any problematic overlays */
+            body::before,
+            body::after,
+            .navbar::before,
+            .navbar::after,
+            .sidebar::before,
+            .sidebar::after {
+                display: none !important;
+            }
+            
+            /* Ensure main content is accessible */
+            .main-content {
+                pointer-events: auto !important;
+                touch-action: pan-y pan-x !important;
+            }
+            
+            /* All interactive elements must be clickable */
+            button, a, input, select, textarea, .btn, .class-card, .nav-item {
+                pointer-events: auto !important;
+                touch-action: manipulation !important;
+            }
+        }
+    </style>
     <style>
         /* Merge styles from existing pages and keep consistent theme */
         :root { 
@@ -106,14 +132,26 @@ $unenrollment_requests = $stmt->fetchAll();
                 right: 10px;
                 left: 10px;
                 max-width: none;
+                z-index: 10001; /* Above modals */
             }
             .toast {
                 width: auto;
+                touch-action: none;
             }
         }
 
         body { font-family: 'Poppins', sans-serif; background: var(--light); }
-        .main-content { padding: 2rem; min-height: calc(100vh - 70px); }
+        
+        html, body {
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        * {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        .main-content { padding: 2rem; min-height: calc(100vh - 70px); position: relative; z-index: 1; }
         .page-header { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 1.75rem; border-radius: 12px; box-shadow: 0 8px 25px rgba(247,82,112,0.18); margin-bottom: 1.5rem; }
         .page-title { font-size: 1.5rem; margin:0; display:flex; gap:0.75rem; align-items:center; }
         .page-subtitle { margin:0; opacity:0.95; }
@@ -125,8 +163,16 @@ $unenrollment_requests = $stmt->fetchAll();
         .toggle-switch.active .toggle-knob { left:29px; background:var(--primary-dark); }
 
         /* Tile Grid */
-        .tiles-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(300px,1fr)); gap:1.5rem; }
-        .class-card { background:white; border-radius:12px; padding:1.25rem; box-shadow:0 8px 25px rgba(0,0,0,0.08); border:1px solid rgba(247,82,112,0.06); }
+        .tiles-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(300px,1fr)); gap:1.5rem; position: relative; z-index: 1; }
+        .class-card { 
+            background:white; 
+            border-radius:12px; 
+            padding:1.25rem; 
+            box-shadow:0 8px 25px rgba(0,0,0,0.08); 
+            border:1px solid rgba(247,82,112,0.06);
+            position: relative;
+            z-index: 2;
+        }
         .class-card .header { display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; }
         .class-code { background:linear-gradient(135deg,var(--primary) 0%, var(--primary-dark) 100%); color:white; padding:6px 10px; border-radius:8px; font-weight:600; }
         .class-title { font-weight:700; color:var(--dark); margin-top:0.5rem; }
@@ -139,15 +185,142 @@ $unenrollment_requests = $stmt->fetchAll();
         .data-table th { background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%); color:white; padding:0.75rem; text-align:left; font-weight:600; }
         .data-table td { padding:0.75rem; border-bottom:1px solid rgba(247,82,112,0.06); }
 
-        .btn { padding:0.6rem 1rem; border-radius:10px; border:none; cursor:pointer; font-weight:600; display:inline-flex; gap:0.5rem; align-items:center; }
+        .btn { 
+            padding:0.6rem 1rem; 
+            border-radius:10px; 
+            border:none; 
+            cursor:pointer; 
+            font-weight:600; 
+            display:inline-flex; 
+            gap:0.5rem; 
+            align-items:center;
+            position: relative;
+            z-index: 10;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
         .btn-primary { background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%); color:white; }
         .btn-danger { background:var(--danger); color:white; }
         .btn-warning { background:var(--warning); color:var(--dark); }
         .btn-secondary { background:var(--gray); color:white; }
 
         /* Responsive tweaks */
-        @media (max-width:768px) { .main-content{ padding:1rem } .controls { flex-direction:column; align-items:flex-start; } .data-table thead { display:none; } .data-table, .data-table tbody, .data-table tr, .data-table td { display:block; width:100%; }
-            .data-table td { box-sizing:border-box; padding:0.75rem 1rem; } .data-row { margin-bottom:1rem; background:white; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06); }
+        @media (max-width:768px) { 
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+                position: relative;
+            }
+            
+            body {
+                padding-bottom: 0;
+            }
+            
+            .main-content{ 
+                padding:1rem;
+                margin-left: 0 !important;
+                width: 100% !important;
+                position: relative;
+                z-index: 1;
+                pointer-events: auto;
+                padding-bottom: 200px; /* Space for footbar and bottom nav */
+            } 
+            
+            .controls { flex-direction:column; align-items:flex-start; } 
+            .data-table thead { display:none; } 
+            .data-table, .data-table tbody, .data-table tr, .data-table td { display:block; width:100%; }
+            .data-table td { box-sizing:border-box; padding:0.75rem 1rem; } 
+            .data-row { margin-bottom:1rem; background:white; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06); }
+            
+            /* Ensure tiles grid works on mobile */
+            .tiles-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                position: relative;
+                z-index: 1;
+                pointer-events: auto;
+            }
+            
+            .class-card {
+                position: relative;
+                z-index: 2;
+                pointer-events: auto;
+                margin-bottom: 1rem;
+            }
+            
+            /* Mobile modal fixes - ensure modals are above sidebar */
+            .modal {
+                z-index: 9999 !important;
+                touch-action: auto;
+                pointer-events: auto;
+            }
+            
+            .modal-content {
+                position: relative;
+                z-index: 10000;
+                max-height: 85vh;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                pointer-events: auto;
+            }
+            
+            .modal-close, .btn {
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: rgba(247, 82, 112, 0.2);
+                pointer-events: auto;
+            }
+            
+            /* Ensure buttons are tappable */
+            .btn {
+                min-height: 48px;
+                min-width: 48px;
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+                position: relative;
+                z-index: 100;
+                pointer-events: auto;
+                background-clip: padding-box;
+            }
+            
+            .class-actions {
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                position: relative;
+                z-index: 100;
+                pointer-events: auto;
+            }
+            
+            .class-actions .btn {
+                flex: 1 1 auto;
+                min-width: 140px;
+                justify-content: center;
+            }
+            
+            /* Ensure toggle switch is clickable */
+            .toggle-switch {
+                position: relative;
+                z-index: 100;
+                pointer-events: auto;
+                touch-action: manipulation;
+            }
+            
+            /* Page header buttons */
+            .page-header {
+                position: relative;
+                z-index: 2;
+            }
+            
+            .controls {
+                position: relative;
+                z-index: 10;
+                pointer-events: auto;
+            }
+            
+            .controls .btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -264,7 +437,7 @@ $unenrollment_requests = $stmt->fetchAll();
     </main>
 
     <!-- Enrollment Modal (reuse from student_manage_schedule) -->
-    <div id="enrollModal" class="modal">
+    <div id="enrollModal" class="modal" style="z-index: 9999;">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">Enroll in Class</h3>
@@ -287,7 +460,7 @@ $unenrollment_requests = $stmt->fetchAll();
     </div>
 
     <!-- Confirmation Modal for Unenroll -->
-    <div id="confirmationModal" class="modal" style="background: rgba(0, 0, 0, 0.5);">
+    <div id="confirmationModal" class="modal" style="background: rgba(0, 0, 0, 0.5); z-index: 9999;">
         <div class="modal-content" style="background: #FFFFFF; border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,0.18); max-width: 520px; width: calc(100% - 2rem); margin: 1rem;">
             <div class="modal-header" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 1.25rem 1.5rem; border-radius: 12px 12px 0 0; display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
                 <h3 class="modal-title" style="margin: 0; font-size: 1.15rem; display: flex; align-items: center; gap: 0.75rem;">
@@ -326,7 +499,7 @@ $unenrollment_requests = $stmt->fetchAll();
     </div>
 
     <!-- Attendance Modal -->
-    <div id="attendanceModal" class="modal" role="dialog" aria-hidden="true">
+    <div id="attendanceModal" class="modal" role="dialog" aria-hidden="true" style="z-index: 9999;">
         <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 1.5rem; border-radius: 12px 12px 0 0;">
                 <h3 class="modal-title" style="font-size: 1.25rem; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 0.75rem;">
@@ -430,6 +603,17 @@ $unenrollment_requests = $stmt->fetchAll();
 
         function openEnrollModal() { document.getElementById('enrollModal').classList.add('show'); }
         function closeEnrollModal() { document.getElementById('enrollModal').classList.remove('show'); }
+
+        // Close modal when clicking outside (on backdrop)
+        document.getElementById('enrollModal').addEventListener('click', function(e) {
+            if (e.target === this) closeEnrollModal();
+        });
+        document.getElementById('confirmationModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+        document.getElementById('attendanceModal').addEventListener('click', function(e) {
+            if (e.target === this) closeAttendanceModal();
+        });
 
         document.getElementById('enrollForm').addEventListener('submit', function(e){
             e.preventDefault();
@@ -556,6 +740,22 @@ $unenrollment_requests = $stmt->fetchAll();
         // Accessibility: allow toggle via keyboard
         document.getElementById('toggle').addEventListener('keydown', function(e){ if (e.key==='Enter' || e.key===' ') { e.preventDefault(); toggleView(); } });
 
+        // Mobile Debug: Log what element is being clicked (remove in production)
+        // Disable verbose mobile click logging to avoid interfering with events
+        // and force-enable pointer events on actionable controls.
+        if (window.innerWidth <= 768) {
+            // Force enable pointer events and proper touch behavior on actionable elements
+            const enableClickTargets = () => {
+                document.querySelectorAll('button, .btn, a, input, select, textarea, [role="button"]').forEach(el => {
+                    el.style.pointerEvents = 'auto';
+                    el.style.touchAction = 'manipulation';
+                });
+            };
+            // Run after DOM ready and again after a tick to catch late content
+            enableClickTargets();
+            setTimeout(enableClickTargets, 0);
+        }
+
         // Polling: check for pending unenrollment request status every 2 seconds
         (function(){
             let lastPendingIds = null;
@@ -632,5 +832,29 @@ $unenrollment_requests = $stmt->fetchAll();
             }, 2000);
         })();
     </script>
+    <style>
+        /* Defensive overrides to prevent invisible overlays from blocking taps on mobile */
+        @media (max-width: 768px) {
+            /* Ensure toasts do not create a full-screen hit target */
+            #toastContainer.toast-container {
+                top: 12px !important;
+                right: 12px !important;
+                bottom: auto !important; /* avoid spanning full height */
+                left: auto !important;
+                width: auto !important;
+                max-width: calc(100% - 24px);
+                pointer-events: none; /* container should not intercept */
+            }
+            #toastContainer .toast { pointer-events: auto; }
+
+            /* Make sure our main interactive areas are above bottom nav/footers */
+            .main-content { position: relative; z-index: 2; }
+
+            /* Modals should always be click-through only on content, backdrop closes */
+            .modal.show { pointer-events: auto; }
+            .modal.show .modal-content { pointer-events: auto; }
+        }
+    </style>
+    <?php include '../includes/footbar.php'; ?>
 </body>
 </html>

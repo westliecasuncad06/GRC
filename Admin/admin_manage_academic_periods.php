@@ -470,5 +470,6 @@ try {
             event.target.classList.add('active');
         }
     </script>
+    <?php include '../includes/footbar.php'; ?>
 </body>
 </html>

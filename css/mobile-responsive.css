@@ -627,3 +627,62 @@
         background: rgba(255, 255, 255, 0.7);
     }
 }
+
+/* Footbar Mobile Fixes for screens 300-465px */
+@media screen and (max-width: 465px) {
+    .footbar {
+        position: relative !important;
+        margin-left: 0 !important;
+        width: 100% !important;
+        float: none !important;
+        clear: both;
+        z-index: 1000;
+        padding: 0.75rem 0.5rem;
+        font-size: 0.75rem;
+        box-sizing: border-box;
+    }
+
+    .footbar-content {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+        width: 100%;
+    }
+
+    .footbar-section {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.4rem !important;
+        width: 100%;
+        text-align: center;
+    }
+
+    .footbar-links {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.4rem !important;
+    }
+
+    .footbar-credits {
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        padding-top: 0.5rem;
+        margin-top: 0.5rem;
+        width: 100%;
+    }
+
+    .footbar-credits span {
+        display: block !important;
+        margin: 0.25rem 0 !important;
+        font-size: 0.7rem;
+    }
+
+    /* Ensure main content wrapper doesn't hide footbar */
+    .main-content {
+        padding-bottom: 1rem !important;
+    }
+
+    /* Fix for sidebar not covering footbar */
+    body {
+        overflow-x: hidden;
+    }
+}

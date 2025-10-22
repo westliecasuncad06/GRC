@@ -1336,5 +1336,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             });
         });
     </script>
+    <?php include '../includes/footbar.php'; ?>
 </body>
 </html>

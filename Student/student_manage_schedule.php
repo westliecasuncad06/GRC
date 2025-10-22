@@ -1233,5 +1233,6 @@ if (empty($enrolled_classes)) {
 
     <!-- Toast Container -->
     <div id="toastContainer" class="toast-container"></div>
+    <?php include '../includes/footbar.php'; ?>
 </body>
 </html>

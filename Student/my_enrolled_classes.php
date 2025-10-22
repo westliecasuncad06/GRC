@@ -1224,5 +1224,6 @@ $unenrollment_requests = $stmt->fetchAll();
             }
         });
     </script>
+    <?php include '../includes/footbar.php'; ?>
 </body>
 </html>

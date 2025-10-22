@@ -182,7 +182,7 @@
 
                 width: 100%;
 
-                padding-bottom: 70px; /* Increased to ensure no overlap */
+                padding-bottom: 200px; /* Increased to ensure room for both sidebar and footbar */
 
             }
 
@@ -190,6 +190,13 @@
 
                 display: none;
 
+            }
+
+            /* Ensure footbar is above sidebar */
+            .footbar {
+                position: relative !important;
+                z-index: 900 !important;
+                margin-bottom: 70px !important; /* Space for bottom navigation */
             }
 
         }
@@ -212,7 +219,10 @@
                 font-size: 0.65rem;
             }
             .main-content {
-                padding-bottom: 60px;
+                padding-bottom: 180px; /* Increased for footbar visibility */
+            }
+            .footbar {
+                margin-bottom: 60px !important; /* Space for smaller sidebar */
             }
         }
 </style>
