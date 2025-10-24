@@ -853,6 +853,13 @@ body {
 }
 
 /* ==========================================
+   FRONT PAGE - HIDDEN ON SCREEN
+   ========================================== */
+.front-page {
+  display: none; /* Hidden on screen, only visible in print */
+}
+
+/* ==========================================
    PRINT STYLES
    ========================================== */
 @media print {
@@ -877,6 +884,147 @@ body {
 
   body {
     background: white;
+  }
+
+  /* Front page (cover) styles - Enhanced Design */
+  .front-page {
+    display: flex;
+    page-break-after: always;
+    height: 100vh;
+    box-sizing: border-box;
+    padding: 0;
+    text-align: center;
+    background: linear-gradient(135deg, #F7CAC9 0%, #FDEBD0 50%, #ffffff 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Decorative elements */
+  .front-page::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(247, 82, 112, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .front-page::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -15%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(247, 202, 201, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .front-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+    padding: 60px;
+  }
+
+  /* Logo container with border */
+  .front-logo {
+    width: 280px;
+    height: auto;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    border: 4px solid white;
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  /* Main title */
+  .front-page h1 {
+    font-size: 42px;
+    font-weight: 700;
+    color: #2b2b2b;
+    margin: 20px 0 10px 0;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    text-transform: uppercase;
+    border: none;
+    padding: 0;
+  }
+
+  /* Subtitle - Manual name */
+  .front-page h2 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #F75270;
+    margin: 0 0 30px 0;
+    letter-spacing: 0.5px;
+    position: relative;
+    padding: 0 40px;
+  }
+
+  .front-page h2::before,
+  .front-page h2::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 30px;
+    height: 2px;
+    background: #F75270;
+  }
+
+  .front-page h2::before {
+    left: 0;
+  }
+
+  .front-page h2::after {
+    right: 0;
+  }
+
+  /* Version and date */
+  .front-meta {
+    margin-top: 40px;
+    padding: 16px 32px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50px;
+    color: #6c757d;
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    letter-spacing: 0.5px;
+  }
+
+  .front-meta span {
+    color: #343a40;
+    font-weight: 600;
+  }
+
+  /* Divider line */
+  .front-divider {
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, #F75270 50%, transparent 100%);
+    margin: 30px auto;
+  }
+
+  /* Footer text on cover */
+  .front-footer {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #6c757d;
+    font-size: 12px;
+    z-index: 1;
   }
 }
 

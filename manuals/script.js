@@ -19,6 +19,13 @@ const manualCards = document.querySelectorAll('.manual-card');
 
 let currentManualContent = '';
 
+// Front page elements (print cover)
+const frontPage = document.getElementById('front-page');
+const frontTitle = document.getElementById('front-title');
+const frontSubtitle = document.getElementById('front-subtitle');
+const frontVersion = document.getElementById('front-version');
+const frontDate = document.getElementById('front-date');
+
 // ==========================================
 // Load Manual Function
 // ==========================================
@@ -52,6 +59,8 @@ async function loadManual(path, title) {
     
     // Update breadcrumb
     currentManualEl.textContent = title;
+  // Update front page subtitle for print
+  if (frontSubtitle) frontSubtitle.textContent = title;
     
     // Generate Table of Contents
     generateTOC();
@@ -73,7 +82,7 @@ async function loadManual(path, title) {
         </div>
         <h1>Unable to Load Manual</h1>
         <p>Could not load the manual file. If you're opening this from the file system (file://), your browser may block loading local files.</p>
-        <p><strong>Solution:</strong> Serve the site via your webserver (XAMPP) at <code>http://localhost/GRC/manuals/</code></p>
+  <p><strong>Solution:</strong> Serve the site via your webserver (XAMPP) at <code>https://grc.gt.tc/manuals/</code></p>
         <p style="margin-top: 20px;">
           <button onclick="location.reload()" class="btn-primary" style="display: inline-flex;">
             <i class="fas fa-redo"></i>
@@ -296,6 +305,17 @@ if (tocClose) {
 // ==========================================
 if (downloadBtn) {
   downloadBtn.addEventListener('click', () => {
+    // Ensure front-page shows correct title/version/date before printing
+    try {
+      if (frontTitle) frontTitle.textContent = 'Global Reciprocal Colleges';
+      if (frontSubtitle) frontSubtitle.textContent = currentManualEl.textContent || 'User Manual';
+      if (frontVersion) frontVersion.textContent = 'Version 1.0';
+      if (frontDate) frontDate.textContent = new Date().toLocaleString('en-US', { month: 'short', year: 'numeric' });
+    } catch (e) {
+      // ignore
+    }
+
+    // Trigger print which will include the front page as a cover
     window.print();
   });
 }

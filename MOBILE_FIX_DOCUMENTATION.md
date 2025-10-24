@@ -1,7 +1,7 @@
 # Mobile View Click Issue Fix - My Classes Page
 
 ## Problem Summary
-Users were unable to click elements on the mobile view of `http://localhost/grc/Student/my_classes.php`. Elements were clickable on desktop but not on mobile devices.
+Users were unable to click elements on the mobile view of `https://grc.gt.tc/Student/my_classes.php`. Elements were clickable on desktop but not on mobile devices.
 
 ## Root Causes Identified
 

@@ -54,7 +54,7 @@ The Student Portal allows you to:
 
 ### Accessing the System
 1. Open your web browser
-2. Navigate to the portal URL: `http://localhost/GRC/` (or your institution's domain)
+2. Navigate to the portal URL: `https://grc.gt.tc/` (or your institution's domain)
 3. You will see the login page
 
 **[INSERT SCREENSHOT: Login page overview]**

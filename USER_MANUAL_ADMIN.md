@@ -49,7 +49,7 @@ The Admin Portal allows you to:
 
 ### Accessing the System
 1. Open your web browser
-2. Navigate to the portal URL: `http://localhost/GRC/` (or your configured domain)
+2. Navigate to the portal URL: `https://grc.gt.tc/` (or your configured domain)
 3. You will be directed to the login page
 
 **[INSERT SCREENSHOT: Login page overview]**

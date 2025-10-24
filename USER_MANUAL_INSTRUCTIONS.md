@@ -27,7 +27,7 @@ Each manual contains placeholder text like:
 #### 1. Run Your Application
 ```bash
 # Start your XAMPP server
-# Navigate to http://localhost/GRC/
+# Navigate to https://grc.gt.tc/
 ```
 
 #### 2. Take Screenshots

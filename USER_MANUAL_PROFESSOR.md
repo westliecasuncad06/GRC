@@ -17,13 +17,12 @@
 7. [Managing Students](#managing-students)
 8. [Taking Attendance](#taking-attendance)
 9. [Viewing Attendance Reports](#viewing-attendance-reports)
-10. [Handling Enrollment Requests](#handling-enrollment-requests)
-11. [Handling Unenrollment Requests](#handling-unenrollment-requests)
-12. [Archive and History](#archive-and-history)
-13. [Account Settings](#account-settings)
-14. [Notifications](#notifications)
-15. [Logout](#logout)
-16. [Troubleshooting](#troubleshooting)
+10. [Handling Unenrollment Requests](#handling-unenrollment-requests)
+11. [Archive and History](#archive-and-history)
+12. [Account Settings](#account-settings)
+13. [Notifications](#notifications)
+14. [Logout](#logout)
+15. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -37,7 +36,7 @@ The Professor Portal allows you to:
 - Take daily attendance for your classes
 - Monitor student enrollment and participation
 - View comprehensive attendance reports
-- Handle student enrollment/unenrollment requests
+- Handle student unenrollment requests
 - Access historical attendance data
 - Communicate with students through the system
 
@@ -53,7 +52,7 @@ The Professor Portal allows you to:
 
 ### Accessing the System
 1. Open your web browser
-2. Navigate to the portal URL: `http://localhost/GRC/` (or your configured domain)
+2. Navigate to the portal URL: `https://grc.gt.tc/` (or your configured domain)
 3. You will be directed to the login page
 
 **[INSERT SCREENSHOT: Login page]**
@@ -132,7 +131,7 @@ The Professor Dashboard is your central hub for managing all your teaching activ
    - Total Subjects (number of subjects you teach)
    - Total Classes (all your class sections)
    - Total Students (all students across your classes)
-   - Pending Requests (enrollment/unenrollment requests)
+   - Pending Requests (unenrollment requests)
 
 **[INSERT SCREENSHOT: Statistics cards section]**
 
@@ -648,59 +647,7 @@ Report displays:
 
 ---
 
-## 10. Handling Enrollment Requests
 
-### Understanding Enrollment Notifications
-
-When a student enrolls in your class:
-- You receive a notification
-- Notification badge appears on bell icon
-- Student is automatically added to your class roster
-- **No approval required** - enrollment is automatic
-
-**[INSERT SCREENSHOT: Enrollment notification in notification panel]**
-
-### Viewing Enrollment Notifications
-
-#### Step 1: Open Notifications
-1. Click the **bell icon** in the top navigation bar
-2. Notification panel opens
-
-**[INSERT SCREENSHOT: Notification bell icon with badge]**
-
-#### Step 2: Review Enrollment Notifications
-
-**[INSERT SCREENSHOT: Enrollment notification details]**
-
-Each notification shows:
-- Student name
-- Subject and section they enrolled in
-- Date and time of enrollment
-- "New student enrolled" message
-
-#### Step 3: Mark Notifications as Read
-1. Click on the notification to mark as read
-2. Or click **"Mark All as Read"** button
-3. Badge count decreases
-
-**[INSERT SCREENSHOT: Mark as read option]**
-
-### Viewing Newly Enrolled Students
-
-#### Step 1: Navigate to Student List
-1. Go to **"Manage Students"**
-2. Filter by recent enrollments (if option available)
-3. Newly enrolled students may be highlighted
-
-**[INSERT SCREENSHOT: Newly enrolled students in list]**
-
-#### Step 2: Verify Student Information
-1. Click on student name
-2. Review their details
-3. Check enrollment date
-4. Verify they appear in class roster for attendance
-
----
 
 ## 11. Handling Unenrollment Requests
 
