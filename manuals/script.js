@@ -5,7 +5,8 @@
 const links = Array.from(document.querySelectorAll('.nav-link[data-file]'));
 const manualEl = document.getElementById('manual');
 const searchInput = document.getElementById('search');
-const downloadBtn = document.getElementById('download-pdf');
+const downloadCompletePdfBtn = document.getElementById('download-complete-pdf');
+const printCurrentBtn = document.getElementById('print-current');
 const toggleSidebarBtn = document.getElementById('toggle-sidebar');
 const sidebar = document.getElementById('sidebar');
 const currentManualEl = document.getElementById('current-manual');
@@ -301,10 +302,23 @@ if (tocClose) {
 }
 
 // ==========================================
-// Download PDF (Print)
+// Download Complete PDF
 // ==========================================
-if (downloadBtn) {
-  downloadBtn.addEventListener('click', () => {
+if (downloadCompletePdfBtn) {
+  downloadCompletePdfBtn.addEventListener('click', () => {
+    // Download the complete PDF file
+    const link = document.createElement('a');
+    link.href = 'USER MANUAL.pdf';
+    link.download = 'GRC_Complete_User_Manual.pdf';
+    link.click();
+  });
+}
+
+// ==========================================
+// Print Current Manual
+// ==========================================
+if (printCurrentBtn) {
+  printCurrentBtn.addEventListener('click', () => {
     // Ensure front-page shows correct title/version/date before printing
     try {
       if (frontTitle) frontTitle.textContent = 'Global Reciprocal Colleges';

@@ -22,9 +22,13 @@
         <button id="toggle-sidebar" class="btn-icon" title="Toggle Sidebar">
           <i class="fas fa-bars"></i>
         </button>
-        <button id="download-pdf" class="btn-primary">
-          <i class="fas fa-download"></i>
-          <span>Download PDF</span>
+        <button id="download-complete-pdf" class="btn-primary" title="Download Complete Manual PDF (All Roles)">
+          <i class="fas fa-file-pdf"></i>
+          <span>Download Complete PDF</span>
+        </button>
+        <button id="print-current" class="btn-secondary" title="Print Current Manual">
+          <i class="fas fa-print"></i>
+          <span class="btn-text">Print</span>
         </button>
       </div>
     </nav>
@@ -75,7 +79,10 @@
 
         <div class="sidebar-footer">
           <div class="quick-links">
-            <a href="#" id="print-view" title="Print View">
+            <a href="USER MANUAL.pdf" download="GRC_Complete_User_Manual.pdf" title="Download Complete PDF">
+              <i class="fas fa-file-pdf"></i>
+            </a>
+            <a href="#" id="print-view" title="Print Current Manual">
               <i class="fas fa-print"></i>
             </a>
             <a href="#" id="fullscreen" title="Fullscreen">
@@ -151,6 +158,18 @@
             </div>
             <h1>Welcome to GRC User Manuals</h1>
             <p>Select a manual from the sidebar to begin. These comprehensive guides will help you navigate and use the Global Reciprocal Colleges Student Portal effectively.</p>
+            
+            <div class="pdf-download-notice">
+              <i class="fas fa-file-pdf"></i>
+              <div>
+                <strong>Complete PDF Manual Available</strong>
+                <p>Download the complete user manual with all roles (Admin, Professor, Student) in a single PDF file.</p>
+                <a href="USER MANUAL.pdf" download="GRC_Complete_User_Manual.pdf" class="btn-download-pdf">
+                  <i class="fas fa-download"></i> Download Complete PDF
+                </a>
+              </div>
+            </div>
+
             <div class="manual-cards">
               <div class="manual-card" data-target="admin">
                 <i class="fas fa-user-shield"></i>
