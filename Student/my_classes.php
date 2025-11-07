@@ -10,12 +10,16 @@ require_once '../php/db.php';
 $student_id = $_SESSION['user_id'];
 
 // Get enrolled classes with professor and subject info
-$stmt = $pdo->prepare("SELECT c.class_id, c.class_name, c.class_code, c.subject_id, c.professor_id, c.schedule, c.room, c.section, c.semester_id, c.status, c.school_year_semester_id, s.subject_name, p.first_name, p.last_name
-                     FROM student_classes sc
-                     JOIN classes c ON sc.class_id = c.class_id
-                     LEFT JOIN subjects s ON c.subject_id = s.subject_id
-                     LEFT JOIN professors p ON c.professor_id = p.professor_id
-                     WHERE sc.student_id = ? AND c.status != 'archived'");
+$stmt = $pdo->prepare("SELECT c.class_id, c.class_name, c.class_code, c.subject_id, c.professor_id, c.schedule, c.room, c.section, c.semester_id, c.status,
+                     s.subject_name, p.first_name, p.last_name,
+                     sy.year_label AS school_year, sem.semester_name AS semester
+                 FROM student_classes sc
+                 JOIN classes c ON sc.class_id = c.class_id
+                 LEFT JOIN subjects s ON c.subject_id = s.subject_id
+                 LEFT JOIN professors p ON c.professor_id = p.professor_id
+                 LEFT JOIN semesters sem ON c.semester_id = sem.id
+                 LEFT JOIN school_years sy ON c.school_year_id = sy.id
+                 WHERE sc.student_id = ? AND c.status != 'archived'");
 $stmt->execute([$student_id]);
 $enrolled_classes = $stmt->fetchAll();
 

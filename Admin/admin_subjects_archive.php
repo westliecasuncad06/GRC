@@ -14,7 +14,7 @@ try {
         SELECT s.*, sem.semester_name, sem.status as semester_status, y.year_label, y.status as year_status
         FROM subjects s
         LEFT JOIN semesters sem ON s.semester_id = sem.id
-        LEFT JOIN school_years y ON sem.school_year_id = y.id
+        LEFT JOIN school_years y ON s.school_year_id = y.id
         ORDER BY y.year_label DESC, sem.semester_name, s.subject_name
     ");
     $stmt->execute();

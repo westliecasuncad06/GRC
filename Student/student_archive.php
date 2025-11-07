@@ -10,14 +10,30 @@ require_once '../php/db.php';
 $student_id = $_SESSION['user_id'];
 
 // Get archived classes for the student
-$query = "SELECT c.*, s.subject_name, s.subject_code, p.first_name, p.last_name, sys.school_year, sys.semester
-          FROM student_classes sc
-          JOIN classes c ON sc.class_id = c.class_id
-          JOIN subjects s ON c.subject_id = s.subject_id
-          LEFT JOIN professors p ON c.professor_id = p.professor_id
-          LEFT JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
-          WHERE sc.student_id = ? AND c.status = 'archived'
-          ORDER BY sys.school_year DESC, sys.semester DESC, s.subject_name ASC";
+$query = "SELECT 
+                        c.*, 
+                        s.subject_name, 
+                        s.subject_code, 
+                        p.first_name, 
+                        p.last_name,
+                        COALESCE(sy.year_label, sy2.year_label) AS school_year,
+                        COALESCE(sem.semester_name, sem2.semester_name) AS semester
+                    FROM student_classes sc
+                    JOIN classes c ON sc.class_id = c.class_id
+                    JOIN subjects s ON c.subject_id = s.subject_id
+                    LEFT JOIN professors p ON c.professor_id = p.professor_id
+                    -- Preferred path: normalized via school_year_semester_id
+                    LEFT JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
+                    LEFT JOIN school_years sy ON sys.school_year_id = sy.id
+                    LEFT JOIN semesters sem ON sys.semester_id = sem.id
+                    -- Fallback path: legacy via classes.semester_id and classes.school_year_id
+                    LEFT JOIN semesters sem2 ON c.semester_id = sem2.id
+                    LEFT JOIN school_years sy2 ON c.school_year_id = sy2.id
+                    WHERE sc.student_id = ? AND c.status = 'archived'
+                    ORDER BY 
+                        COALESCE(sy.year_label, sy2.year_label) DESC, 
+                        COALESCE(sem.semester_name, sem2.semester_name) DESC, 
+                        s.subject_name ASC";
 
 $stmt = $pdo->prepare($query);
 $stmt->execute([$student_id]);
@@ -26,7 +42,13 @@ $archived_classes = $stmt->fetchAll();
 // Group by school year and semester
 $grouped_classes = [];
 foreach ($archived_classes as $class) {
-    $key = $class['school_year'] . ' - ' . $class['semester'];
+    $school_year_label = $class['school_year'] ?? '';
+    $semester_label = $class['semester'] ?? '';
+    if ($school_year_label === '' && $semester_label === '') {
+        $key = 'Unknown Term';
+    } else {
+        $key = ($school_year_label !== '' ? $school_year_label : 'N/A') . ' - ' . ($semester_label !== '' ? $semester_label : 'N/A');
+    }
     if (!isset($grouped_classes[$key])) {
         $grouped_classes[$key] = [];
     }

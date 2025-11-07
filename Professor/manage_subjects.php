@@ -34,8 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         throw new Exception("Subject code '$subject_code' already exists. Please choose a different code.");
                     }
 
-                    // Get school_year_semester_id and check if active
-                    $stmt = $pdo->prepare("SELECT id FROM school_year_semester WHERE school_year = ? AND semester = ? AND status = 'Active'");
+                    // Resolve semester_id and school_year_id via bridge table school_year_semester
+                    $stmt = $pdo->prepare("SELECT sem.id AS semester_id, sy.id AS school_year_id
+                                            FROM school_year_semester sys
+                                            JOIN school_years sy ON sys.school_year_id = sy.id
+                                            JOIN semesters sem ON sys.semester_id = sem.id
+                                            WHERE sy.year_label = ? AND sem.semester_name = ? AND sys.status = 'Active'");
                     $stmt->execute([$school_year, $semester]);
                     $term = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -43,7 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         throw new Exception("Selected school year and semester combination is not active or does not exist.");
                     }
 
-                    $school_year_semester_id = $term['id'];
+                    $semester_id = (int)$term['semester_id'];
+                    $school_year_id = (int)$term['school_year_id'];
 
                     // First insert the subject
                     $stmt = $pdo->prepare("INSERT INTO subjects (subject_id, subject_name, subject_code, credits, duration_id, created_at, updated_at)
@@ -54,11 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     // Generate unique class code
                     $class_code = generateUniqueClassCode($pdo);
 
-                    // Then create a class for this subject
-                    $stmt = $pdo->prepare("INSERT INTO classes (class_id, class_name, class_code, subject_id, professor_id, schedule, room, school_year_semester_id, created_at, updated_at)
-                                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                    // Then create a class for this subject (set both semester_id and school_year_id)
+                    $stmt = $pdo->prepare("INSERT INTO classes (class_id, class_name, class_code, subject_id, professor_id, schedule, room, semester_id, school_year_id, created_at, updated_at)
+                                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
                     $class_id = 'CLASS' . time();
-                    $stmt->execute([$class_id, $subject_name . ' Class', $class_code, $subject_id, $professor_id, $schedule, $room, $school_year_semester_id]);
+                    $stmt->execute([$class_id, $subject_name . ' Class', $class_code, $subject_id, $professor_id, $schedule, $room, $semester_id, $school_year_id]);
 
                     $success = "Subject and class added successfully! Class Code: " . $class_code;
                 } catch (PDOException $e) {
@@ -79,8 +84,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $duration_id = isset($_POST['duration_id']) && $_POST['duration_id'] !== '' ? (int)$_POST['duration_id'] : null;
 
                 try {
-                    // Get new school_year_semester_id
-                    $stmt = $pdo->prepare("SELECT id FROM school_year_semester WHERE school_year = ? AND semester = ? AND status = 'Active'");
+                    // Resolve new semester_id and school_year_id via bridge table
+                    $stmt = $pdo->prepare("SELECT sem.id AS semester_id, sy.id AS school_year_id
+                                            FROM school_year_semester sys
+                                            JOIN school_years sy ON sys.school_year_id = sy.id
+                                            JOIN semesters sem ON sys.semester_id = sem.id
+                                            WHERE sy.year_label = ? AND sem.semester_name = ? AND sys.status = 'Active'");
                     $stmt->execute([$school_year, $semester]);
                     $term = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -88,17 +97,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         throw new Exception("Selected school year and semester combination is not active or does not exist.");
                     }
 
-                    $new_school_year_semester_id = $term['id'];
+                    $new_semester_id = (int)$term['semester_id'];
+                    $new_school_year_id = (int)$term['school_year_id'];
 
                     // Update subject information
                     $stmt = $pdo->prepare("UPDATE subjects SET subject_code = ?, subject_name = ?, duration_id = ?, updated_at = NOW()
                                           WHERE subject_id = ?");
                     $stmt->execute([$subject_code, $subject_name, $duration_id, $subject_id]);
 
-                    // Update class information
-                    $stmt = $pdo->prepare("UPDATE classes SET schedule = ?, room = ?, school_year_semester_id = ?, updated_at = NOW()
+                    // Update class information (set both semester_id and school_year_id)
+                    $stmt = $pdo->prepare("UPDATE classes SET schedule = ?, room = ?, semester_id = ?, school_year_id = ?, updated_at = NOW()
                                           WHERE subject_id = ? AND professor_id = ?");
-                    $stmt->execute([$schedule, $room, $new_school_year_semester_id, $subject_id, $professor_id]);
+                    $stmt->execute([$schedule, $room, $new_semester_id, $new_school_year_id, $subject_id, $professor_id]);
 
                     $success = "Subject updated successfully!";
                 } catch (PDOException $e) {
@@ -168,11 +178,12 @@ function generateUniqueClassCode($pdo) {
     return 'CLASS' . time();
 }
 
-// Get professor's subjects
-$query = "SELECT s.*, s.duration_id, c.class_code, c.schedule, c.room, sys.school_year, sys.semester
+// Get professor's subjects with proper joins via classes' term fields
+$query = "SELECT s.*, s.duration_id, c.class_code, c.schedule, c.room, sy.year_label AS school_year, sem.semester_name AS semester
           FROM subjects s
           JOIN classes c ON s.subject_id = c.subject_id
-          JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
+          LEFT JOIN semesters sem ON c.semester_id = sem.id
+          LEFT JOIN school_years sy ON c.school_year_id = sy.id
           WHERE c.professor_id = ? AND c.status = 'active'
           ORDER BY s.created_at DESC";
 $stmt = $pdo->prepare($query);
@@ -189,13 +200,8 @@ foreach ($subjects as $subject) {
     $enrollment_counts[$subject['subject_id']] = $stmt->fetch()['count'];
 }
 
-// Get active school_year_semester combinations for dropdowns
-$academic_periods_stmt = $pdo->prepare("
-    SELECT id, school_year, semester
-    FROM school_year_semester
-    WHERE status = 'Active'
-    ORDER BY school_year DESC, semester
-");
+// Get active academic periods using the bridge table
+$academic_periods_stmt = $pdo->prepare("\n    SELECT sys.id AS id, sy.year_label AS school_year, sem.semester_name AS semester\n    FROM school_year_semester sys\n    JOIN school_years sy ON sys.school_year_id = sy.id\n    JOIN semesters sem ON sys.semester_id = sem.id\n    WHERE sys.status = 'Active'\n    ORDER BY sy.year_label DESC, sem.semester_name\n");
 $academic_periods_stmt->execute();
 $academic_periods = $academic_periods_stmt->fetchAll(PDO::FETCH_ASSOC);
 

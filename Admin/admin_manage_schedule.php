@@ -50,8 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
 
                 $pdo->beginTransaction();
 
-                // Get school_year_semester_id and check if active
-                $stmt = $pdo->prepare("SELECT id FROM school_year_semester WHERE school_year = ? AND semester = ? AND status = 'Active'");
+                // Get school_year_semester_id and check if active (normalized)
+                $stmt = $pdo->prepare("SELECT sys.id
+                                        FROM school_year_semester sys
+                                        JOIN school_years sy ON sys.school_year_id = sy.id
+                                        JOIN semesters sem ON sys.semester_id = sem.id
+                                        WHERE sy.year_label = ? AND sem.semester_name = ? AND sys.status = 'Active'");
                 $stmt->execute([$school_year, $semester]);
                 $term = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -90,8 +94,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
 
                 $pdo->beginTransaction();
 
-                // resolve school_year_semester_id based on selected school_year and semester (must be active)
-                $stmt = $pdo->prepare("SELECT id FROM school_year_semester WHERE school_year = ? AND semester = ? AND status = 'Active'");
+                // resolve school_year_semester_id based on selected school_year and semester (must be active) - normalized
+                $stmt = $pdo->prepare("SELECT sys.id
+                                        FROM school_year_semester sys
+                                        JOIN school_years sy ON sys.school_year_id = sy.id
+                                        JOIN semesters sem ON sys.semester_id = sem.id
+                                        WHERE sy.year_label = ? AND sem.semester_name = ? AND sys.status = 'Active'");
                 $stmt->execute([$school_year, $semester]);
                 $term = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -145,10 +153,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
 
 // Fetch data for display
 $subjects = $pdo->query("SELECT s.*, p.first_name, p.last_name, c.class_id, c.class_code, c.professor_id, c.schedule, c.room, c.school_year_semester_id,
-                        sys.school_year, sys.semester
+                        sy.year_label AS school_year, sem.semester_name AS semester
                         FROM subjects s
                         JOIN classes c ON s.subject_id = c.subject_id
                         LEFT JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
+                        LEFT JOIN school_years sy ON sys.school_year_id = sy.id
+                        LEFT JOIN semesters sem ON sys.semester_id = sem.id
                         LEFT JOIN professors p ON c.professor_id = p.professor_id
                         ORDER BY s.created_at DESC")->fetchAll();
 
@@ -156,10 +166,12 @@ $professors = $pdo->query("SELECT * FROM professors ORDER BY first_name, last_na
 
 // Get active school_year_semester combinations for dropdowns
 $academic_periods_stmt = $pdo->prepare("
-    SELECT id, school_year, semester
-    FROM school_year_semester
-    WHERE status = 'Active'
-    ORDER BY school_year DESC, semester
+    SELECT sys.id, sy.year_label AS school_year, sem.semester_name AS semester
+    FROM school_year_semester sys
+    JOIN school_years sy ON sys.school_year_id = sy.id
+    JOIN semesters sem ON sys.semester_id = sem.id
+    WHERE sys.status = 'Active'
+    ORDER BY sy.year_label DESC, sem.semester_name
 ");
 $academic_periods_stmt->execute();
 $academic_periods = $academic_periods_stmt->fetchAll(PDO::FETCH_ASSOC);

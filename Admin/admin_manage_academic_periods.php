@@ -8,64 +8,143 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 
 require_once '../php/db.php';
 
-// Handle form submission for creating academic period
+// Helper: fetch or create school year, return id
+function ensure_school_year(PDO $pdo, string $year_label): int {
+    $stmt = $pdo->prepare("SELECT id FROM school_years WHERE year_label = ? LIMIT 1");
+    $stmt->execute([$year_label]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($row) return (int)$row['id'];
+    // Insert with created_by/updated_by if columns exist
+    $hasCreatedBy = columnExists($pdo, 'school_years', 'created_by');
+    $adminId = $_SESSION['user_id'] ?? null;
+    if ($hasCreatedBy && $adminId) {
+        $sql = "INSERT INTO school_years (year_label, status, created_at, updated_at, created_by, updated_by) VALUES (?, 'Active', NOW(), NOW(), ?, ?)";
+        $insert = $pdo->prepare($sql);
+        $insert->execute([$year_label, $adminId, $adminId]);
+    } else {
+        $insert = $pdo->prepare("INSERT INTO school_years (year_label, status, created_at, updated_at) VALUES (?, 'Active', NOW(), NOW())");
+        $insert->execute([$year_label]);
+    }
+    return (int)$pdo->lastInsertId();
+}
+
+// Helper: prevent duplicate semester creation
+function semester_exists(PDO $pdo, int $school_year_id, string $semester_name): bool {
+    // In normalized schema, the mapping exists in school_year_semester
+    $stmt = $pdo->prepare("SELECT sys.id
+                            FROM school_year_semester sys
+                            JOIN semesters sem ON sys.semester_id = sem.id
+                            WHERE sys.school_year_id = ? AND sem.semester_name = ?
+                            LIMIT 1");
+    $stmt->execute([$school_year_id, $semester_name]);
+    return (bool)$stmt->fetch();
+}
+
+// Helper: fetch or create a semester by name, return semesters.id
+function ensure_semester(PDO $pdo, string $semester_name, ?string $status = null): int {
+    $stmt = $pdo->prepare("SELECT id FROM semesters WHERE semester_name = ? LIMIT 1");
+    $stmt->execute([$semester_name]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($row) return (int)$row['id'];
+    // Insert with optional created_by/updated_by if present
+    $hasCreatedBy = columnExists($pdo, 'semesters', 'created_by');
+    $adminId = $_SESSION['user_id'] ?? null;
+    $sql = "INSERT INTO semesters (semester_name, status, created_at, updated_at";
+    if ($hasCreatedBy && $adminId) { $sql .= ", created_by, updated_by"; }
+    $sql .= ") VALUES (?, ?, NOW(), NOW()";
+    if ($hasCreatedBy && $adminId) { $sql .= ", ?, ?"; }
+    $sql .= ")";
+    $stmt = $pdo->prepare($sql);
+    $params = [$semester_name, $status ?? 'Active'];
+    if ($hasCreatedBy && $adminId) { $params[] = $adminId; $params[] = $adminId; }
+    $stmt->execute($params);
+    return (int)$pdo->lastInsertId();
+}
+
+// Handle form submission for creating academic period (normalized tables)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_academic_period'])) {
     $school_year = trim($_POST['school_year']);
-    $semester = $_POST['semester'];
+    $semester_name = $_POST['semester'];
     $status = $_POST['status'] ?? 'Active';
-
-    if (empty($school_year) || empty($semester)) {
+    if (empty($school_year) || empty($semester_name)) {
         $error = 'School year and semester are required.';
     } else {
         try {
-            $stmt = $pdo->prepare("INSERT INTO school_year_semester (school_year, semester, status) VALUES (?, ?, ?)");
-            $stmt->execute([$school_year, $semester, $status]);
-            $success = 'Academic period created successfully.';
+            $pdo->beginTransaction();
+            $school_year_id = ensure_school_year($pdo, $school_year);
+            if (semester_exists($pdo, $school_year_id, $semester_name)) {
+                $error = 'Semester already exists for that school year.';
+                $pdo->rollBack();
+            } else {
+                // Ensure semester row exists
+                $semester_id = ensure_semester($pdo, $semester_name, $status);
+                // Create mapping in school_year_semester
+                $stmt = $pdo->prepare("INSERT INTO school_year_semester (school_year_id, semester_id, status, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW())");
+                $stmt->execute([$school_year_id, $semester_id, $status]);
+                $pdo->commit();
+                $success = 'Academic period created successfully.';
+            }
         } catch (PDOException $e) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
             $error = 'Error creating academic period: ' . $e->getMessage();
         }
     }
 }
 
-// Handle archiving academic period
+// Handle archiving academic period (semester)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['archive_period'])) {
-    $period_id = $_POST['period_id'];
+    $period_id = (int)$_POST['period_id']; // refers to school_year_semester.id
     try {
-        // Archive the academic period
+        // Archive the academic period mapping
         $stmt = $pdo->prepare("UPDATE school_year_semester SET status = 'Archived' WHERE id = ?");
         $stmt->execute([$period_id]);
-
-        // Archive all classes associated with this academic period
-        $stmt = $pdo->prepare("UPDATE classes SET status = 'archived' WHERE school_year_semester_id = ?");
+        // Archive all classes for this exact period
+        $stmt = $pdo->prepare("UPDATE classes c
+                               JOIN school_year_semester sys ON c.semester_id = sys.semester_id AND c.school_year_id = sys.school_year_id
+                               SET c.status = 'archived'
+                               WHERE sys.id = ?");
         $stmt->execute([$period_id]);
-
-        $success = 'Academic period and all associated subjects archived successfully.';
+        $success = 'Academic period and all associated classes archived successfully.';
     } catch (PDOException $e) {
-        $error = 'Error archiving academic period: ' . $e->getMessage();
+        $error = 'Error archiving semester: ' . $e->getMessage();
     }
 }
 
-// Handle unarchiving academic period
+// Handle unarchiving academic period (semester)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unarchive_period'])) {
-    $period_id = $_POST['period_id'];
+    $period_id = (int)$_POST['period_id'];
     try {
-        // Unarchive the academic period
+        // Unarchive the academic period mapping
         $stmt = $pdo->prepare("UPDATE school_year_semester SET status = 'Active' WHERE id = ?");
         $stmt->execute([$period_id]);
-
-        // Unarchive all classes associated with this academic period
-        $stmt = $pdo->prepare("UPDATE classes SET status = 'active' WHERE school_year_semester_id = ?");
+        // Unarchive all classes for this exact period
+        $stmt = $pdo->prepare("UPDATE classes c
+                               JOIN school_year_semester sys ON c.semester_id = sys.semester_id AND c.school_year_id = sys.school_year_id
+                               SET c.status = 'active'
+                               WHERE sys.id = ?");
         $stmt->execute([$period_id]);
-
-        $success = 'Academic period and all associated subjects unarchived successfully.';
+        $success = 'Academic period and all associated classes unarchived successfully.';
     } catch (PDOException $e) {
-        $error = 'Error unarchiving academic period: ' . $e->getMessage();
+        $error = 'Error unarchiving semester: ' . $e->getMessage();
     }
 }
 
-// Fetch all academic periods
+// Utility: check if column exists (for created_by/updated_by compatibility)
+function columnExists(PDO $pdo, string $table, string $column): bool {
+    try {
+        $stmt = $pdo->prepare("SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?");
+        $stmt->execute([$table, $column]);
+        return (bool)$stmt->fetch();
+    } catch (PDOException $e) { return false; }
+}
+
+// Fetch all academic periods (via school_year_semester bridge)
 try {
-    $stmt = $pdo->query("SELECT * FROM school_year_semester ORDER BY school_year DESC, semester");
+    $stmt = $pdo->query("SELECT sys.id AS id, sy.year_label AS school_year, sem.semester_name AS semester, sys.status, sys.created_at, sys.updated_at
+                         FROM school_year_semester sys
+                         JOIN school_years sy ON sys.school_year_id = sy.id
+                         JOIN semesters sem ON sys.semester_id = sem.id
+                         ORDER BY sy.year_label DESC, sem.semester_name");
     $academic_periods = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $error = 'Error fetching academic periods: ' . $e->getMessage();

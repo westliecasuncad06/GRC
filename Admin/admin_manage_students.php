@@ -82,14 +82,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Get all students with semester info
+// Get all students with latest class term info (joins via classes.semester_id and classes.school_year_id)
 $query = "
     SELECT s.*, sem.semester_name, y.year_label
     FROM students s
     LEFT JOIN student_classes sc ON s.student_id = sc.student_id
     LEFT JOIN classes c ON sc.class_id = c.class_id
     LEFT JOIN semesters sem ON c.semester_id = sem.id
-    LEFT JOIN school_years y ON sem.school_year_id = y.id
+    LEFT JOIN school_years y ON c.school_year_id = y.id
     GROUP BY s.student_id
     ORDER BY s.last_name, s.first_name
 ";

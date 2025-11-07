@@ -23,12 +23,19 @@ $class_id = $_GET['class_id'];
 $professor_id = $_SESSION['user_id'];
 
 // Fetch class details with subject and term info
-$stmt = $pdo->prepare("SELECT s.*, c.class_id, c.class_code, c.schedule, c.room, c.section, c.status,
-                             sys.school_year, sys.semester
-                      FROM subjects s
-                      JOIN classes c ON s.subject_id = c.subject_id
-                      LEFT JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
-                      WHERE c.class_id = ? AND c.professor_id = ?");
+$stmt = $pdo->prepare("SELECT 
+                s.*, 
+                c.class_id, c.class_code, c.schedule, c.room, c.section, c.status,
+                COALESCE(sy.year_label, sy2.year_label) AS school_year,
+                COALESCE(sem.semester_name, sem2.semester_name) AS semester
+             FROM subjects s
+             JOIN classes c ON s.subject_id = c.subject_id
+             LEFT JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
+             LEFT JOIN school_years sy ON sys.school_year_id = sy.id
+             LEFT JOIN semesters sem ON sys.semester_id = sem.id
+             LEFT JOIN semesters sem2 ON c.semester_id = sem2.id
+             LEFT JOIN school_years sy2 ON sem2.school_year_id = sy2.id
+             WHERE c.class_id = ? AND c.professor_id = ?");
 $stmt->execute([$class_id, $professor_id]);
 $class = $stmt->fetch(PDO::FETCH_ASSOC);
 

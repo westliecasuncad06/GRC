@@ -14,71 +14,112 @@ $stmt = $pdo->prepare("SELECT first_name, last_name FROM professors WHERE profes
 $stmt->execute([$professor_id]);
 $professor = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Get professor's classes (both active and archived) with school year and semester from school_year_semester table
+// Get professor's classes (both active and archived)
+// Prefer normalized mapping via school_year_semester (with IDs), fall back to legacy classes.semester_id + classes.school_year_id
 $query = "SELECT s.*, c.class_id, c.class_code, c.schedule, c.room, c.section, c.status,
-                 sys.school_year,
-                 sys.semester,
-                 sys.status as term_status
+           COALESCE(sy.year_label, sy2.year_label) AS school_year,
+           COALESCE(sem.semester_name, sem2.semester_name) AS semester,
+           COALESCE(sys.status, sem2.status, 'Active') AS term_status
           FROM subjects s
           JOIN classes c ON s.subject_id = c.subject_id
           LEFT JOIN school_year_semester sys ON c.school_year_semester_id = sys.id
+          LEFT JOIN school_years sy ON sys.school_year_id = sy.id
+          LEFT JOIN semesters sem ON sys.semester_id = sem.id
+       LEFT JOIN semesters sem2 ON c.semester_id = sem2.id
+       LEFT JOIN school_years sy2 ON c.school_year_id = sy2.id
           WHERE c.professor_id = ?
-          ORDER BY COALESCE(sys.status, 'Active') DESC, sys.school_year DESC, sys.semester DESC, s.subject_name";
+          ORDER BY COALESCE(sy.year_label, sy2.year_label) DESC, COALESCE(sem.semester_name, sem2.semester_name) DESC, s.subject_name";
 $stmt = $pdo->prepare($query);
 $stmt->execute([$professor_id]);
 $classes = $stmt->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action']) && $_POST['action'] === 'archive_all_2025_1st') {
-        // Get the current school year and semester
-        $stmt = $pdo->prepare("SELECT id, school_year, semester FROM school_year_semester WHERE status = 'Active'");
-        $stmt->execute();
-        $active_term = $stmt->fetch(PDO::FETCH_ASSOC);
+        // Archive all classes for the currently active term for this professor.
+        // Try preferred: school_year_semester with status 'Active'; fallback: semesters with status 'Active'.
+        $sys_id = null;
+        $sem_id = null;
 
-        if ($active_term) {
-            $school_year_semester_id = $active_term['id'];
-            $school_year = $active_term['school_year'];
-            $semester = $active_term['semester'];
-
-            // Archive all classes for the active school year and semester for this professor
-            // First update the school_year_semester status to 'Archived'
-            $stmt = $pdo->prepare("UPDATE school_year_semester SET status = 'Archived' WHERE id = ?");
-            $stmt->execute([$school_year_semester_id]);
-
-            // Then update the classes.status for backward compatibility
-            $archiveQuery = "UPDATE classes c
-                             SET c.status = 'archived'
-                             WHERE c.professor_id = ? AND c.school_year_semester_id = ?";
-            $stmt = $pdo->prepare($archiveQuery);
-            $stmt->execute([$professor_id, $school_year_semester_id]);
-
-            header('Location: archive.php');
-            exit();
-        } else {
-            // Handle the case where no active school year and semester are found
-            echo "No active school year and semester found.";
-            exit();
+        try {
+            $stmt = $pdo->prepare("SELECT id FROM school_year_semester WHERE status = 'Active' ORDER BY updated_at DESC, id DESC LIMIT 1");
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) { $sys_id = $row['id']; }
+        } catch (Throwable $e) {
+            // table or column might not exist; ignore and fallback
         }
+
+        if ($sys_id) {
+            $stmt = $pdo->prepare("UPDATE classes c SET c.status = 'archived' WHERE c.professor_id = ? AND c.school_year_semester_id = ?");
+            $stmt->execute([$professor_id, $sys_id]);
+        } else {
+            // Fallback: mark as archived based on the most recently updated year+semester present in classes table
+            try {
+                $sql = "SELECT c.school_year_id, c.semester_id
+                        FROM classes c
+                        WHERE c.professor_id = ?
+                        AND c.school_year_id IS NOT NULL AND c.semester_id IS NOT NULL
+                        ORDER BY c.updated_at DESC LIMIT 1";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$professor_id]);
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($row && $row['school_year_id'] && $row['semester_id']) {
+                    $stmt = $pdo->prepare("UPDATE classes c SET c.status = 'archived' WHERE c.professor_id = ? AND c.school_year_id = ? AND c.semester_id = ?");
+                    $stmt->execute([$professor_id, $row['school_year_id'], $row['semester_id']]);
+                } else {
+                    echo "No active school year and semester found.";
+                    exit();
+                }
+            } catch (Throwable $e) {
+                echo "No active school year and semester found.";
+                exit();
+            }
+        }
+
+        header('Location: archive.php');
+        exit();
     } elseif (isset($_POST['action']) && $_POST['action'] === 'unarchive_all_1st') {
-        // Unarchive all classes for 1st semester 2025-2026 for this professor
-        // First get the school_year_semester_id for 2025-2026 1st Semester
-        $stmt = $pdo->prepare("SELECT id FROM school_year_semester WHERE school_year = '2025-2026' AND semester = '1st Semester'");
-        $stmt->execute();
-        $term = $stmt->fetch(PDO::FETCH_ASSOC);
+        // Unarchive all classes for 1st Semester of 2025-2026 for this professor.
+        // Prefer school_year_semester(school_year_id + semester_id); fallback to semesters + school_years.
+        $sys_id = null;
+        $sem_id = null;
 
-        if ($term) {
-            $school_year_semester_id = $term['id'];
+        try {
+            // Resolve sys.id by joining to year and semester tables when available
+            $sql = "SELECT sys.id
+                    FROM school_year_semester sys
+                    JOIN school_years sy ON sys.school_year_id = sy.id
+                    JOIN semesters sem ON sys.semester_id = sem.id
+                    WHERE sy.year_label = '2025-2026' AND sem.semester_name = '1st Semester'
+                    LIMIT 1";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) { $sys_id = $row['id']; }
+        } catch (Throwable $e) {
+            // If school_year_semester lacks those columns, fallback below
+        }
 
-            // Update the school_year_semester status to 'Active'
-            $stmt = $pdo->prepare("UPDATE school_year_semester SET status = 'Active' WHERE id = ?");
-            $stmt->execute([$school_year_semester_id]);
+        if ($sys_id) {
+            $stmt = $pdo->prepare("UPDATE classes c SET c.status = 'active' WHERE c.professor_id = ? AND c.school_year_semester_id = ?");
+            $stmt->execute([$professor_id, $sys_id]);
+        } else {
+            // Fallback by resolving school_year_id and semester_id separately
+            try {
+                $stmt = $pdo->prepare("SELECT id FROM school_years WHERE year_label = '2025-2026' LIMIT 1");
+                $stmt->execute();
+                $syRow = $stmt->fetch(PDO::FETCH_ASSOC);
+                $stmt = $pdo->prepare("SELECT id FROM semesters WHERE semester_name = '1st Semester' LIMIT 1");
+                $stmt->execute();
+                $semRow = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Then update the classes.status for backward compatibility
-            $unarchiveQuery = "UPDATE classes c
-                             SET c.status = 'active'
-                             WHERE c.professor_id = ? AND c.school_year_semester_id = ?";
-            $stmt = $pdo->prepare($unarchiveQuery);
-            $stmt->execute([$professor_id, $school_year_semester_id]);
+                if ($syRow && $semRow) {
+                    $stmt = $pdo->prepare("UPDATE classes c SET c.status = 'active' WHERE c.professor_id = ? AND c.school_year_id = ? AND c.semester_id = ?");
+                    $stmt->execute([$professor_id, $syRow['id'], $semRow['id']]);
+                }
+            } catch (Throwable $e) {
+                // swallow; noop
+            }
         }
 
         header('Location: archive.php');

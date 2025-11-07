@@ -18,8 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        $stmt = $pdo->prepare("INSERT INTO school_years (year_label, status) VALUES (?, ?)");
-        $stmt->execute([$year_label, $status]);
+        $admin_id = $_SESSION['user_id'];
+        $stmt = $pdo->prepare("INSERT INTO school_years (year_label, status, created_by, updated_by) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$year_label, $status, $admin_id, $admin_id]);
 
         $_SESSION['success'] = 'School year created successfully.';
     } catch (PDOException $e) {

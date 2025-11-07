@@ -35,7 +35,7 @@ try {
         SELECT s.*, sem.semester_name, y.year_label
         FROM subjects s
         LEFT JOIN semesters sem ON s.semester_id = sem.id
-        LEFT JOIN school_years y ON sem.school_year_id = y.id
+        LEFT JOIN school_years y ON s.school_year_id = y.id
         ORDER BY y.year_label DESC, sem.semester_name, s.subject_name
     ");
     $stmt->execute();
@@ -48,11 +48,12 @@ try {
 // Fetch semester options for dropdown
 try {
     $stmt = $pdo->prepare("
-        SELECT s.id, CONCAT(y.year_label, ' - ', s.semester_name) AS label
-        FROM semesters s
-        JOIN school_years y ON s.school_year_id = y.id
-        WHERE s.status = 'Active' AND y.status = 'Active'
-        ORDER BY y.year_label DESC, s.semester_name
+        SELECT sem.id, CONCAT(y.year_label, ' - ', sem.semester_name) AS label
+        FROM school_year_semester sys
+        JOIN semesters sem ON sys.semester_id = sem.id
+        JOIN school_years y ON sys.school_year_id = y.id
+        WHERE sys.status = 'Active' AND y.status = 'Active'
+        ORDER BY y.year_label DESC, sem.semester_name
     ");
     $stmt->execute();
     $semester_options = $stmt->fetchAll(PDO::FETCH_ASSOC);

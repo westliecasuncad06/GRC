@@ -19,8 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        $stmt = $pdo->prepare("INSERT INTO semesters (school_year_id, semester_name, status) VALUES (?, ?, ?)");
-        $stmt->execute([$school_year_id, $semester_name, $status]);
+        $admin_id = $_SESSION['user_id'];
+        $stmt = $pdo->prepare("INSERT INTO semesters (school_year_id, semester_name, status, created_by, updated_by) VALUES (?, ?, ?, ?, ?)");
+        $stmt->execute([$school_year_id, $semester_name, $status, $admin_id, $admin_id]);
 
         $_SESSION['success'] = 'Semester created successfully.';
     } catch (PDOException $e) {

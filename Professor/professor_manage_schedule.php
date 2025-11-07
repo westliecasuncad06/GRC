@@ -54,8 +54,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $subject_id = 'SUB' . time();
                     $stmt->execute([$subject_id, $subject_name, $subject_code]);
 
-                    // Get active school year and semester
-                    $stmt = $pdo->prepare("SELECT id, school_year, semester FROM school_year_semester WHERE status = 'Active' LIMIT 1");
+                    // Get active school year and semester (normalized joins)
+                    $stmt = $pdo->prepare("SELECT sys.id, sy.year_label AS school_year, sem.semester_name AS semester
+                                            FROM school_year_semester sys
+                                            LEFT JOIN school_years sy ON sys.school_year_id = sy.id
+                                            LEFT JOIN semesters sem ON sys.semester_id = sem.id
+                                            WHERE sys.status = 'Active' LIMIT 1");
                     $stmt->execute();
                     $active_term = $stmt->fetch(PDO::FETCH_ASSOC);
                     $school_year_semester_id = $active_term ? $active_term['id'] : NULL;
@@ -65,11 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     // Generate unique class code
                     $class_code = generateUniqueClassCode($pdo);
 
-                    // Then create a class for this subject
-                    $stmt = $pdo->prepare("INSERT INTO classes (class_id, class_name, class_code, subject_id, professor_id, schedule, room, section, created_at, updated_at, school_year_semester_id, semester, school_year)
-                                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), ?, ?, ?)");
+                    // Then create a class for this subject (align with current schema: no semester/school_year columns on classes)
+                    $stmt = $pdo->prepare("INSERT INTO classes (class_id, class_name, class_code, subject_id, professor_id, schedule, room, section, created_at, updated_at, school_year_semester_id)
+                                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), ?)");
                     $class_id = 'CLASS' . time();
-                    $stmt->execute([$class_id, $subject_name . ' Class', $class_code, $subject_id, $professor_id, $schedule, $room, $section, $school_year_semester_id, $semester, $school_year]);
+                    $stmt->execute([$class_id, $subject_name . ' Class', $class_code, $subject_id, $professor_id, $schedule, $room, $section, $school_year_semester_id]);
 
                     // Check if subject has any active classes (excluding the newly created one)
                     $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM classes WHERE subject_id = ? AND class_id != ? AND status = 'active'");
